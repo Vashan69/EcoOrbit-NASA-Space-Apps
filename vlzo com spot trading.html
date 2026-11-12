@@ -1,0 +1,905 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>VLZO Professional Trading</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, #0a0e14 0%, #1a1f2e 100%);
+      color: #ffffff;
+      overflow-x: hidden;
+    }
+
+    /* Animated Background */
+    .bg-animation {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: -1;
+      opacity: 0.1;
+    }
+
+    .floating-shapes {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+    }
+
+    .shape {
+      position: absolute;
+      background: linear-gradient(45deg, #f7931e, #ffd700);
+      border-radius: 50%;
+      animation: float 20s infinite ease-in-out;
+    }
+
+    .shape:nth-child(1) { width: 80px; height: 80px; left: 10%; animation-delay: 0s; }
+    .shape:nth-child(2) { width: 60px; height: 60px; right: 20%; animation-delay: 5s; }
+    .shape:nth-child(3) { width: 40px; height: 40px; left: 70%; animation-delay: 10s; }
+    .shape:nth-child(4) { width: 100px; height: 100px; right: 10%; animation-delay: 15s; }
+
+    @keyframes float {
+      0%, 100% { transform: translateY(0px) rotate(0deg); opacity: 0.5; }
+      25% { transform: translateY(-100px) rotate(90deg); opacity: 0.8; }
+      50% { transform: translateY(-200px) rotate(180deg); opacity: 0.3; }
+      75% { transform: translateY(-100px) rotate(270deg); opacity: 0.6; }
+    }
+
+    /* Header */
+    header {
+      background: rgba(18, 22, 28, 0.95);
+      backdrop-filter: blur(10px);
+      border-bottom: 1px solid rgba(255, 215, 0, 0.2);
+      padding: 15px 30px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+    }
+
+    .logo-icon {
+      width: 40px;
+      height: 40px;
+      background: linear-gradient(135deg, #f7931e, #ffd700);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
+      font-size: 18px;
+      color: #000;
+      animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse {
+      0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(247, 147, 30, 0.7); }
+      50% { transform: scale(1.05); box-shadow: 0 0 0 10px rgba(247, 147, 30, 0); }
+      100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(247, 147, 30, 0); }
+    }
+
+    .status-indicator {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      color: #00c896;
+      font-size: 14px;
+    }
+
+    .status-dot {
+      width: 8px;
+      height: 8px;
+      background: #00c896;
+      border-radius: 50%;
+      animation: blink 1.5s infinite;
+    }
+
+    @keyframes blink {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.3; }
+    }
+
+    /* Main Container */
+    .trading-container {
+      display: grid;
+      grid-template-columns: 300px 1fr 320px;
+      gap: 20px;
+      padding: 20px;
+      height: calc(100vh - 80px);
+    }
+
+    /* Panels */
+    .panel {
+      background: rgba(30, 35, 41, 0.8);
+      backdrop-filter: blur(15px);
+      border-radius: 15px;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      padding: 20px;
+      overflow: hidden;
+      position: relative;
+      transition: all 0.3s ease;
+    }
+
+    .panel::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 2px;
+      background: linear-gradient(90deg, #f7931e, #ffd700, #f7931e);
+      animation: shimmer 3s infinite;
+    }
+
+    @keyframes shimmer {
+      0% { transform: translateX(-100%); }
+      100% { transform: translateX(100%); }
+    }
+
+    .panel:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 30px rgba(247, 147, 30, 0.2);
+    }
+
+    /* Panel Headers */
+    .panel h3 {
+      color: #ffd700;
+      margin-bottom: 20px;
+      font-size: 18px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    /* Price Display */
+    .price-header {
+      text-align: center;
+      margin-bottom: 20px;
+      padding: 15px;
+      background: rgba(18, 22, 28, 0.6);
+      border-radius: 10px;
+      border: 1px solid rgba(255, 215, 0, 0.3);
+    }
+
+    .current-price {
+      font-size: 28px;
+      font-weight: bold;
+      color: #ffd700;
+      animation: priceFlicker 0.5s ease-in-out;
+    }
+
+    @keyframes priceFlicker {
+      0% { opacity: 0.7; }
+      50% { opacity: 1; transform: scale(1.02); }
+      100% { opacity: 0.9; }
+    }
+
+    .price-change {
+      font-size: 14px;
+      margin-top: 5px;
+    }
+
+    .positive { color: #00c896; }
+    .negative { color: #f6465d; }
+
+    /* Order Book */
+    .order-book {
+      height: calc(100% - 120px);
+      overflow-y: auto;
+    }
+
+    .order-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+    }
+
+    .order-table th {
+      background: rgba(18, 22, 28, 0.8);
+      padding: 10px 8px;
+      text-align: right;
+      color: #8c8c8c;
+      font-weight: 500;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .order-table td {
+      padding: 6px 8px;
+      text-align: right;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+      transition: all 0.2s ease;
+    }
+
+    .order-table tr:hover {
+      background: rgba(255, 255, 255, 0.05);
+      transform: scale(1.01);
+    }
+
+    .ask-row { color: #f6465d; }
+    .bid-row { color: #00c896; }
+
+    /* Chart Container */
+    .chart-section {
+      height: 60%;
+      margin-bottom: 20px;
+    }
+
+    .chart-container {
+      height: 100%;
+      border-radius: 10px;
+      overflow: hidden;
+      position: relative;
+      border: 1px solid rgba(255, 215, 0, 0.2);
+      background: rgba(18, 22, 28, 0.8);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .chart-placeholder {
+      text-align: center;
+      color: #8c8c8c;
+    }
+
+    /* Trading Form */
+    .trading-form {
+      height: 40%;
+    }
+
+    .balance-display {
+      background: rgba(18, 22, 28, 0.6);
+      padding: 15px;
+      border-radius: 10px;
+      margin-bottom: 20px;
+      border: 1px solid rgba(0, 200, 150, 0.3);
+    }
+
+    .balance-item {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 8px;
+      font-size: 14px;
+    }
+
+    .balance-value {
+      font-weight: bold;
+      color: #00c896;
+    }
+
+    /* Input Fields */
+    .input-group {
+      margin-bottom: 15px;
+      position: relative;
+    }
+
+    .input-label {
+      display: block;
+      margin-bottom: 5px;
+      font-size: 12px;
+      color: #8c8c8c;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .input-field {
+      width: 100%;
+      padding: 12px 15px;
+      background: rgba(18, 22, 28, 0.8);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 8px;
+      color: white;
+      font-size: 14px;
+      transition: all 0.3s ease;
+    }
+
+    .input-field:focus {
+      outline: none;
+      border-color: #ffd700;
+      box-shadow: 0 0 10px rgba(255, 215, 0, 0.3);
+      transform: translateY(-1px);
+    }
+
+    /* Percentage Buttons */
+    .percentage-buttons {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 15px;
+    }
+
+    .percent-btn {
+      flex: 1;
+      padding: 8px;
+      background: rgba(43, 49, 57, 0.8);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 6px;
+      color: #8c8c8c;
+      font-size: 12px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .percent-btn:hover {
+      background: rgba(255, 215, 0, 0.2);
+      color: #ffd700;
+      transform: translateY(-2px);
+    }
+
+    /* Action Buttons */
+    .action-btn {
+      width: 100%;
+      padding: 15px;
+      border: none;
+      border-radius: 8px;
+      font-size: 16px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      position: relative;
+      overflow: hidden;
+      margin-bottom: 10px;
+    }
+
+    .buy-btn {
+      background: linear-gradient(135deg, #00c896, #00b383);
+      color: white;
+    }
+
+    .sell-btn {
+      background: linear-gradient(135deg, #f6465d, #e0354c);
+      color: white;
+    }
+
+    .action-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+    }
+
+    .action-btn::after {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 0;
+      height: 0;
+      background: rgba(255, 255, 255, 0.2);
+      border-radius: 50%;
+      transform: translate(-50%, -50%);
+      transition: width 0.6s, height 0.6s;
+    }
+
+    .action-btn:active::after {
+      width: 300px;
+      height: 300px;
+    }
+
+    /* Trade History */
+    .trade-history {
+      height: calc(100% - 60px);
+      overflow-y: auto;
+    }
+
+    .trade-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 12px;
+    }
+
+    .trade-table th {
+      background: rgba(18, 22, 28, 0.8);
+      padding: 10px 8px;
+      color: #8c8c8c;
+      font-weight: 500;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      position: sticky;
+      top: 0;
+    }
+
+    .trade-table td {
+      padding: 8px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+      animation: slideIn 0.5s ease-out;
+    }
+
+    @keyframes slideIn {
+      from { opacity: 0; transform: translateX(20px); }
+      to { opacity: 1; transform: translateX(0); }
+    }
+
+    .trade-buy { color: #00c896; }
+    .trade-sell { color: #f6465d; }
+
+    /* Scrollbar Styling */
+    ::-webkit-scrollbar {
+      width: 6px;
+    }
+
+    ::-webkit-scrollbar-track {
+      background: rgba(255, 255, 255, 0.05);
+      border-radius: 3px;
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background: rgba(255, 215, 0, 0.5);
+      border-radius: 3px;
+    }
+
+    ::-webkit-scrollbar-thumb:hover {
+      background: rgba(255, 215, 0, 0.8);
+    }
+
+    /* Responsive Design */
+    @media (max-width: 1200px) {
+      .trading-container {
+        grid-template-columns: 1fr;
+        grid-template-rows: auto auto auto;
+      }
+      
+      .panel {
+        height: auto;
+        min-height: 400px;
+      }
+    }
+
+    /* Loading Animation */
+    .loading {
+      display: inline-block;
+      width: 12px;
+      height: 12px;
+      border: 2px solid rgba(255, 215, 0, 0.3);
+      border-radius: 50%;
+      border-top-color: #ffd700;
+      animation: spin 1s ease-in-out infinite;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    /* Success/Error Messages */
+    .message {
+      position: fixed;
+      top: 100px;
+      right: 30px;
+      padding: 15px 20px;
+      border-radius: 8px;
+      color: white;
+      font-weight: bold;
+      z-index: 2000;
+      transform: translateX(100%);
+      transition: transform 0.3s ease;
+    }
+
+    .message.show {
+      transform: translateX(0);
+    }
+
+    .message.success {
+      background: linear-gradient(135deg, #00c896, #00b383);
+    }
+
+    .message.error {
+      background: linear-gradient(135deg, #f6465d, #e0354c);
+    }
+  </style>
+</head>
+<body>
+  <div class="bg-animation">
+    <div class="floating-shapes">
+      <div class="shape"></div>
+      <div class="shape"></div>
+      <div class="shape"></div>
+      <div class="shape"></div>
+    </div>
+  </div>
+
+  <header>
+    <div class="logo">
+      <div class="logo-icon">V</div>
+      <div>
+        <h2>VLZO COIN Spot Trading</h2>
+        <small style="color: #8c8c8c;">Professional Trading Platform</small>
+      </div>
+    </div>
+    <div class="status-indicator">
+      <div class="status-dot"></div>
+      <span>Live Market Data</span>
+      <div class="loading"></div>
+    </div>
+  </header>
+
+  <div class="trading-container">
+    <!-- Order Book Panel -->
+    <div class="panel">
+      <h3><i class="fas fa-list-alt"></i> Order Book</h3>
+      
+      <div class="price-header">
+        <div class="current-price" id="currentPrice">0.0234</div>
+        <div class="price-change positive" id="priceChange">+3.45% (+0.0008)</div>
+      </div>
+
+      <div class="order-book">
+        <table class="order-table">
+          <thead>
+            <tr>
+              <th>Price (USDT)</th>
+              <th>Amount</th>
+              <th>Total</th>
+            </tr>
+          </thead>
+          <tbody id="asksTable">
+            <!-- Asks filled by JavaScript -->
+          </tbody>
+          <tbody id="bidsTable">
+            <!-- Bids filled by JavaScript -->
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Chart & Trading Panel -->
+    <div class="panel">
+      <div class="chart-section">
+        <div class="chart-container">
+          <div class="chart-placeholder">
+            <i class="fas fa-chart-line" style="font-size: 48px; color: #ffd700; margin-bottom: 15px;"></i>
+            <h3 style="color: #ffd700; margin-bottom: 10px;">VLZO/USDT Chart</h3>
+            <p>Real-time trading chart will appear here</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="trading-form">
+        <div class="balance-display">
+          <div class="balance-item">
+            <span>USDT Balance:</span>
+            <span class="balance-value" id="usdtBalance">1,000.00</span>
+          </div>
+          <div class="balance-item">
+            <span>VLZO Balance:</span>
+            <span class="balance-value" id="vlzoBalance">500.00</span>
+          </div>
+        </div>
+
+        <div class="percentage-buttons">
+          <button class="percent-btn" onclick="setPercentage(25)">25%</button>
+          <button class="percent-btn" onclick="setPercentage(50)">50%</button>
+          <button class="percent-btn" onclick="setPercentage(75)">75%</button>
+          <button class="percent-btn" onclick="setPercentage(100)">MAX</button>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+          <!-- Buy Section -->
+          <div>
+            <div class="input-group">
+              <label class="input-label">Buy Price</label>
+              <input type="number" class="input-field" id="buyPrice" placeholder="0.0000" step="0.0001">
+            </div>
+            <div class="input-group">
+              <label class="input-label">Amount</label>
+              <input type="number" class="input-field" id="buyAmount" placeholder="0.00">
+            </div>
+            <button class="action-btn buy-btn" onclick="executeBuy()">
+              <i class="fas fa-arrow-up"></i> Buy VLZO
+            </button>
+          </div>
+
+          <!-- Sell Section -->
+          <div>
+            <div class="input-group">
+              <label class="input-label">Sell Price</label>
+              <input type="number" class="input-field" id="sellPrice" placeholder="0.0000" step="0.0001">
+            </div>
+            <div class="input-group">
+              <label class="input-label">Amount</label>
+              <input type="number" class="input-field" id="sellAmount" placeholder="0.00">
+            </div>
+            <button class="action-btn sell-btn" onclick="executeSell()">
+              <i class="fas fa-arrow-down"></i> Sell VLZO
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Trade History Panel -->
+    <div class="panel">
+      <h3><i class="fas fa-history"></i> Recent Trades</h3>
+      
+      <div class="trade-history">
+        <table class="trade-table">
+          <thead>
+            <tr>
+              <th>Time</th>
+              <th>Side</th>
+              <th>Price</th>
+              <th>Amount</th>
+            </tr>
+          </thead>
+          <tbody id="tradeHistoryTable">
+            <!-- Trade history filled by JavaScript -->
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Trading Data
+    let balances = {
+      usdt: 1000.00,
+      vlzo: 500.00
+    };
+
+    let currentPrice = 0.0234;
+    let priceChange = 0.0008;
+    let tradeHistory = [];
+
+    // Order Book Data
+    let orderBook = {
+      asks: [
+        { price: 0.0238, amount: 150.5, total: 3.5819 },
+        { price: 0.0237, amount: 220.8, total: 5.2330 },
+        { price: 0.0236, amount: 180.2, total: 4.2527 },
+        { price: 0.0235, amount: 305.6, total: 7.1816 },
+        { price: 0.0234, amount: 95.3, total: 2.2300 }
+      ],
+      bids: [
+        { price: 0.0233, amount: 125.7, total: 2.9288 },
+        { price: 0.0232, amount: 200.4, total: 4.6493 },
+        { price: 0.0231, amount: 165.8, total: 3.8300 },
+        { price: 0.0230, amount: 280.9, total: 6.4607 },
+        { price: 0.0229, amount: 190.2, total: 4.3556 }
+      ]
+    };
+
+    // Initialize the platform
+    function init() {
+      updateOrderBook();
+      updateBalances();
+      updatePriceDisplay();
+      startPriceUpdates();
+      addSampleTrades();
+      
+      // Set initial prices
+      document.getElementById('buyPrice').value = orderBook.asks[0].price.toFixed(4);
+      document.getElementById('sellPrice').value = orderBook.bids[0].price.toFixed(4);
+    }
+
+    // Add sample trade history
+    function addSampleTrades() {
+      const sampleTrades = [
+        { time: '14:25:30', side: 'BUY', price: 0.0233, amount: 45.2 },
+        { time: '14:24:15', side: 'SELL', price: 0.0234, amount: 120.8 },
+        { time: '14:23:45', side: 'BUY', price: 0.0232, amount: 85.5 },
+        { time: '14:22:20', side: 'SELL', price: 0.0235, amount: 200.0 },
+        { time: '14:21:05', side: 'BUY', price: 0.0231, amount: 150.3 }
+      ];
+      
+      tradeHistory = sampleTrades;
+      updateTradeHistory();
+    }
+
+    // Update order book display
+    function updateOrderBook() {
+      const asksTable = document.getElementById('asksTable');
+      const bidsTable = document.getElementById('bidsTable');
+      
+      asksTable.innerHTML = '';
+      bidsTable.innerHTML = '';
+
+      // Display asks (sell orders) - reverse order
+      orderBook.asks.slice().reverse().forEach(ask => {
+        asksTable.innerHTML += `
+          <tr class="ask-row">
+            <td>${ask.price.toFixed(4)}</td>
+            <td>${ask.amount.toFixed(1)}</td>
+            <td>${ask.total.toFixed(4)}</td>
+          </tr>
+        `;
+      });
+
+      // Display bids (buy orders)
+      orderBook.bids.forEach(bid => {
+        bidsTable.innerHTML += `
+          <tr class="bid-row">
+            <td>${bid.price.toFixed(4)}</td>
+            <td>${bid.amount.toFixed(1)}</td>
+            <td>${bid.total.toFixed(4)}</td>
+          </tr>
+        `;
+      });
+    }
+
+    // Update balance display
+    function updateBalances() {
+      document.getElementById('usdtBalance').textContent = balances.usdt.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+      document.getElementById('vlzoBalance').textContent = balances.vlzo.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+    }
+
+    // Update price display
+    function updatePriceDisplay() {
+      document.getElementById('currentPrice').textContent = currentPrice.toFixed(4);
+      const changePercent = ((priceChange / (currentPrice - priceChange)) * 100).toFixed(2);
+      const changeElement = document.getElementById('priceChange');
+      
+      if (priceChange >= 0) {
+        changeElement.className = 'price-change positive';
+        changeElement.textContent = `+${changePercent}% (+${priceChange.toFixed(4)})`;
+      } else {
+        changeElement.className = 'price-change negative';
+        changeElement.textContent = `${changePercent}% (${priceChange.toFixed(4)})`;
+      }
+    }
+
+    // Start real-time price updates
+    function startPriceUpdates() {
+      setInterval(() => {
+        // Simulate price movement
+        const change = (Math.random() - 0.5) * 0.0004;
+        currentPrice += change;
+        priceChange = change;
+        
+        // Update order book prices
+        orderBook.asks.forEach(ask => {
+          ask.price += change * 0.8;
+          ask.total = ask.price * ask.amount;
+        });
+        orderBook.bids.forEach(bid => {
+          bid.price += change * 0.8;
+          bid.total = bid.price * bid.amount;
+        });
+        
+        updatePriceDisplay();
+        updateOrderBook();
+      }, 3000);
+    }
+
+    // Set percentage for buy/sell amounts
+    function setPercentage(percent) {
+      const buyPrice = parseFloat(document.getElementById('buyPrice').value) || currentPrice;
+      const sellPrice = parseFloat(document.getElementById('sellPrice').value) || currentPrice;
+      
+      // Calculate max buy amount based on USDT balance
+      const maxBuyAmount = (balances.usdt * (percent / 100)) / buyPrice;
+      document.getElementById('buyAmount').value = maxBuyAmount.toFixed(2);
+      
+      // Calculate max sell amount based on VLZO balance
+      const maxSellAmount = balances.vlzo * (percent / 100);
+      document.getElementById('sellAmount').value = maxSellAmount.toFixed(2);
+    }
+
+    // Execute buy order
+    function executeBuy() {
+      const price = parseFloat(document.getElementById('buyPrice').value);
+      const amount = parseFloat(document.getElementById('buyAmount').value);
+      const total = price * amount;
+
+      if (!price || !amount) {
+        showMessage('Please enter valid price and amount', 'error');
+        return;
+      }
+
+      if (total > balances.usdt) {
+        showMessage('Insufficient USDT balance', 'error');
+        return;
+      }
+
+      // Execute trade
+      balances.usdt -= total;
+      balances.vlzo += amount;
+      
+      // Add to trade history
+      addTradeToHistory('BUY', price, amount);
+      
+      // Update displays
+      updateBalances();
+      showMessage(`Successfully bought ${amount.toFixed(2)} VLZO`, 'success');
+      
+      // Clear inputs
+      document.getElementById('buyAmount').value = '';
+    }
+
+    // Execute sell order
+    function executeSell() {
+      const price = parseFloat(document.getElementById('sellPrice').value);
+      const amount = parseFloat(document.getElementById('sellAmount').value);
+
+      if (!price || !amount) {
+        showMessage('Please enter valid price and amount', 'error');
+        return;
+      }
+
+      if (amount > balances.vlzo) {
+        showMessage('Insufficient VLZO balance', 'error');
+        return;
+      }
+
+      // Execute trade
+      balances.vlzo -= amount;
+      balances.usdt += price * amount;
+      
+      // Add to trade history
+      addTradeToHistory('SELL', price, amount);
+      
+      // Update displays
+      updateBalances();
+      showMessage(`Successfully sold ${amount.toFixed(2)} VLZO`, 'success');
+      
+      // Clear inputs
+      document.getElementById('sellAmount').value = '';
+    }
+
+    // Add trade to history
+    function addTradeToHistory(side, price, amount) {
+      const time = new Date().toLocaleTimeString('en-US', { hour12: false });
+      tradeHistory.unshift({ time, side, price, amount });
+      
+      // Keep only last 20 trades
+      if (tradeHistory.length > 20) {
+        tradeHistory = tradeHistory.slice(0, 20);
+      }
+      
+      updateTradeHistory();
+    }
+
+    // Update trade history display
+    function updateTradeHistory() {
+      const tableBody = document.getElementById('tradeHistoryTable');
+      tableBody.innerHTML = '';
+      
+      tradeHistory.forEach(trade => {
+        const row = `
+          <tr>
+            <td>${trade.time}</td>
+            <td class="${trade.side === 'BUY' ? 'trade-buy' : 'trade-sell'}">${trade.side}</td>
+            <td>${trade.price.toFixed(4)}</td>
+            <td>${trade.amount.toFixed(2)}</td>
+          </tr>
+        `;
+        tableBody.innerHTML += row;
+      });
+    }
+
+    // Show success/error messages
+    function showMessage(text, type) {
+      const message = document.createElement('div');
+      message.className = `message ${type}`;
+      message.innerHTML = `<i class="fas fa-${type === 'success' ? 'check-circle' : 'exclamation-circle'}"></i> ${text}`;
+      
+      document.body.appendChild(message);
+      
+      setTimeout(() => {
+        message.classList.add('show');
+      }, 100);
+      
+      setTimeout(() => {
+        message.classList.remove('show');
+        setTimeout(() => {
+          document.body.removeChild(message);
+        }, 300);
+      }, 3000);
+    }
+
+    // Initialize when page loads
+    window.addEventListener('load', init);
+  </script>
+</body>
+</html>

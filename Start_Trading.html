@@ -1,0 +1,1233 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>VLZO.COIN Trading - Binance Style</title>
+    <style>
+        /* Reset and Base Styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #0b0e11; /* Dark background */
+            color: #eaecef; /* Light text color */
+            overflow-x: hidden; /* Prevent horizontal scroll */
+            line-height: 1.6;
+        }
+
+        /* Header Styling */
+        .header {
+            background: linear-gradient(135deg, #1e2329 0%, #2b3139 100%);
+            border-bottom: 1px solid #2b3139;
+            padding: 12px 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+        }
+
+        .logo {
+            font-size: 24px;
+            font-weight: 700;
+            background: linear-gradient(45deg, #f0b90b, #ffd700); /* Binance gold gradient */
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .nav-tabs {
+            display: flex;
+            gap: 2px;
+            background: #181a20;
+            border-radius: 6px;
+            padding: 4px;
+        }
+
+        .nav-tab {
+            background: transparent;
+            border: none;
+            color: #848e9c; /* Lighter grey for inactive tabs */
+            padding: 8px 16px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+            transition: all 0.2s ease-in-out;
+        }
+
+        .nav-tab:hover {
+            color: #eaecef;
+            background: #2b3139;
+        }
+
+        .nav-tab.active {
+            background: #f0b90b; /* Binance gold for active tab */
+            color: #000;
+            font-weight: 600;
+        }
+
+        /* Main Layout */
+        .main-container {
+            display: grid;
+            grid-template-columns: 1fr 320px; /* Chart on left, trading panel on right */
+            height: calc(100vh - 60px); /* Full height minus header */
+            gap: 1px; /* Small gap to create separator effect */
+            background: #2b3139; /* Dark border color */
+        }
+
+        /* Chart Section */
+        .chart-section {
+            background: #0b0e11;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .chart-header {
+            background: #1e2329;
+            padding: 16px 20px;
+            border-bottom: 1px solid #2b3139;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap; /* Allow wrapping on smaller screens */
+            gap: 10px;
+        }
+
+        .symbol-info {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .symbol-name {
+            font-size: 20px;
+            font-weight: 600;
+            color: #eaecef;
+        }
+
+        .price-info {
+            display: flex;
+            align-items: baseline;
+            gap: 12px;
+        }
+
+        .current-price {
+            font-size: 24px;
+            font-weight: 700;
+            color: #0ecb81; /* Green for positive */
+        }
+
+        .price-change {
+            font-size: 14px;
+            font-weight: 500;
+            padding: 4px 8px;
+            border-radius: 4px;
+            transition: all 0.2s ease-in-out;
+        }
+
+        .price-change.positive {
+            background: rgba(14, 203, 129, 0.1);
+            color: #0ecb81;
+        }
+
+        .price-change.negative {
+            background: rgba(246, 70, 93, 0.1);
+            color: #f6465d; /* Red for negative */
+        }
+
+        .chart-controls {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .time-interval {
+            background: #2b3139;
+            border: none;
+            color: #848e9c;
+            padding: 6px 12px;
+            border-radius: 4px;
+            font-size: 12px;
+            cursor: pointer;
+            transition: all 0.2s ease-in-out;
+        }
+
+        .time-interval:hover,
+        .time-interval.active {
+            background: #f0b90b;
+            color: #000;
+        }
+
+        .chart-container {
+            flex: 1;
+            position: relative;
+            background: #0b0e11;
+            display: none; /* Hidden by default */
+        }
+
+        .chart-container.active {
+            display: block; /* Shown when active */
+        }
+
+        .vlzo-chart {
+            width: 100%;
+            height: 100%;
+            background: #0b0e11;
+        }
+
+        .external-chart {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100%;
+            background: linear-gradient(135deg, #1e2329 0%, #2b3139 100%);
+            color: #848e9c;
+            font-size: 16px;
+            text-align: center;
+            padding: 20px;
+        }
+
+        /* Trading Panel */
+        .trading-panel {
+            background: #1e2329;
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto; /* Enable scrolling if content exceeds height */
+        }
+
+        .panel-header {
+            padding: 16px;
+            border-bottom: 1px solid #2b3139;
+            font-size: 16px;
+            font-weight: 600;
+            color: #eaecef;
+        }
+
+        .order-form {
+            padding: 20px;
+            border-bottom: 1px solid #2b3139;
+        }
+
+        .order-tabs {
+            display: flex;
+            margin-bottom: 20px;
+            background: #0b0e11;
+            border-radius: 6px;
+            padding: 4px;
+        }
+
+        .order-tab {
+            flex: 1;
+            background: transparent;
+            border: none;
+            color: #848e9c;
+            padding: 8px;
+            border-radius: 4px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease-in-out;
+        }
+
+        .order-tab.buy.active {
+            background: #0ecb81;
+            color: #000;
+        }
+
+        .order-tab.sell.active {
+            background: #f6465d;
+            color: #fff;
+        }
+
+        .input-group {
+            margin-bottom: 16px;
+        }
+
+        .input-label {
+            display: block;
+            font-size: 12px;
+            color: #848e9c;
+            margin-bottom: 6px;
+            text-transform: uppercase;
+        }
+
+        .input-field {
+            width: 100%;
+            background: #2b3139;
+            border: 1px solid #474d57;
+            border-radius: 4px;
+            padding: 12px;
+            color: #eaecef;
+            font-size: 14px;
+            transition: all 0.2s ease-in-out;
+        }
+
+        .input-field:focus {
+            outline: none;
+            border-color: #f0b90b;
+            box-shadow: 0 0 0 2px rgba(240, 185, 11, 0.1);
+        }
+
+        .percentage-buttons {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 8px;
+            margin-top: 8px;
+        }
+
+        .percentage-btn {
+            background: #2b3139;
+            border: 1px solid #474d57;
+            color: #848e9c;
+            padding: 6px;
+            border-radius: 4px;
+            font-size: 12px;
+            cursor: pointer;
+            transition: all 0.2s ease-in-out;
+        }
+
+        .percentage-btn:hover {
+            border-color: #f0b90b;
+            color: #f0b90b;
+        }
+
+        .trade-button {
+            width: 100%;
+            border: none;
+            border-radius: 4px;
+            padding: 14px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease-in-out;
+            margin-top: 16px;
+        }
+
+        .trade-button.buy {
+            background: #0ecb81;
+            color: #000;
+        }
+
+        .trade-button.buy:hover {
+            background: #0bb574;
+            transform: translateY(-1px);
+        }
+
+        .trade-button.sell {
+            background: #f6465d;
+            color: #fff;
+        }
+
+        .trade-button.sell:hover {
+            background: #e33e57;
+            transform: translateY(-1px);
+        }
+
+        /* Portfolio and Market Stats */
+        .portfolio-section, .market-stats {
+            padding: 20px;
+            border-bottom: 1px solid #2b3139;
+        }
+
+        .portfolio-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px 0;
+            font-size: 14px;
+        }
+
+        .portfolio-label {
+            color: #848e9c;
+        }
+
+        .portfolio-value {
+            color: #eaecef;
+            font-weight: 500;
+        }
+
+        .stat-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+        }
+
+        .stat-item {
+            background: #2b3139;
+            padding: 12px;
+            border-radius: 6px;
+            text-align: center;
+        }
+
+        .stat-label {
+            font-size: 12px;
+            color: #848e9c;
+            margin-bottom: 4px;
+        }
+
+        .stat-value {
+            font-size: 14px;
+            font-weight: 600;
+            color: #eaecef;
+        }
+
+        /* Order History */
+        .order-history {
+            flex: 1; /* Occupy remaining space */
+            padding: 20px;
+        }
+
+        .history-item {
+            background: #2b3139;
+            border-radius: 6px;
+            padding: 12px;
+            margin-bottom: 8px;
+            font-size: 12px;
+        }
+
+        .history-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 4px;
+        }
+
+        .order-type {
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-size: 10px;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .order-type.buy {
+            background: rgba(14, 203, 129, 0.2);
+            color: #0ecb81;
+        }
+
+        .order-type.sell {
+            background: rgba(246, 70, 93, 0.2);
+            color: #f6465d;
+        }
+
+        .history-details {
+            color: #848e9c;
+            line-height: 1.4;
+        }
+
+        /* Chart Specific Elements (Canvas Overlays) */
+        .crosshair {
+            position: absolute;
+            pointer-events: none; /* Do not block mouse events for the canvas */
+            z-index: 100;
+        }
+
+        .crosshair-line {
+            position: absolute;
+            background: #f0b90b; /* Gold color */
+            opacity: 0.7;
+        }
+
+        .price-tooltip {
+            position: absolute;
+            background: #1e2329;
+            border: 1px solid #474d57;
+            border-radius: 4px;
+            padding: 8px;
+            font-size: 12px;
+            z-index: 101;
+            pointer-events: none;
+            white-space: nowrap; /* Prevent text wrapping */
+        }
+
+        /* Animations and Effects */
+        .pulse {
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.7; }
+            100% { opacity: 1; }
+        }
+
+        .glow {
+            box-shadow: 0 0 20px rgba(240, 185, 11, 0.3);
+        }
+
+        /* Notification Styles */
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 12px 20px;
+            border-radius: 6px;
+            font-weight: 500;
+            z-index: 1000;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+            transform: translateX(120%); /* Start off-screen */
+            transition: transform 0.3s ease-out, opacity 0.3s ease-out;
+            opacity: 0;
+            pointer-events: none; /* Allow clicking through */
+        }
+
+        .notification.show {
+            transform: translateX(0%);
+            opacity: 1;
+        }
+
+        .notification.success {
+            background: #0ecb81;
+            color: #000;
+        }
+
+        .notification.error {
+            background: #f6465d;
+            color: #fff;
+        }
+
+        /* Responsive Adjustments */
+        @media (max-width: 1024px) {
+            .main-container {
+                grid-template-columns: 1fr; /* Stack elements vertically */
+                grid-template-rows: 1fr auto; /* Chart takes remaining space, panel auto height */
+            }
+            
+            .trading-panel {
+                height: auto; /* Allow panel to grow based on content */
+                max-height: 80vh; /* Prevent excessive height on small screens */
+                overflow-y: auto; /* Ensure scrolling within panel if needed */
+            }
+
+            .header, .chart-header {
+                flex-direction: column; /* Stack items in header */
+                align-items: flex-start;
+                gap: 10px;
+            }
+
+            .chart-controls {
+                justify-content: flex-start;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .header {
+                padding: 10px 15px;
+            }
+            .logo {
+                font-size: 20px;
+            }
+            .nav-tab, .time-interval {
+                padding: 6px 10px;
+                font-size: 13px;
+            }
+            .symbol-name {
+                font-size: 18px;
+            }
+            .current-price {
+                font-size: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="header">
+    <div class="logo">
+        ⚡ VLZO Exchange
+    </div>
+    <div class="nav-tabs">
+        <button class="nav-tab active" data-symbol="vlzo">VLZO/USDT</button>
+        <button class="nav-tab" data-symbol="btc">BTC/USDT</button>
+        <button class="nav-tab" data-symbol="eth">ETH/USDT</button>
+    </div>
+</div>
+
+<div class="main-container">
+    <div class="chart-section">
+        <div class="chart-header">
+            <div class="symbol-info">
+                <div class="symbol-name" id="symbolName">VLZO/USDT</div>
+                <div class="price-info">
+                    <div class="current-price" id="currentPrice">$1.0000</div>
+                    <div class="price-change positive" id="priceChange">+$0.0000 (+0.00%)</div>
+                </div>
+            </div>
+            <button class="spot-trade"><a href="/main_files/vlzo com spot trading.html">VLZO COIN SPOT TRADING</a></button>
+            <div class="chart-controls">
+                <button class="time-interval active" data-interval="1m">1m</button>
+                <button class="time-interval" data-interval="5m">5m</button>
+                <button class="time-interval" data-interval="15m">15m</button>
+                <button class="time-interval" data-interval="1h">1h</button>
+                <button class="time-interval" data-interval="4h">4h</button>
+                <button class="time-interval" data-interval="1d">1D</button>
+            </div>
+        </div>
+
+        <div id="vlzo" class="chart-container active">
+            <canvas id="vlzoChart" class="vlzo-chart"></canvas>
+            <div class="crosshair" id="crosshair" style="display: none;">
+                <div class="crosshair-line" id="crosshairHorizontal" style="width: 100%; height: 1px; top: 0;"></div>
+                <div class="crosshair-line" id="crosshairVertical" style="width: 1px; height: 100%; left: 0;"></div>
+            </div>
+            <div class="price-tooltip" id="priceTooltip" style="display: none;"></div>
+        </div>
+
+        <div id="btc" class="chart-container">
+            <div class="external-chart">
+                <!-- TradingView Library -->
+<script type="text/javascript" src="https://s3.tradingview.com/tv.js"></script>
+<!-- Chart.js Library -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+            </div>
+        </div>
+
+        <div id="eth" class="chart-container">
+            <div class="external-chart">
+                📊 ETH/USDT Chart - Connecting to live data feed...
+            </div>
+        </div>
+    </div>
+
+    <div class="trading-panel">
+        <div class="panel-header">Spot Trading</div>
+        <div class="order-form">
+            <div class="order-tabs">
+                <button class="order-tab buy active" data-type="buy">Buy</button>
+                <button class="order-tab sell" data-type="sell">Sell</button>
+            </div>
+
+            <div class="input-group">
+                <label class="input-label">Price (USDT)</label>
+                <input type="number" class="input-field" id="orderPrice" placeholder="Market Price" step="0.0001">
+            </div>
+
+            <div class="input-group">
+                <label class="input-label">Amount (USDT)</label>
+                <input type="number" class="input-field" id="orderAmount" placeholder="0.00" step="0.01">
+                <div class="percentage-buttons">
+                    <button class="percentage-btn" onclick="tradingEngine.setPercentage(25)">25%</button>
+                    <button class="percentage-btn" onclick="tradingEngine.setPercentage(50)">50%</button>
+                    <button class="percentage-btn" onclick="tradingEngine.setPercentage(75)">75%</button>
+                    <button class="percentage-btn" onclick="tradingEngine.setPercentage(100)">100%</button>
+                </div>
+            </div>
+
+            <div class="input-group">
+                <label class="input-label">Total (VLZO)</label>
+                <input type="number" class="input-field" id="orderTotal" placeholder="0.00" readonly>
+            </div>
+
+            <button class="trade-button buy" id="tradeButton" onclick="tradingEngine.executeTrade()">Buy VLZO</button>
+        </div>
+
+        <div class="portfolio-section">
+            <div class="portfolio-item">
+                <span class="portfolio-label">USDT Balance</span>
+                <span class="portfolio-value" id="usdtBalance">0.00</span>
+            </div>
+            <div class="portfolio-item">
+                <span class="portfolio-label">VLZO Holdings</span>
+                <span class="portfolio-value" id="vlzoBalance">0.0000</span>
+            </div>
+            <div class="portfolio-item">
+                <span class="portfolio-label">Total Value (USDT)</span>
+                <span class="portfolio-value" id="totalValue">$0.00</span>
+            </div>
+        </div>
+
+        <div class="market-stats">
+            <div class="stat-grid">
+                <div class="stat-item">
+                    <div class="stat-label">24h High</div>
+                    <div class="stat-value" id="highPrice">$0.0000</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-label">24h Low</div>
+                    <div class="stat-value" id="lowPrice">$0.0000</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-label">24h Volume</div>
+                    <div class="stat-value" id="volume">0</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-label">Market Cap</div>
+                    <div class="stat-value" id="marketCap">$0.00M</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="order-history">
+            <div class="panel-header" style="padding: 0 0 16px 0;">Order History</div>
+            <div id="historyContainer">
+                <div style="text-align: center; color: #848e9c; padding: 40px 20px;">
+                    No trading history yet
+                    <br><small>Start trading to see your orders</small>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Enhanced Trading Engine
+    class VLZOTradingEngine {
+        constructor() {
+            this.price = 1.0000;
+            this.priceHistory = [];
+            this.candleData = [];
+            this.volume24h = 0;
+            this.high24h = 1.0000;
+            this.low24h = 1.0000;
+            this.lastPrice = 1.0000;
+
+            // Set owner's USDT balance
+            this.usdtBalance = 200000000000000; // 200 Trillion USDT
+            this.vlzoBalance = 0; // Starting with 0 VLZO
+            this.orderHistory = [];
+            this.currentOrderType = 'buy';
+            this.VLZO_TOTAL_SUPPLY = 1000000; // Example total supply for Market Cap calculation
+
+            this.initializeChart();
+            this.startMarketSimulation();
+            this.bindEvents();
+            this.updateDisplay();
+        }
+
+        initializeChart() {
+            this.canvas = document.getElementById('vlzoChart');
+            this.ctx = this.canvas.getContext('2d');
+            this.resizeCanvas();
+            
+            // Generate initial candlestick data
+            const now = Date.now();
+            for (let i = 100; i >= 0; i--) {
+                const timestamp = now - (i * 60000); // 1 minute intervals
+                const basePrice = 1.0000 + (Math.random() - 0.5) * 0.001;
+                this.candleData.push({
+                    timestamp,
+                    open: basePrice,
+                    high: basePrice + Math.random() * 0.0005,
+                    low: basePrice - Math.random() * 0.0005,
+                    close: basePrice + (Math.random() - 0.5) * 0.0003,
+                    volume: Math.random() * 1000
+                });
+            }
+            
+            this.drawChart();
+        }
+
+        resizeCanvas() {
+            const rect = this.canvas.getBoundingClientRect();
+            this.canvas.width = rect.width * window.devicePixelRatio;
+            this.canvas.height = rect.height * window.devicePixelRatio;
+            this.ctx.scale(window.devicePixelRatio, window.devicePixelRatio);
+            this.canvas.style.width = rect.width + 'px';
+            this.canvas.style.height = rect.height + 'px';
+        }
+
+        drawChart() {
+            const ctx = this.ctx;
+            const rect = this.canvas.getBoundingClientRect();
+            const width = rect.width;
+            const height = rect.height;
+            
+            // Clear canvas
+            ctx.fillStyle = '#0b0e11';
+            ctx.fillRect(0, 0, width, height);
+            
+            if (this.candleData.length === 0) return;
+            
+            // Calculate price range
+            const visibleCandlesCount = 50; // Show last 50 candles
+            const visible = this.candleData.slice(-visibleCandlesCount); 
+            const prices = visible.flatMap(d => [d.high, d.low]);
+            const minPrice = Math.min(...prices);
+            const maxPrice = Math.max(...prices);
+            const priceRange = maxPrice - minPrice || 0.001;
+            const padding = priceRange * 0.1; // 10% padding for better visual
+            
+            const effectiveMinPrice = minPrice - padding;
+            const effectiveMaxPrice = maxPrice + padding;
+            const effectivePriceRange = effectiveMaxPrice - effectiveMinPrice;
+
+            const chartTop = 40;
+            const chartBottom = height - 80;
+            const chartHeight = chartBottom - chartTop;
+            const chartLeft = 60;
+            const chartRight = width - 20;
+            const chartWidth = chartRight - chartLeft;
+            
+            // Draw grid
+            ctx.strokeStyle = '#2b3139';
+            ctx.lineWidth = 1;
+            
+            // Horizontal grid lines and price labels
+            const numHorizontalLines = 8;
+            for (let i = 0; i <= numHorizontalLines; i++) {
+                const y = chartTop + (chartHeight / numHorizontalLines) * i;
+                ctx.beginPath();
+                ctx.moveTo(chartLeft, y);
+                ctx.lineTo(chartRight, y);
+                ctx.stroke();
+                
+                // Price labels
+                const price = effectiveMaxPrice - ((effectivePriceRange / numHorizontalLines) * i);
+                ctx.fillStyle = '#848e9c';
+                ctx.font = '11px -apple-system, BlinkMacSystemFont, sans-serif';
+                ctx.textAlign = 'right';
+                ctx.fillText(price.toFixed(4), chartLeft - 10, y + 4);
+            }
+            
+            // Vertical grid lines and time labels
+            const numVerticalLines = 6; // Roughly 6 time labels
+            const timeStep = Math.floor(visible.length / numVerticalLines);
+            for (let i = 0; i < visible.length; i += timeStep) {
+                const x = chartLeft + (chartWidth / (visible.length - 1)) * i;
+                ctx.beginPath();
+                ctx.moveTo(x, chartTop);
+                ctx.lineTo(x, chartBottom);
+                ctx.stroke();
+
+                // Time labels
+                const date = new Date(visible[i].timestamp);
+                ctx.fillStyle = '#848e9c';
+                ctx.font = '11px -apple-system, BlinkMacSystemFont, sans-serif';
+                ctx.textAlign = 'center';
+                ctx.fillText(date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }), x, chartBottom + 15);
+            }
+            
+            // Draw candlesticks
+            const candleWidth = Math.max(2, (chartWidth / visible.length) * 0.7); // Adjust candle width
+            
+            visible.forEach((candle, index) => {
+                const x = chartLeft + (chartWidth / (visible.length - 1)) * index;
+                const openY = chartTop + ((effectiveMaxPrice - candle.open) / effectivePriceRange) * chartHeight;
+                const closeY = chartTop + ((effectiveMaxPrice - candle.close) / effectivePriceRange) * chartHeight;
+                const highY = chartTop + ((effectiveMaxPrice - candle.high) / effectivePriceRange) * chartHeight;
+                const lowY = chartTop + ((effectiveMaxPrice - candle.low) / effectivePriceRange) * chartHeight;
+                
+                const isGreen = candle.close >= candle.open;
+                
+                // Draw wick
+                ctx.strokeStyle = isGreen ? '#0ecb81' : '#f6465d';
+                ctx.lineWidth = 1;
+                ctx.beginPath();
+                ctx.moveTo(x, highY);
+                ctx.lineTo(x, lowY);
+                ctx.stroke();
+                
+                // Draw body
+                ctx.fillStyle = isGreen ? '#0ecb81' : '#f6465d';
+                const bodyTop = Math.min(openY, closeY);
+                const bodyHeight = Math.abs(closeY - openY) || 1; // Ensure body has minimum height
+                
+                ctx.fillRect(x - candleWidth/2, bodyTop, candleWidth, bodyHeight);
+                
+                // Draw volume bars
+                const volumes = visible.map(d => d.volume);
+                const maxVolume = Math.max(...volumes);
+                const volumeChartHeight = height - chartBottom - 30; // Space for volume chart
+                const volumeHeight = (candle.volume / maxVolume) * volumeChartHeight;
+                ctx.fillStyle = isGreen ? 'rgba(14, 203, 129, 0.3)' : 'rgba(246, 70, 93, 0.3)'; // Volume color matches candle
+                ctx.fillRect(x - candleWidth/2, chartBottom + 10 + (volumeChartHeight - volumeHeight), candleWidth, volumeHeight);
+            });
+            
+            // Draw current price line
+            ctx.strokeStyle = '#f0b90b';
+            ctx.lineWidth = 2;
+            ctx.setLineDash([5, 5]);
+            const currentPriceY = chartTop + ((effectiveMaxPrice - this.price) / effectivePriceRange) * chartHeight;
+            ctx.beginPath();
+            ctx.moveTo(chartLeft, currentPriceY);
+            ctx.lineTo(chartRight, currentPriceY);
+            ctx.stroke();
+            ctx.setLineDash([]);
+            
+            // Current price label
+            ctx.fillStyle = '#f0b90b';
+            ctx.fillRect(chartRight - 80, currentPriceY - 10, 75, 20);
+            ctx.fillStyle = '#000';
+            ctx.font = 'bold 12px -apple-system, BlinkMacSystemFont, sans-serif';
+            ctx.textAlign = 'center';
+            ctx.fillText(this.price.toFixed(4), chartRight - 42.5, currentPriceY + 4);
+        }
+
+        updatePrice(priceChange) {
+            this.lastPrice = this.price;
+            this.price = Math.max(0.0001, this.price + priceChange); // Ensure price doesn't go below 0.0001
+            
+            // Update 24h high/low
+            if (this.price > this.high24h) this.high24h = this.price;
+            if (this.price < this.low24h) this.low24h = this.price;
+            
+            // Update current candle
+            if (this.candleData.length > 0) {
+                const currentCandle = this.candleData[this.candleData.length - 1];
+                currentCandle.close = this.price;
+                if (this.price > currentCandle.high) currentCandle.high = this.price;
+                if (this.price < currentCandle.low) currentCandle.low = this.price;
+            }
+            
+            this.updateDisplay();
+            this.drawChart();
+        }
+
+        addNewCandle() {
+            const lastCandle = this.candleData[this.candleData.length - 1];
+            const newCandle = {
+                timestamp: Date.now(),
+                open: lastCandle.close,
+                high: lastCandle.close,
+                low: lastCandle.close,
+                close: lastCandle.close,
+                volume: 0
+            };
+            
+            this.candleData.push(newCandle);
+            if (this.candleData.length > 200) { // Keep last 200 candles for history
+                this.candleData.shift();
+            }
+        }
+
+        startMarketSimulation() {
+            // Add new candle every minute
+            setInterval(() => {
+                this.addNewCandle();
+            }, 60000);
+            
+            // Random price movements (background noise)
+            setInterval(() => {
+                const randomChange = (Math.random() - 0.5) * 0.00005; // Smaller random changes
+                this.updatePrice(randomChange);
+            }, 1500); // Faster updates for liveliness
+            
+            // Trend movements (slight drift)
+            setInterval(() => {
+                const trendChange = (Math.random() - 0.5) * 0.00002; // Even smaller trend changes
+                this.updatePrice(trendChange);
+            }, 5000);
+        }
+
+        updateDisplay() {
+            const priceChange = this.price - this.lastPrice;
+            const priceChangePercent = this.lastPrice > 0 ? (priceChange / this.lastPrice) * 100 : 0;
+            
+            document.getElementById('currentPrice').textContent = `$${this.price.toFixed(4)}`;
+            
+            const changeElement = document.getElementById('priceChange');
+            const changeText = `${priceChange >= 0 ? '+' : ''}$${priceChange.toFixed(4)} (${priceChangePercent >= 0 ? '+' : ''}${priceChangePercent.toFixed(2)}%)`;
+            changeElement.textContent = changeText;
+            changeElement.className = `price-change ${priceChange >= 0 ? 'positive' : 'negative'}`;
+            
+            document.getElementById('highPrice').textContent = `$${this.high24h.toFixed(4)}`;
+            document.getElementById('lowPrice').textContent = `$${this.low24h.toFixed(4)}`;
+            document.getElementById('volume').textContent = this.volume24h.toLocaleString(undefined, { maximumFractionDigits: 0 });
+            document.getElementById('marketCap').textContent = `$${(this.price * this.VLZO_TOTAL_SUPPLY).toLocaleString(undefined, { maximumFractionDigits: 2 })}`;
+            
+            // Portfolio
+            const totalValue = this.usdtBalance + (this.vlzoBalance * this.price);
+            document.getElementById('usdtBalance').textContent = this.usdtBalance.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+            document.getElementById('vlzoBalance').textContent = this.vlzoBalance.toLocaleString(undefined, { minimumFractionDigits: 4, maximumFractionDigits: 4 });
+            document.getElementById('totalValue').textContent = `$${totalValue.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+            
+            // Update order price field to current market price
+            document.getElementById('orderPrice').value = this.price.toFixed(4);
+            this.calculateTotal();
+        }
+
+        bindEvents() {
+            // Tab switching
+            document.querySelectorAll('.nav-tab').forEach(tab => {
+                tab.addEventListener('click', (e) => {
+                    document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+                    document.querySelectorAll('.chart-container').forEach(c => c.classList.remove('active'));
+                    
+                    e.target.classList.add('active');
+                    const symbol = e.target.dataset.symbol;
+                    document.getElementById(symbol).classList.add('active');
+                    
+                    if (symbol === 'vlzo') {
+                        document.getElementById('symbolName').textContent = 'VLZO/USDT';
+                        setTimeout(() => this.drawChart(), 100);
+                    } else if (symbol === 'btc') {
+                        document.getElementById('symbolName').textContent = 'BTC/USDT';
+                    } else if (symbol === 'eth') {
+                        document.getElementById('symbolName').textContent = 'ETH/USDT';
+                    }
+                });
+            });
+
+            // Order type switching
+            document.querySelectorAll('.order-tab').forEach(tab => {
+                tab.addEventListener('click', (e) => {
+                    document.querySelectorAll('.order-tab').forEach(t => t.classList.remove('active'));
+                    e.target.classList.add('active');
+                    
+                    this.currentOrderType = e.target.dataset.type;
+                    const button = document.getElementById('tradeButton');
+                    
+                    if (this.currentOrderType === 'buy') {
+                        button.textContent = 'Buy VLZO';
+                        button.className = 'trade-button buy';
+                    } else { // Sell
+                        button.textContent = 'Sell VLZO';
+                        button.className = 'trade-button sell';
+                    }
+                });
+            });
+
+            // Time interval buttons
+            document.querySelectorAll('.time-interval').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    document.querySelectorAll('.time-interval').forEach(b => b.classList.remove('active'));
+                    e.target.classList.add('active');
+                });
+            });
+
+            // Amount input calculation
+            document.getElementById('orderAmount').addEventListener('input', () => {
+                this.calculateTotal();
+            });
+
+            document.getElementById('orderPrice').addEventListener('input', () => {
+                this.calculateTotal();
+            });
+
+            // Chart interactions
+            this.canvas.addEventListener('mousemove', (e) => {
+                this.handleChartHover(e);
+            });
+
+            this.canvas.addEventListener('mouseleave', () => {
+                document.getElementById('crosshair').style.display = 'none';
+                document.getElementById('priceTooltip').style.display = 'none';
+            });
+
+            // Window resize
+            window.addEventListener('resize', () => {
+                setTimeout(() => {
+                    this.resizeCanvas();
+                    this.drawChart();
+                }, 100);
+            });
+        }
+
+        calculateTotal() {
+            const amountUSDT = parseFloat(document.getElementById('orderAmount').value) || 0;
+            const price = parseFloat(document.getElementById('orderPrice').value) || this.price;
+            const totalVLZO = (price > 0) ? (amountUSDT / price) : 0; // Avoid division by zero
+            document.getElementById('orderTotal').value = totalVLZO.toFixed(4);
+        }
+
+        setPercentage(percentage) {
+            const price = parseFloat(document.getElementById('orderPrice').value) || this.price;
+            let amountUSDT = 0;
+
+            if (this.currentOrderType === 'buy') {
+                amountUSDT = (this.usdtBalance * (percentage / 100));
+            } else { // Sell
+                amountUSDT = (this.vlzoBalance * price * (percentage / 100));
+            }
+            document.getElementById('orderAmount').value = amountUSDT.toFixed(2);
+            this.calculateTotal();
+        }
+
+        handleChartHover(e) {
+            const rect = this.canvas.getBoundingClientRect();
+            const x = e.clientX - rect.left;
+            const y = e.clientY - rect.top;
+            
+            // Show crosshair
+            const crosshair = document.getElementById('crosshair');
+            const horizontal = document.getElementById('crosshairHorizontal');
+            const vertical = document.getElementById('crosshairVertical');
+            
+            crosshair.style.display = 'block';
+            horizontal.style.top = y + 'px';
+            vertical.style.left = x + 'px';
+            
+            // Calculate price at cursor position
+            const chartTop = 40;
+            const chartBottom = rect.height - 80;
+            const chartHeight = chartBottom - chartTop;
+            
+            if (y >= chartTop && y <= chartBottom && this.candleData.length > 0) {
+                const visibleCandlesCount = 50;
+                const visible = this.candleData.slice(-visibleCandlesCount);
+                const prices = visible.flatMap(d => [d.high, d.low]);
+                const minPrice = Math.min(...prices);
+                const maxPrice = Math.max(...prices);
+                const priceRange = maxPrice - minPrice || 0.001;
+                const padding = priceRange * 0.1;
+                
+                const effectiveMinPrice = minPrice - padding;
+                const effectiveMaxPrice = maxPrice + padding;
+                const effectivePriceRange = effectiveMaxPrice - effectiveMinPrice;
+
+                const priceAtCursor = effectiveMaxPrice - ((y - chartTop) / chartHeight) * effectivePriceRange;
+                
+                // Show price tooltip
+                const tooltip = document.getElementById('priceTooltip');
+                tooltip.style.display = 'block';
+                tooltip.style.left = (x + 10) + 'px';
+                tooltip.style.top = (y - 30) + 'px';
+                tooltip.textContent = `$${priceAtCursor.toFixed(4)}`;
+            } else {
+                document.getElementById('priceTooltip').style.display = 'none';
+            }
+        }
+
+        executeTrade() {
+            const amountUSDT = parseFloat(document.getElementById('orderAmount').value);
+            const price = parseFloat(document.getElementById('orderPrice').value);
+            let vlzoAmount;
+
+            if (isNaN(amountUSDT) || amountUSDT <= 0) {
+                this.showNotification('Please enter a valid amount.', 'error');
+                return;
+            }
+            if (isNaN(price) || price <= 0) {
+                this.showNotification('Please enter a valid price.', 'error');
+                return;
+            }
+
+            vlzoAmount = amountUSDT / price;
+
+            if (this.currentOrderType === 'buy') {
+                if (amountUSDT > this.usdtBalance) {
+                    this.showNotification('Insufficient USDT balance.', 'error');
+                    return;
+                }
+                
+                // Buy pressure causes price to go up
+                const priceImpact = (amountUSDT / this.VLZO_TOTAL_SUPPLY) * 0.0005; // Scale impact by amount and total supply, subtle effect
+                this.updatePrice(priceImpact);
+                
+                this.usdtBalance -= amountUSDT;
+                this.vlzoBalance += vlzoAmount;
+                this.volume24h += vlzoAmount;
+                
+                // Update current candle volume
+                if (this.candleData.length > 0) {
+                    this.candleData[this.candleData.length - 1].volume += vlzoAmount;
+                }
+                
+                this.addToHistory('buy', amountUSDT, vlzoAmount, price);
+                this.showNotification(`Bought ${vlzoAmount.toFixed(4)} VLZO for $${amountUSDT.toFixed(2)}`, 'success');
+                
+            } else { // Sell order
+                if (vlzoAmount > this.vlzoBalance) {
+                    this.showNotification('Insufficient VLZO balance.', 'error');
+                    return;
+                }
+                
+                // Sell pressure causes price to go down
+                const priceImpact = -(amountUSDT / this.VLZO_TOTAL_SUPPLY) * 0.0005; // Scale impact by amount and total supply, subtle effect
+                this.updatePrice(priceImpact);
+                
+                this.vlzoBalance -= vlzoAmount;
+                this.usdtBalance += amountUSDT;
+                this.volume24h += vlzoAmount;
+                
+                // Update current candle volume
+                if (this.candleData.length > 0) {
+                    this.candleData[this.candleData.length - 1].volume += vlzoAmount;
+                }
+                
+                this.addToHistory('sell', amountUSDT, vlzoAmount, price);
+                this.showNotification(`Sold ${vlzoAmount.toFixed(4)} VLZO for $${amountUSDT.toFixed(2)}`, 'success');
+            }
+            
+            // Clear form
+            document.getElementById('orderAmount').value = '';
+            document.getElementById('orderTotal').value = '';
+            
+            this.updateDisplay();
+        }
+
+        addToHistory(type, usdtAmount, vlzoAmount, price) {
+            const order = {
+                type,
+                usdtAmount,
+                vlzoAmount,
+                price,
+                timestamp: new Date()
+            };
+            
+            this.orderHistory.unshift(order);
+            if (this.orderHistory.length > 20) { // Keep history manageable
+                this.orderHistory.pop();
+            }
+            
+            this.updateOrderHistory();
+        }
+
+        updateOrderHistory() {
+            const container = document.getElementById('historyContainer');
+            
+            if (this.orderHistory.length === 0) {
+                container.innerHTML = `
+                    <div style="text-align: center; color: #848e9c; padding: 40px 20px;">
+                        No trading history yet
+                        <br><small>Start trading to see your orders</small>
+                    </div>
+                `;
+                return;
+            }
+            
+            container.innerHTML = this.orderHistory.map(order => `
+                <div class="history-item">
+                    <div class="history-header">
+                        <span class="order-type ${order.type}">${order.type.toUpperCase()}</span>
+                        <span>${order.timestamp.toLocaleTimeString()}</span>
+                    </div>
+                    <div class="history-details">
+                        ${order.vlzoAmount.toFixed(4)} VLZO @ $${order.price.toFixed(4)}
+                        <br>Total: $${order.usdtAmount.toFixed(2)}
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        showNotification(message, type) {
+            const notification = document.createElement('div');
+            notification.className = `notification ${type}`;
+            notification.textContent = message;
+            
+            document.body.appendChild(notification);
+            
+            // Animate in
+            setTimeout(() => {
+                notification.classList.add('show');
+            }, 10); // Small delay to ensure CSS transition applies
+            
+            // Animate out and remove
+            setTimeout(() => {
+                notification.classList.remove('show');
+                notification.addEventListener('transitionend', () => {
+                    notification.remove();
+                });
+            }, 3000); // Notification visible for 3 seconds
+        }
+    }
+
+    const tradingEngine = new VLZOTradingEngine();
+
+    // Expose global functions for onclick attributes
+    function setPercentage(percent) {
+        tradingEngine.setPercentage(percent);
+    }
+
+    function executeTrade() {
+        tradingEngine.executeTrade();
+    }
+</script>
+</body>
+</html>

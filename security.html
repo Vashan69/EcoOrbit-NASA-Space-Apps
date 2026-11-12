@@ -1,0 +1,1200 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Network Vashan Antivirus Software v1.0</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: #333;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .header {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 20px;
+            margin-bottom: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .header h1 {
+            color: white;
+            text-align: center;
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .header p {
+            color: rgba(255, 255, 255, 0.9);
+            text-align: center;
+            font-size: 1.1em;
+        }
+
+        .nav-bar {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 15px;
+            padding: 15px;
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 20px;
+        }
+
+        .nav-btn {
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s ease;
+        }
+
+        .nav-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+
+        .login-section {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .login-btn {
+            background: #4CAF50;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s ease;
+        }
+
+        .main-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        .section {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 15px;
+            padding: 20px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+            backdrop-filter: blur(10px);
+        }
+
+        .section h3 {
+            color: #333;
+            margin-bottom: 15px;
+            font-size: 1.3em;
+            border-bottom: 2px solid #667eea;
+            padding-bottom: 5px;
+        }
+
+        .crypto-trading {
+            grid-column: span 2;
+        }
+
+        .chart-container {
+            height: 300px;
+            background: #f8f9fa;
+            border-radius: 10px;
+            margin: 15px 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 2px dashed #ccc;
+            font-size: 1.1em;
+            color: #666;
+        }
+
+        .trading-buttons {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .buy-btn {
+            background: #4CAF50;
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-weight: bold;
+            flex: 1;
+            transition: all 0.3s ease;
+        }
+
+        .sell-btn {
+            background: #f44336;
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-weight: bold;
+            flex: 1;
+            transition: all 0.3s ease;
+        }
+
+        .buy-btn:hover, .sell-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+
+        .antivirus-status {
+            text-align: center;
+        }
+
+        .status-indicator {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            background: linear-gradient(45deg, #4CAF50, #45a049);
+            margin: 0 auto 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.5em;
+            font-weight: bold;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+
+        .scan-btn {
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 1.1em;
+            width: 100%;
+            margin-top: 15px;
+            transition: all 0.3s ease;
+        }
+
+        .vlzo-mining {
+            background: linear-gradient(135deg, #ffd700, #ffed4e);
+            color: #333;
+        }
+
+        .mining-stats {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-top: 15px;
+        }
+
+        .stat-item {
+            background: rgba(255, 255, 255, 0.3);
+            padding: 10px;
+            border-radius: 10px;
+            text-align: center;
+        }
+
+        .payment-gateways {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .payment-btn {
+            background: #333;
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 0.9em;
+            transition: all 0.3s ease;
+        }
+
+        .payment-btn:hover {
+            background: #555;
+            transform: translateY(-1px);
+        }
+
+        .bottom-sections {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        .form-section {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 15px;
+            padding: 20px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+            color: #333;
+        }
+
+        .form-group input, .form-group textarea, .form-group select {
+            width: 100%;
+            padding: 10px;
+            border: 2px solid #ddd;
+            border-radius: 10px;
+            font-size: 1em;
+            transition: border-color 0.3s ease;
+        }
+
+        .form-group input:focus, .form-group textarea:focus, .form-group select:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .submit-btn {
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 1.1em;
+            width: 100%;
+            transition: all 0.3s ease;
+        }
+
+        .submit-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+
+        .footer {
+            background: rgba(0, 0, 0, 0.8);
+            color: white;
+            text-align: center;
+            padding: 20px;
+            border-radius: 15px;
+            margin-top: 20px;
+        }
+
+        .footer-links {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-bottom: 15px;
+        }
+
+        .footer-link {
+            color: #4CAF50;
+            text-decoration: none;
+            font-weight: bold;
+            transition: color 0.3s ease;
+        }
+
+        .footer-link:hover {
+            color: #45a049;
+        }
+
+        .youtube-subscribe {
+            background: #ff0000;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-weight: bold;
+            margin: 10px;
+            transition: all 0.3s ease;
+        }
+
+        .youtube-subscribe:hover {
+            background: #cc0000;
+            transform: translateY(-2px);
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+        }
+
+        .modal-content {
+            background-color: white;
+            margin: 15% auto;
+            padding: 20px;
+            border-radius: 15px;
+            width: 80%;
+            max-width: 500px;
+        }
+
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .close:hover {
+            color: black;
+        }
+
+        .language-selector {
+            background: white;
+            border: 2px solid #ddd;
+            border-radius: 10px;
+            padding: 8px 15px;
+            margin-left: 15px;
+        }
+
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: #4CAF50;
+            color: white;
+            padding: 15px 20px;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            display: none;
+            z-index: 1001;
+        }
+
+        @media (max-width: 768px) {
+            .main-content {
+                grid-template-columns: 1fr;
+            }
+            
+            .crypto-trading {
+                grid-column: span 1;
+            }
+            
+            .bottom-sections {
+                grid-template-columns: 1fr;
+            }
+            
+            .nav-bar {
+                flex-direction: column;
+                gap: 15px;
+            }
+            
+            .nav-links {
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <h1>🛡️ AI Network Vashan Antivirus Software</h1>
+            <p>Version 1.0 | Advanced AI-powered Security & Blockchain Technology</p>
+        </div>
+
+        <!-- Navigation -->
+        <div class="nav-bar">
+            <div class="nav-links">
+                <button class="nav-btn" onclick="showSection('antivirus')">🛡️ Antivirus</button>
+                <button class="nav-btn" onclick="showSection('trading')">📈 Trading</button>
+                <button class="nav-btn" onclick="showSection('mining')">⛏️ Mining</button>
+                <button class="nav-btn" onclick="showSection('research')">🔬 Research</button>
+                <button class="nav-btn" onclick="showSection('feedback')">💬 Feedback</button>
+            </div>
+            <div class="login-section">
+                <select class="language-selector" onchange="changeLanguage(this.value)">
+                    <option value="en">English</option>
+                    <option value="bn">বাংলা</option>
+                    <option value="ar">العربية</option>
+                    <option value="hi">हिंदी</option>
+                </select>
+                <button class="login-btn" onclick="showLogin()">🔐 Login</button>
+                <button class="login-btn" onclick="showSignup()">📝 Sign Up</button>
+                <button class="youtube-subscribe" onclick="subscribeYoutube()">🔔 Subscribe</button>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="main-content">
+            <!-- Antivirus Section -->
+            <div class="section">
+                <h3>🛡️ Antivirus Protection</h3>
+                <div class="antivirus-status">
+                    <div class="status-indicator">SECURE</div>
+                    <p><strong>System Status:</strong> Protected</p>
+                    <p><strong>Last Scan:</strong> <span id="lastScan">Never</span></p>
+                    <p><strong>Threats Blocked:</strong> <span id="threatsBlocked">0</span></p>
+                    <button class="scan-btn" onclick="startScan()">🔍 Start Full Scan</button>
+                </div>
+            </div>
+
+            <!-- Crypto Trading Section -->
+            <div class="section crypto-trading">
+                <h3>📈 VLZO Coin Trading & Analytics</h3>
+                <div class="chart-container" id="vlzoChart">
+                    <div>
+                        <h4>VLZO Coin Live Chart</h4>
+                        <p>Current Price: $<span id="vlzoPrice">1.00</span></p>
+                        <p>24h Change: <span id="vlzoChange" style="color: green;">+5.2%</span></p>
+                        <canvas id="priceChart" width="400" height="200"></canvas>
+                    </div>
+                </div>
+                <div class="trading-buttons">
+                    <button class="buy-btn" onclick="buyCrypto('VLZO')">💰 Buy VLZO</button>
+                    <button class="sell-btn" onclick="sellCrypto('VLZO')">💸 Sell VLZO</button>
+                    <button class="nav-btn" onclick="showAllCoins()">📊 All Coins</button>
+                </div>
+                <div class="payment-gateways">
+                    <button class="payment-btn" onclick="selectPayment('VLZO')">VLZO COIN</button>
+                    <button class="payment-btn" onclick="selectPayment('PayPal')">PayPal</button>
+                    <button class="payment-btn" onclick="selectPayment('GooglePay')">Google Pay</button>
+                    <button class="payment-btn" onclick="selectPayment('USDT')">USDT</button>
+                    <button class="payment-btn" onclick="selectPayment('BTC')">Bitcoin</button>
+                    <button class="payment-btn" onclick="selectPayment('ETH')">Ethereum</button>
+                </div>
+            </div>
+
+            <!-- VLZO Mining Section -->
+            <div class="section vlzo-mining">
+                <h3>⛏️ VLZO Coin Mining</h3>
+                <p><strong>Mining Status:</strong> <span id="miningStatus">Stopped</span></p>
+                <div class="mining-stats">
+                    <div class="stat-item">
+                        <strong>Hash Rate</strong><br>
+                        <span id="hashRate">0 H/s</span>
+                    </div>
+                    <div class="stat-item">
+                        <strong>Mined Today</strong><br>
+                        <span id="minedToday">0.00 VLZO</span>
+                    </div>
+                    <div class="stat-item">
+                        <strong>Total Mined</strong><br>
+                        <span id="totalMined">0.00 VLZO</span>
+                    </div>
+                    <div class="stat-item">
+                        <strong>Reward Rate</strong><br>
+                        <span id="rewardRate">0.001 VLZO/min</span>
+                    </div>
+                </div>
+                <button class="scan-btn" onclick="toggleMining()" id="miningBtn">▶️ Start Mining</button>
+            </div>
+        </div>
+
+        <!-- Bottom Sections -->
+        <div class="bottom-sections">
+            <!-- Agriculture ICT Research Application -->
+            <div class="form-section">
+                <h3>🌱 Agriculture ICT Research Industry</h3>
+                <form id="researchForm" onsubmit="submitResearchApplication(event)">
+                    <div class="form-group">
+                        <label for="researchName">Full Name:</label>
+                        <input type="text" id="researchName" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="researchEmail">Email:</label>
+                        <input type="email" id="researchEmail" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="researchPhone">Phone:</label>
+                        <input type="tel" id="researchPhone" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="researchExperience">Experience in Agriculture/ICT:</label>
+                        <textarea id="researchExperience" rows="3" required></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="researchProject">Project Interest:</label>
+                        <select id="researchProject" required>
+                            <option value="">Select Project</option>
+                            <option value="smart-farming">Smart Farming Solutions</option>
+                            <option value="crop-monitoring">Crop Monitoring Systems</option>
+                            <option value="blockchain-supply">Blockchain Supply Chain</option>
+                            <option value="ai-agriculture">AI in Agriculture</option>
+                        </select>
+                    </div>
+                    <button type="submit" class="submit-btn">🚀 Apply Now</button>
+                </form>
+            </div>
+
+            <!-- Feedback Section -->
+            <div class="form-section">
+                <h3>💬 Feedback & Support</h3>
+                <form id="feedbackForm" onsubmit="submitFeedback(event)">
+                    <div class="form-group">
+                        <label for="feedbackName">Name:</label>
+                        <input type="text" id="feedbackName" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="feedbackEmail">Email:</label>
+                        <input type="email" id="feedbackEmail" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="feedbackType">Feedback Type:</label>
+                        <select id="feedbackType" required>
+                            <option value="">Select Type</option>
+                            <option value="bug-report">Bug Report</option>
+                            <option value="feature-request">Feature Request</option>
+                            <option value="general-feedback">General Feedback</option>
+                            <option value="support">Technical Support</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="feedbackMessage">Message:</label>
+                        <textarea id="feedbackMessage" rows="4" required></textarea>
+                    </div>
+                    <button type="submit" class="submit-btn">📤 Send Feedback</button>
+                </form>
+
+                <!-- Auto VAT Calculator -->
+                <div style="margin-top: 20px; padding-top: 20px; border-top: 2px solid #eee;">
+                    <h4>🧮 Auto VAT Calculator</h4>
+                    <div class="form-group">
+                        <label for="amount">Amount:</label>
+                        <input type="number" id="amount" placeholder="Enter amount" oninput="calculateVAT()">
+                    </div>
+                    <p><strong>VAT (15%):</strong> $<span id="vatAmount">0.00</span></p>
+                    <p><strong>Total:</strong> $<span id="totalAmount">0.00</span></p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <div class="footer">
+            <div class="footer-links">
+                <a href="https://www.vlzo.com" class="footer-link">🌐 VLZO.com</a>
+                <a href="#" class="footer-link" onclick="showCompanyInfo()">🏢 Company Info</a>
+                <a href="https://www.youtube.com/@Code-With-Omar.official" class="footer-link">📺 Code With Omar</a>
+                <button class="youtube-subscribe" onclick="subscribeYoutube()">🔔 Subscribe Channel</button>
+            </div>
+            <p><strong>Founder:</strong> Abdullah Mahmud Mozumder | <strong>Software Programming:</strong> Omar Ibne Abdullah</p>
+            <p><strong>Managing Director:</strong> vlzo.group.bd@gmail.com | <strong>Security Admin:</strong> vashani.it.eng@gmail.com</p>
+            <p><strong>Business Contact:</strong> vlzocp1@gmail.com | <strong>Founder Email:</strong> vashani.it.eng@vlzo.com</p>
+            <p><strong>Sister Companies:</strong> VLZO TV, VLZO GROUP, VLZO ENGINEERING</p>
+            <p>© 2024 AI Network Vashan Antivirus Software | MIT License | All Rights Reserved</p>
+        </div>
+    </div>
+
+    <!-- Login Modal -->
+    <div id="loginModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal('loginModal')">&times;</span>
+            <h3>🔐 Login to VLZO Account</h3>
+            <form id="loginForm" onsubmit="handleLogin(event)">
+                <div class="form-group">
+                    <label for="loginEmail">Email:</label>
+                    <input type="email" id="loginEmail" required>
+                </div>
+                <div class="form-group">
+                    <label for="loginPassword">Password:</label>
+                    <input type="password" id="loginPassword" required>
+                </div>
+                <button type="submit" class="submit-btn">🚀 Login</button>
+                <button type="button" class="nav-btn" onclick="loginWithGoogle()" style="margin-top: 10px; width: 100%;">
+                    🔍 Login with Google
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Signup Modal -->
+    <div id="signupModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal('signupModal')">&times;</span>
+            <h3>📝 Create VLZO Account</h3>
+            <form id="signupForm" onsubmit="handleSignup(event)">
+                <div class="form-group">
+                    <label for="signupName">Full Name:</label>
+                    <input type="text" id="signupName" required>
+                </div>
+                <div class="form-group">
+                    <label for="signupEmail">Email:</label>
+                    <input type="email" id="signupEmail" required>
+                </div>
+                <div class="form-group">
+                    <label for="signupPassword">Password:</label>
+                    <input type="password" id="signupPassword" required>
+                </div>
+                <div class="form-group">
+                    <label for="signupCountry">Country:</label>
+                    <input type="text" id="signupCountry" required>
+                </div>
+                <button type="submit" class="submit-btn">🚀 Create Account</button>
+                <button type="button" class="nav-btn" onclick="signupWithGoogle()" style="margin-top: 10px; width: 100%;">
+                    🔍 Sign Up with Google
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Notification -->
+    <div id="notification" class="notification"></div>
+
+    <script>
+        // Global Variables
+        let currentLanguage = 'en';
+        let userLoggedIn = false;
+        let miningActive = false;
+        let vlzoPrice = 1.00;
+        let priceHistory = [];
+        let scanProgress = 0;
+        let threatsBlocked = 0;
+        let minedVLZO = 0.00;
+        let hashRate = 0;
+
+        // Language Translations
+        const translations = {
+            en: {
+                title: "AI Network Vashan Antivirus Software",
+                subtitle: "Version 1.0 | Advanced AI-powered Security & Blockchain Technology"
+            },
+            bn: {
+                title: "এআই নেটওয়ার্ক ভাসান অ্যান্টিভাইরাস সফটওয়্যার",
+                subtitle: "সংস্করণ ১.০ | উন্নত এআই-চালিত নিরাপত্তা ও ব্লকচেইন প্রযুক্তি"
+            }
+        };
+
+        // Initialize Application
+        function initializeApp() {
+            generatePriceHistory();
+            updatePriceChart();
+            updateDateTime();
+            setInterval(updatePriceChart, 5000);
+            setInterval(updateDateTime, 1000);
+            
+            // Simulate real-time price updates
+            setInterval(() => {
+                vlzoPrice += (Math.random() - 0.5) * 0.1;
+                vlzoPrice = Math.max(0.1, vlzoPrice);
+                document.getElementById('vlzoPrice').textContent = vlzoPrice.toFixed(4);
+                priceHistory.push(vlzoPrice);
+                if (priceHistory.length > 50) priceHistory.shift();
+            }, 3000);
+        }
+
+        // Price Chart Functions
+        function generatePriceHistory() {
+            for (let i = 0; i < 50; i++) {
+                vlzoPrice += (Math.random() - 0.5) * 0.05;
+                vlzoPrice = Math.max(0.1, vlzoPrice);
+                priceHistory.push(vlzoPrice);
+            }
+        }
+
+        function updatePriceChart() {
+            const canvas = document.getElementById('priceChart');
+            if (!canvas) return;
+            
+            const ctx = canvas.getContext('2d');
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            
+            if (priceHistory.length > 1) {
+                ctx.strokeStyle = '#4CAF50';
+                ctx.lineWidth = 2;
+                ctx.beginPath();
+                
+                const width = canvas.width;
+                const height = canvas.height;
+                const step = width / (priceHistory.length - 1);
+                const minPrice = Math.min(...priceHistory);
+                const maxPrice = Math.max(...priceHistory);
+                const priceRange = maxPrice - minPrice || 1;
+                
+                priceHistory.forEach((price, index) => {
+                    const x = index * step;
+                    const y = height - ((price - minPrice) / priceRange) * height;
+                    
+                    if (index === 0) {
+                        ctx.moveTo(x, y);
+                    } else {
+                        ctx.lineTo(x, y);
+                    }
+                });
+                
+                ctx.stroke();
+            }
+        }
+
+        function updateDateTime() {
+            const now = new Date();
+            document.getElementById('lastScan').textContent = now.toLocaleString();
+        }
+
+        // Authentication Functions
+        function showLogin() {
+            document.getElementById('loginModal').style.display = 'block';
+        }
+
+        function showSignup() {
+            document.getElementById('signupModal').style.display = 'block';
+        }
+
+        function closeModal(modalId) {
+            document.getElementById(modalId).style.display = 'none';
+        }
+
+        function handleLogin(event) {
+            event.preventDefault();
+            const email = document.getElementById('loginEmail').value;
+            const password = document.getElementById('loginPassword').value;
+            
+            // Simulate login
+            userLoggedIn = true;
+            showNotification('Login successful! Welcome to VLZO Network.');
+            closeModal('loginModal');
+            
+            // Send notification email (simulated)
+            console.log(`Login notification sent to: vashani.it.eng@gmail.com`);
+        }
+
+        function handleSignup(event) {
+            event.preventDefault();
+            const formData = {
+                name: document.getElementById('signupName').value,
+                email: document.getElementById('signupEmail').value,
+                password: document.getElementById('signupPassword').value,
+                country: document.getElementById('signupCountry').value,
+                timestamp: new Date().toISOString()
+            };
+            
+            // Simulate database save
+            localStorage.setItem('vlzo_user_' + Date.now(), JSON.stringify(formData));
+            
+            showNotification('Account created successfully! Please check your email for verification.');
+            closeModal('signupModal');
+            
+            // Send notification (simulated)
+            console.log(`New user registration: ${formData.email} - Auto request sent to Gmail`);
+        }
+
+        function loginWithGoogle() {
+            // Simulate Google OAuth
+            showNotification('Redirecting to Google Sign-In...');
+            setTimeout(() => {
+                userLoggedIn = true;
+                showNotification('Successfully logged in with Google!');
+                closeModal('loginModal');
+            }, 2000);
+        }
+
+        function signupWithGoogle() {
+            // Simulate Google OAuth signup
+            showNotification('Redirecting to Google Sign-Up...');
+            setTimeout(() => {
+                showNotification('Successfully signed up with Google!');
+                closeModal('signupModal');
+            }, 2000);
+        }
+
+        // Antivirus Functions
+        function startScan() {
+            const scanBtn = document.querySelector('.scan-btn');
+            scanBtn.textContent = '🔄 Scanning...';
+            scanBtn.disabled = true;
+            
+            scanProgress = 0;
+            const scanInterval = setInterval(() => {
+                scanProgress += Math.random() * 10;
+                
+                if (scanProgress >= 100) {
+                    clearInterval(scanInterval);
+                    scanProgress = 100;
+                    threatsBlocked += Math.floor(Math.random() * 5);
+                    
+                    document.getElementById('threatsBlocked').textContent = threatsBlocked;
+                    document.getElementById('lastScan').textContent = new Date().toLocaleString();
+                    
+                    scanBtn.textContent = '✅ Scan Complete';
+                    setTimeout(() => {
+                        scanBtn.textContent = '🔍 Start Full Scan';
+                        scanBtn.disabled = false;
+                    }, 3000);
+                    
+                    showNotification('System scan completed successfully! No threats found.');
+                } else {
+                    scanBtn.textContent = `🔄 Scanning... ${Math.floor(scanProgress)}%`;
+                }
+            }, 200);
+        }
+
+        // Mining Functions
+        function toggleMining() {
+            const miningBtn = document.getElementById('miningBtn');
+            const miningStatus = document.getElementById('miningStatus');
+            
+            if (!miningActive) {
+                miningActive = true;
+                miningBtn.textContent = '⏸️ Stop Mining';
+                miningStatus.textContent = 'Active';
+                miningStatus.style.color = '#4CAF50';
+                
+                // Start mining simulation
+                const miningInterval = setInterval(() => {
+                    if (!miningActive) {
+                        clearInterval(miningInterval);
+                        return;
+                    }
+                    
+                    hashRate = Math.floor(Math.random() * 1000) + 500;
+                    minedVLZO += 0.001;
+                    
+                    document.getElementById('hashRate').textContent = hashRate + ' H/s';
+                    document.getElementById('minedToday').textContent = (minedVLZO % 1).toFixed(3) + ' VLZO';
+                    document.getElementById('totalMined').textContent = minedVLZO.toFixed(3) + ' VLZO';
+                }, 1000);
+                
+                showNotification('VLZO mining started successfully!');
+            } else {
+                miningActive = false;
+                miningBtn.textContent = '▶️ Start Mining';
+                miningStatus.textContent = 'Stopped';
+                miningStatus.style.color = '#f44336';
+                hashRate = 0;
+                document.getElementById('hashRate').textContent = '0 H/s';
+                
+                showNotification('VLZO mining stopped.');
+            }
+        }
+
+        // Trading Functions
+        function buyCrypto(coin) {
+            if (!userLoggedIn) {
+                showNotification('Please login to trade cryptocurrencies.');
+                showLogin();
+                return;
+            }
+            
+            const amount = prompt(`Enter amount of ${coin} to buy:`);
+            if (amount && parseFloat(amount) > 0) {
+                showNotification(`Buy order placed for ${amount} ${coin} at ${vlzoPrice.toFixed(4)}`);
+                
+                // Simulate order processing
+                setTimeout(() => {
+                    showNotification(`Successfully purchased ${amount} ${coin}!`);
+                }, 2000);
+            }
+        }
+
+        function sellCrypto(coin) {
+            if (!userLoggedIn) {
+                showNotification('Please login to trade cryptocurrencies.');
+                showLogin();
+                return;
+            }
+            
+            const amount = prompt(`Enter amount of ${coin} to sell:`);
+            if (amount && parseFloat(amount) > 0) {
+                showNotification(`Sell order placed for ${amount} ${coin} at ${vlzoPrice.toFixed(4)}`);
+                
+                // Simulate order processing
+                setTimeout(() => {
+                    showNotification(`Successfully sold ${amount} ${coin}!`);
+                }, 2000);
+            }
+        }
+
+        function showAllCoins() {
+            const coins = ['BTC', 'ETH', 'VLZO', 'USDT', 'BNB', 'ADA', 'SOL', 'DOT'];
+            let coinList = 'Live Cryptocurrency Prices:\n\n';
+            
+            coins.forEach(coin => {
+                const price = coin === 'VLZO' ? vlzoPrice : Math.random() * 50000;
+                const change = (Math.random() - 0.5) * 20;
+                coinList += `${coin}: ${price.toFixed(4)} (${change > 0 ? '+' : ''}${change.toFixed(2)}%)\n`;
+            });
+            
+            alert(coinList);
+        }
+
+        function selectPayment(method) {
+            showNotification(`Payment method selected: ${method}`);
+        }
+
+        // Form Submissions
+        function submitResearchApplication(event) {
+            event.preventDefault();
+            
+            const formData = {
+                name: document.getElementById('researchName').value,
+                email: document.getElementById('researchEmail').value,
+                phone: document.getElementById('researchPhone').value,
+                experience: document.getElementById('researchExperience').value,
+                project: document.getElementById('researchProject').value,
+                timestamp: new Date().toISOString()
+            };
+            
+            // Simulate Cloudflare integration
+            console.log('Sending to Cloudflare:', formData);
+            
+            showNotification('Application submitted successfully! You will be contacted soon.');
+            document.getElementById('researchForm').reset();
+            
+            // Send notification email
+            console.log(`Research application sent to: vlzocp1@gmail.com`);
+        }
+
+        function submitFeedback(event) {
+            event.preventDefault();
+            
+            const feedbackData = {
+                name: document.getElementById('feedbackName').value,
+                email: document.getElementById('feedbackEmail').value,
+                type: document.getElementById('feedbackType').value,
+                message: document.getElementById('feedbackMessage').value,
+                timestamp: new Date().toISOString()
+            };
+            
+            showNotification('Feedback submitted successfully! Thank you for your input.');
+            document.getElementById('feedbackForm').reset();
+            
+            // Send notification to founder email
+            console.log(`Feedback notification sent to: vashani.it.eng@gmail.com`);
+            console.log('Feedback data:', feedbackData);
+        }
+
+        // VAT Calculator
+        function calculateVAT() {
+            const amount = parseFloat(document.getElementById('amount').value) || 0;
+            const vatRate = 0.15; // 15% VAT
+            const vatAmount = amount * vatRate;
+            const totalAmount = amount + vatAmount;
+            
+            document.getElementById('vatAmount').textContent = vatAmount.toFixed(2);
+            document.getElementById('totalAmount').textContent = totalAmount.toFixed(2);
+        }
+
+        // Language Functions
+        function changeLanguage(lang) {
+            currentLanguage = lang;
+            
+            if (translations[lang]) {
+                document.querySelector('.header h1').textContent = translations[lang].title;
+                document.querySelector('.header p').textContent = translations[lang].subtitle;
+            }
+            
+            showNotification(`Language changed to: ${lang.toUpperCase()}`);
+        }
+
+        // Utility Functions
+        function showNotification(message) {
+            const notification = document.getElementById('notification');
+            notification.textContent = message;
+            notification.style.display = 'block';
+            
+            setTimeout(() => {
+                notification.style.display = 'none';
+            }, 5000);
+        }
+
+        function showSection(section) {
+            showNotification(`Navigating to ${section} section...`);
+            
+            // Scroll to relevant section
+            const sections = {
+                'antivirus': '.antivirus-status',
+                'trading': '.crypto-trading',
+                'mining': '.vlzo-mining',
+                'research': '.form-section',
+                'feedback': '.form-section:last-child'
+            };
+            
+            if (sections[section]) {
+                document.querySelector(sections[section]).scrollIntoView({ behavior: 'smooth' });
+            }
+        }
+
+        function subscribeYoutube() {
+            window.open('https://www.youtube.com/@Code-With-Omar.official?sub_confirmation=1', '_blank');
+            showNotification('Redirecting to Code With Omar YouTube channel...');
+        }
+
+        function showCompanyInfo() {
+            const companyInfo = `
+🏢 VLZO Company Information:
+
+🌟 Main Company: VLZO GROUP
+🎬 Sister Companies: VLZO TV, VLZO ENGINEERING
+🌐 Website: www.vlzo.com
+
+👨‍💼 Founder: Abdullah Mahmud Mozumder
+📧 Founder Email: vashani.it.eng@vlzo.com
+
+👨‍💻 Software Developer: Omar Ibne Abdullah
+📧 Co-founder Contact: vlzocp1@gmail.com
+
+🏢 Managing Director: vlzo.group.bd@gmail.com
+🔒 Security Administrator: vashani.it.eng@gmail.com
+
+🎯 Focus Areas:
+• AI & Machine Learning
+• Blockchain Technology
+• Cybersecurity Solutions
+• Agriculture ICT Research
+• Financial Technology
+
+📍 Headquarters: Bangladesh
+🌍 Global Operations: Worldwide
+            `;
+            
+            alert(companyInfo);
+        }
+
+        // Security Functions
+        function checkSecurityPermissions(email) {
+            const authorizedEmails = [
+                'vashani.it.eng@gmail.com',
+                'vlzo.group.bd@gmail.com',
+                'vlzocp1@gmail.com',
+                'vashani.it.eng@vlzo.com'
+            ];
+            
+            return authorizedEmails.includes(email.toLowerCase());
+        }
+
+        // Blockchain Simulation
+        function generateBlockchainHash() {
+            const chars = '0123456789abcdef';
+            let hash = '';
+            for (let i = 0; i < 64; i++) {
+                hash += chars[Math.floor(Math.random() * chars.length)];
+            }
+            return hash;
+        }
+
+        // Auto-save user data
+        function saveUserData(data) {
+            const userData = {
+                ...data,
+                timestamp: new Date().toISOString(),
+                hash: generateBlockchainHash(),
+                version: '1.0'
+            };
+            
+            // Simulate SQL database save
+            const userKey = `vlzo_user_${Date.now()}`;
+            localStorage.setItem(userKey, JSON.stringify(userData));
+            
+            console.log('User data saved to database:', userData);
+        }
+
+        // Integration with external APIs (simulated)
+        function integrateWithBinance() {
+            console.log('Connecting to Binance API...');
+            // Simulated Binance integration
+            showNotification('Connected to Binance for live trading data.');
+        }
+
+        function integrateWithGoogleFinance() {
+            console.log('Connecting to Google Finance API...');
+            // Simulated Google Finance integration
+            showNotification('Connected to Google Finance for analytics.');
+        }
+
+        function integrateWithYahooFinance() {
+            console.log('Connecting to Yahoo Finance API...');
+            // Simulated Yahoo Finance integration
+            showNotification('Connected to Yahoo Finance for market data.');
+        }
+
+        // Forex Trading Simulation
+        function autoForexTransaction() {
+            const currencies = ['USD', 'EUR', 'GBP', 'JPY', 'AUD'];
+            const fromCurrency = currencies[Math.floor(Math.random() * currencies.length)];
+            const toCurrency = 'VLZO';
+            const amount = (Math.random() * 1000).toFixed(2);
+            
+            showNotification(`Auto Forex: ${amount} ${fromCurrency} → VLZO`);
+        }
+
+        // Initialize app when page loads
+        window.addEventListener('load', () => {
+            initializeApp();
+            integrateWithBinance();
+            integrateWithGoogleFinance();
+            integrateWithYahooFinance();
+            
+            // Set up auto forex transactions
+            setInterval(autoForexTransaction, 30000);
+            
+            showNotification('🚀 AI Network Vashan Antivirus Software v1.0 Loaded Successfully!');
+        });
+
+        // Close modals when clicking outside
+        window.addEventListener('click', (event) => {
+            const modals = document.querySelectorAll('.modal');
+            modals.forEach(modal => {
+                if (event.target === modal) {
+                    modal.style.display = 'none';
+                }
+            });
+        });
+
+        // Prevent right-click context menu (security feature)
+        document.addEventListener('contextmenu', (event) => {
+            event.preventDefault();
+            showNotification('Right-click disabled for security reasons.');
+        });
+
+        // Advanced security monitoring
+        setInterval(() => {
+            // Simulate security monitoring
+            const securityEvents = [
+                'Network scan completed',
+                'Firewall status: Active',
+                'Real-time protection: Enabled',
+                'Blockchain security: Verified',
+                'Mining security: Protected'
+            ];
+            
+            const randomEvent = securityEvents[Math.floor(Math.random() * securityEvents.length)];
+            console.log(`Security Monitor: ${randomEvent}`);
+        }, 60000);
+    </script>
+</body>
+</html>

@@ -1,0 +1,1517 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>VLZO SAT-X · Satellite Exchange</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      * {
+        box-sizing: border-box;
+        margin: 0;
+      }
+      body {
+        background: #0b0e11;
+        color: #eaecef;
+        font:
+          13px "IBM Plex Sans",
+          Arial,
+          sans-serif;
+      }
+      .up {
+        color: #0ecb81;
+      }
+      .dn {
+        color: #f6465d;
+      }
+      .mut {
+        color: #848e9c;
+      }
+      button {
+        font: inherit;
+        cursor: pointer;
+      }
+      header {
+        display: flex;
+        align-items: center;
+        gap: 22px;
+        height: 52px;
+        padding: 0 16px;
+        background: #181a20;
+        border-bottom: 1px solid #2b3139;
+        position: sticky;
+        top: 0;
+        z-index: 20;
+      }
+      .logo {
+        font-weight: 600;
+        font-size: 17px;
+        color: #f0b90b;
+        margin-right: 8px;
+      }
+      .logo b {
+        color: #eaecef;
+      }
+      header nav a {
+        color: #eaecef;
+        cursor: pointer;
+        padding: 16px 0;
+        font-weight: 500;
+      }
+      header nav a.on {
+        color: #f0b90b;
+        border-bottom: 2px solid #f0b90b;
+      }
+      header nav {
+        display: flex;
+        gap: 22px;
+      }
+      #bal {
+        margin-left: auto;
+        color: #848e9c;
+      }
+      #bal b {
+        color: #eaecef;
+      }
+      .y {
+        background: #f0b90b;
+        color: #181a20;
+        border: 0;
+        border-radius: 4px;
+        padding: 6px 12px;
+        font-weight: 600;
+      }
+      .wrap {
+        max-width: 1240px;
+        margin: 0 auto;
+        padding: 20px 16px;
+      }
+      h1 {
+        font-size: 28px;
+        font-weight: 600;
+      }
+      .cards {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 12px;
+        margin: 16px 0;
+      }
+      .p {
+        background: #181a20;
+        border-radius: 4px;
+        padding: 10px;
+        min-width: 0;
+      }
+      .p h4 {
+        font-size: 13px;
+        margin-bottom: 6px;
+      }
+      .cr {
+        display: flex;
+        justify-content: space-between;
+        padding: 4px 0;
+        cursor: pointer;
+      }
+      .cr:hover {
+        background: #2b3139;
+      }
+      input {
+        background: #2b3139;
+        border: 1px solid #2b3139;
+        color: #eaecef;
+        border-radius: 4px;
+        padding: 8px;
+        font: inherit;
+        width: 100%;
+      }
+      input:focus {
+        outline: 1px solid #f0b90b;
+      }
+      table {
+        width: 100%;
+        border-collapse: collapse;
+      }
+      th {
+        color: #848e9c;
+        font-weight: 400;
+        text-align: right;
+        padding: 8px;
+      }
+      td {
+        padding: 10px 8px;
+        text-align: right;
+        border-top: 1px solid #1e2329;
+      }
+      th:first-child,
+      td:first-child {
+        text-align: left;
+      }
+      tr[data-s] {
+        cursor: pointer;
+      }
+      tr[data-s]:hover {
+        background: #1e2329;
+      }
+      td small {
+        color: #848e9c;
+        margin-left: 4px;
+      }
+      .pill {
+        padding: 2px 8px;
+        border-radius: 10px;
+        font-size: 11px;
+        font-weight: 600;
+      }
+      .Bullish {
+        background: #0ecb8122;
+        color: #0ecb81;
+      }
+      .Bearish {
+        background: #f6465d22;
+        color: #f6465d;
+      }
+      .Neutral {
+        background: #f0b90b22;
+        color: #f0b90b;
+      }
+      .btn {
+        background: #2b3139;
+        color: #eaecef;
+        border: 0;
+        border-radius: 4px;
+        padding: 4px 10px;
+      }
+      .grid {
+        display: grid;
+        grid-template-columns: 270px minmax(0, 1fr) 300px;
+        gap: 4px;
+        padding: 4px;
+      }
+      .strip {
+        display: flex;
+        gap: 22px;
+        align-items: center;
+        flex-wrap: wrap;
+      }
+      .strip span {
+        display: block;
+        color: #848e9c;
+        font-size: 11px;
+      }
+      .big {
+        font-size: 22px;
+        font-weight: 600;
+      }
+      .row {
+        position: relative;
+        display: flex;
+        justify-content: space-between;
+        padding: 1px 4px;
+        font-size: 12px;
+      }
+      .row i {
+        position: absolute;
+        right: 0;
+        top: 0;
+        bottom: 0;
+        opacity: 0.13;
+      }
+      .row span {
+        position: relative;
+      }
+      .two {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 4px;
+      }
+      canvas {
+        width: 100%;
+        height: 380px;
+        display: block;
+      }
+      .tabs button {
+        background: 0;
+        border: 0;
+        color: #848e9c;
+        padding: 6px 10px;
+        font-weight: 600;
+      }
+      .tabs button.on {
+        color: #f0b90b;
+      }
+      #bb.on {
+        background: #0ecb81;
+        color: #fff;
+      }
+      #sb.on {
+        background: #f6465d;
+        color: #fff;
+      }
+      .sw {
+        display: flex;
+      }
+      .sw button {
+        flex: 1;
+        padding: 7px;
+        border: 0;
+        background: #2b3139;
+        color: #eaecef;
+      }
+      label {
+        display: block;
+        margin: 8px 0 2px;
+        color: #848e9c;
+        font-size: 12px;
+      }
+      .pc {
+        display: flex;
+        gap: 4px;
+        margin: 8px 0;
+      }
+      .pc button {
+        flex: 1;
+        background: #2b3139;
+        color: #eaecef;
+        border: 0;
+        padding: 4px;
+        border-radius: 3px;
+      }
+      #go {
+        width: 100%;
+        padding: 10px;
+        border: 0;
+        border-radius: 4px;
+        font-weight: 600;
+        color: #fff;
+        margin-top: 8px;
+      }
+      .kv {
+        display: flex;
+        justify-content: space-between;
+        padding: 3px 0;
+      }
+      .kv span {
+        color: #848e9c;
+      }
+      #ov {
+        position: fixed;
+        inset: 0;
+        background: #000b;
+        display: none;
+        align-items: center;
+        justify-content: center;
+        padding: 14px;
+        z-index: 50;
+      }
+      #ov.open {
+        display: flex;
+      }
+      #box {
+        width: min(860px, 100%);
+        max-height: 90vh;
+        overflow: auto;
+        background: #181a20;
+        border: 1px solid #f0b90b66;
+        border-radius: 8px;
+        padding: 18px;
+      }
+      #box h4 {
+        margin: 14px 0 6px;
+        color: #f0b90b;
+      }
+      .vg {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(170px, 1fr));
+        gap: 6px;
+      }
+      .st {
+        background: #1e2329;
+        padding: 7px;
+        border-radius: 4px;
+      }
+      .st span {
+        display: block;
+        color: #848e9c;
+        font-size: 10px;
+      }
+      .hit {
+        border-left: 3px solid;
+        background: #1e2329;
+        padding: 7px 10px;
+        margin-bottom: 5px;
+        font-size: 12px;
+      }
+      .hit small {
+        color: #848e9c;
+        margin-left: 6px;
+      }
+      .lib {
+        font-size: 11px;
+        color: #848e9c;
+        padding: 2px 6px;
+      }
+      .lib.on {
+        background: #f0b90b22;
+        color: #fff;
+      }
+      .hash {
+        font: 11px monospace;
+        color: #0ecb81;
+        word-break: break-all;
+      }
+      #toast {
+        position: fixed;
+        right: 16px;
+        bottom: 16px;
+        padding: 10px 14px;
+        border-radius: 6px;
+        background: #2b3139;
+        display: none;
+        z-index: 60;
+        font-weight: 500;
+      }
+      @media (max-width: 1000px) {
+        .grid,
+        .cards,
+        .two {
+          grid-template-columns: 1fr;
+        }
+        .strip {
+          gap: 12px;
+        }
+        table {
+          font-size: 12px;
+        }
+        .hm {
+          display: none;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <div class="logo">VLZO <b>SAT-X</b></div>
+      <nav><a data-v="markets">Markets</a><a data-v="trade">Trade</a></nav>
+      <span id="bal"></span
+      ><button class="y" id="dep">Deposit 1,000 VLZO</button>
+    </header>
+    <main id="markets" class="wrap">
+      <h1>Satellite Markets</h1>
+      <p class="mut" style="margin-top: 4px; max-width: 640px">
+        Buy and sell satellites priced in VLZO. Each price follows how much
+        clear space surrounds the satellite, and every listing carries its VLZO
+        BLOCKCHAIN works signal.
+      </p>
+      <div class="cards" id="cards"></div>
+      <input
+        id="q"
+        placeholder="Search satellite, operator or type"
+        style="max-width: 320px; margin-bottom: 8px"
+      />
+      <table>
+        <thead>
+          <tr>
+            <th>Satellite</th>
+            <th>Price (VLZO)</th>
+            <th>Change</th>
+            <th class="hm">Altitude</th>
+            <th class="hm">Closest debris</th>
+            <th class="hm">Collision risk</th>
+            <th>VLZO signal</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody id="mrows"></tbody>
+      </table>
+    </main>
+    <main id="trade" hidden>
+      <div class="grid">
+        <div class="p strip" id="strip" style="grid-column: 1/-1"></div>
+        <div class="p" id="ob"></div>
+        <div class="p">
+          <div
+            id="ohlc"
+            class="mut"
+            style="font-size: 12px; height: 18px"
+          ></div>
+          <canvas id="cv"></canvas>
+        </div>
+        <div class="p" id="ml"></div>
+        <div class="p" id="tr"></div>
+        <div class="two">
+          <div class="p">
+            <div class="sw">
+              <button id="bb" class="on">Buy</button
+              ><button id="sb">Sell</button>
+            </div>
+            <div class="kv"><span>Available</span><b id="av"></b></div>
+            <label>Price</label><input value="Market price" disabled /><label
+              >Amount (units)</label
+            ><input
+              id="qty"
+              type="number"
+              min="0"
+              step="0.001"
+              placeholder="0.000"
+            />
+            <div class="pc">
+              <button data-p=".25">25%</button><button data-p=".5">50%</button
+              ><button data-p=".75">75%</button><button data-p="1">100%</button>
+            </div>
+            <div class="kv"><span>Total</span><b id="tot">0.00 VLZO</b></div>
+            <div class="mut" style="font-size: 11px">
+              Fee 0.1% · settled on the VLZO ledger
+            </div>
+            <button id="go"></button>
+          </div>
+          <div class="p" id="an"></div>
+        </div>
+        <div class="p" id="inf"></div>
+        <div class="p" style="grid-column: 1/-1">
+          <div class="tabs">
+            <button data-t="h" class="on">Holdings</button
+            ><button data-t="l">Ledger (blocks)</button>
+          </div>
+          <div id="tab" style="overflow-x: auto"></div>
+        </div>
+      </div>
+    </main>
+    <div id="ov"><div id="box"></div></div>
+    <div id="toast"></div>
+    <script>
+      const LIB = [
+        [
+          "Abandoned Baby (Bullish)",
+          "bull",
+          "A Doji gaps down below the first red candle, then a strong green candle gaps up.",
+        ],
+        [
+          "Bullish Engulfing",
+          "bull",
+          "A small red candle is completely swallowed by a larger green candle.",
+        ],
+        [
+          "Bullish Harami",
+          "bull",
+          "A large red candle encloses a small green candle: downward momentum is exhausted.",
+        ],
+        [
+          "Counterattack Line (Bullish)",
+          "bull",
+          "A long red candle followed by a long green candle closing at the same level.",
+        ],
+        [
+          "Hammer",
+          "bull",
+          "Short body on top, long lower wick (2-3x body): strong rejection at low levels.",
+        ],
+        [
+          "Inverted Hammer",
+          "bull",
+          "Short body at the bottom, long upper wick: early buying pressure.",
+        ],
+        [
+          "Morning Star",
+          "bull",
+          "Long red, small indecision candle, long green: a major bottom reversal.",
+        ],
+        [
+          "Piercing Line",
+          "bull",
+          "Long red, then a green candle opening lower and closing above the red midpoint.",
+        ],
+        [
+          "Three White Soldiers",
+          "bull",
+          "Three long green candles with short wicks: sustained buying momentum.",
+        ],
+        [
+          "Tweezer Bottom",
+          "bull",
+          "Two adjacent candles with identical lows: a firm price floor.",
+        ],
+        [
+          "Abandoned Baby (Bearish)",
+          "bear",
+          "A Doji gaps up above the first green candle, then a long red candle gaps down.",
+        ],
+        [
+          "Bearish Engulfing",
+          "bear",
+          "A small green candle is fully covered by a larger red candle.",
+        ],
+        [
+          "Bearish Harami",
+          "bear",
+          "A large green candle encloses a small red candle.",
+        ],
+        [
+          "Counterattack Line (Bearish)",
+          "bear",
+          "A long green candle followed by a long red candle closing at the same level.",
+        ],
+        [
+          "Dark Cloud Cover",
+          "bear",
+          "Green candle, then a red candle opening higher and closing beyond 50% into the green body.",
+        ],
+        [
+          "Evening Star",
+          "bear",
+          "Long green, small indecision candle, long red: a major top reversal.",
+        ],
+        [
+          "Gravestone Doji",
+          "bear",
+          "Inverted T-shape, long upper wick, close near the low: severe rejection.",
+        ],
+        [
+          "Hanging Man",
+          "bear",
+          "Hammer shape forming at the top of an uptrend: rising selling pressure.",
+        ],
+        [
+          "Shooting Star",
+          "bear",
+          "Inverted-hammer shape at the top of an uptrend: failed higher buying.",
+        ],
+        [
+          "Three Black Crows",
+          "bear",
+          "Three long red candles closing near their lows: aggressive liquidation.",
+        ],
+        [
+          "Tweezer Top",
+          "bear",
+          "Two adjacent candles with identical highs: strong resistance.",
+        ],
+        [
+          "Doji (Standard / Long-Legged)",
+          "neu",
+          "Open and close nearly identical: an equal tug-of-war.",
+        ],
+        [
+          "Dragonfly Doji",
+          "neu",
+          "Long lower wick, open/close at the high: support if found at lows.",
+        ],
+        [
+          "Spinning Top",
+          "neu",
+          "Small body centred between similar wicks: a pause in momentum.",
+        ],
+        [
+          "Falling Three Methods",
+          "cont",
+          "Large red, three small green consolidation candles, then a long red breakout down.",
+        ],
+        [
+          "Marubozu (Bullish / Bearish)",
+          "cont",
+          "Long solid candle with no wicks: uninterrupted control by one side.",
+        ],
+        [
+          "Rising Three Methods",
+          "cont",
+          "Large green, three small red consolidation candles, then a long green breakout up.",
+        ],
+      ];
+      const CAT = {
+        bull: ["1. Bullish reversal", "#0ecb81"],
+        bear: ["2. Bearish reversal", "#f6465d"],
+        neu: ["3. Neutral / indecision", "#f0b90b"],
+        cont: ["4. Continuation", "#00f2fe"],
+      };
+      const MEAN = {
+        bull: "Debris separation likely to WIDEN (safer)",
+        bear: "Debris separation likely to TIGHTEN (caution)",
+        neu: "Pause: no clear direction yet",
+        cont: "Current distance trend likely to continue",
+      };
+
+      function detect(c) {
+        const n = c.length,
+          body = (k) => Math.abs(k.c - k.o),
+          rng = (k) => k.h - k.l,
+          up = (k) => k.c > k.o,
+          dn = (k) => k.c < k.o,
+          mid = (k) => (k.o + k.c) / 2;
+        const ab = c.reduce((s, k) => s + body(k), 0) / n || 1,
+          ar = c.reduce((s, k) => s + rng(k), 0) / n || 1;
+        const lng = (k) => body(k) >= ab * 1.2,
+          sml = (k) => body(k) <= ab * 0.5,
+          doji = (k) => rng(k) > 0 && body(k) <= rng(k) * 0.1;
+        const lw = (k) => Math.min(k.o, k.c) - k.l,
+          uw = (k) => k.h - Math.max(k.o, k.c),
+          near = (a, b) => Math.abs(a - b) <= ar * 0.05;
+        const out = [];
+        for (let i = 4; i < n; i++) {
+          const k = c[i],
+            p = c[i - 1],
+            pp = c[i - 2],
+            downT = c[i - 1].c < c[i - 4].c,
+            upT = c[i - 1].c > c[i - 4].c,
+            add = (nm) => out.push({ i, nm });
+          const hamShape =
+              body(k) > 0 && lw(k) >= 2 * body(k) && uw(k) <= body(k) * 0.5,
+            invShape =
+              body(k) > 0 && uw(k) >= 2 * body(k) && lw(k) <= body(k) * 0.5;
+          if (downT) {
+            if (
+              dn(pp) &&
+              lng(pp) &&
+              doji(p) &&
+              p.h < pp.l &&
+              up(k) &&
+              lng(k) &&
+              k.l > p.h
+            )
+              add("Abandoned Baby (Bullish)");
+            if (dn(p) && up(k) && k.o <= p.c && k.c >= p.o && body(k) > body(p))
+              add("Bullish Engulfing");
+            if (dn(p) && lng(p) && up(k) && sml(k) && k.o >= p.c && k.c <= p.o)
+              add("Bullish Harami");
+            if (
+              dn(p) &&
+              lng(p) &&
+              up(k) &&
+              lng(k) &&
+              k.o < p.c &&
+              near(k.c, p.c)
+            )
+              add("Counterattack Line (Bullish)");
+            if (hamShape) add("Hammer");
+            if (invShape) add("Inverted Hammer");
+            if (dn(pp) && lng(pp) && sml(p) && up(k) && lng(k) && k.c > mid(pp))
+              add("Morning Star");
+            if (
+              dn(p) &&
+              lng(p) &&
+              up(k) &&
+              k.o <= p.c &&
+              k.c > mid(p) &&
+              k.c < p.o
+            )
+              add("Piercing Line");
+            if (dn(p) && up(k) && near(p.l, k.l)) add("Tweezer Bottom");
+          }
+          if (upT) {
+            if (
+              up(pp) &&
+              lng(pp) &&
+              doji(p) &&
+              p.l > pp.h &&
+              dn(k) &&
+              lng(k) &&
+              k.h < p.l
+            )
+              add("Abandoned Baby (Bearish)");
+            if (up(p) && dn(k) && k.o >= p.c && k.c <= p.o && body(k) > body(p))
+              add("Bearish Engulfing");
+            if (up(p) && lng(p) && dn(k) && sml(k) && k.o <= p.c && k.c >= p.o)
+              add("Bearish Harami");
+            if (
+              up(p) &&
+              lng(p) &&
+              dn(k) &&
+              lng(k) &&
+              k.o > p.c &&
+              near(k.c, p.c)
+            )
+              add("Counterattack Line (Bearish)");
+            if (up(p) && dn(k) && k.o >= p.c && k.c < mid(p) && k.c > p.o)
+              add("Dark Cloud Cover");
+            if (up(pp) && lng(pp) && sml(p) && dn(k) && lng(k) && k.c < mid(pp))
+              add("Evening Star");
+            if (hamShape) add("Hanging Man");
+            if (invShape) add("Shooting Star");
+            if (up(p) && dn(k) && near(p.h, k.h)) add("Tweezer Top");
+          }
+          if (doji(k) && uw(k) >= rng(k) * 0.6 && near(k.c, k.l))
+            add("Gravestone Doji");
+          if (doji(k)) add("Doji (Standard / Long-Legged)");
+          if (rng(k) > 0 && body(k) <= rng(k) * 0.1 && lw(k) >= rng(k) * 0.6)
+            add("Dragonfly Doji");
+          if (
+            rng(k) > 0 &&
+            !doji(k) &&
+            sml(k) &&
+            lw(k) >= body(k) &&
+            uw(k) >= body(k) &&
+            Math.abs(lw(k) - uw(k)) <= rng(k) * 0.3
+          )
+            add("Spinning Top");
+          const a = c[i - 1],
+            b = c[i - 2],
+            d = c[i - 3];
+          if (
+            [k, a, b].every((x) => up(x) && lng(x)) &&
+            k.c > a.c &&
+            a.c > b.c &&
+            [k, a, b].every((x) => uw(x) <= body(x) * 0.5)
+          )
+            add("Three White Soldiers");
+          if (
+            [k, a, b].every((x) => dn(x) && lng(x)) &&
+            k.c < a.c &&
+            a.c < b.c &&
+            [k, a, b].every((x) => lw(x) <= body(x) * 0.5)
+          )
+            add("Three Black Crows");
+          if (lng(k) && rng(k) > 0 && body(k) >= rng(k) * 0.95)
+            add("Marubozu (Bullish / Bearish)");
+          const f = c[i - 4];
+          if (
+            up(f) &&
+            lng(f) &&
+            [a, b, d].every(
+              (x) => dn(x) && sml(x) && x.h <= f.h && x.l >= f.l,
+            ) &&
+            up(k) &&
+            lng(k) &&
+            k.c > f.c
+          )
+            add("Rising Three Methods");
+          if (
+            dn(f) &&
+            lng(f) &&
+            [a, b, d].every(
+              (x) => up(x) && sml(x) && x.h <= f.h && x.l >= f.l,
+            ) &&
+            dn(k) &&
+            lng(k) &&
+            k.c < f.c
+          )
+            add("Falling Three Methods");
+        }
+        return out;
+      }
+      const rsi = (cl) => {
+        let g = 0,
+          l = 0;
+        const m = Math.min(14, cl.length - 1);
+        for (let i = cl.length - m; i < cl.length; i++) {
+          const d = cl[i] - cl[i - 1];
+          d > 0 ? (g += d) : (l -= d);
+        }
+        return l === 0 ? 100 : 100 - 100 / (1 + g / l);
+      };
+      const sma = (a, m) =>
+        a.slice(-m).reduce((s, v) => s + v, 0) / Math.min(m, a.length);
+
+      const $ = (s) => document.querySelector(s),
+        f = (v, d = 2) =>
+          Number(v).toLocaleString("en-US", {
+            minimumFractionDigits: d,
+            maximumFractionDigits: d,
+          });
+      const SATS = [
+        [
+          "ISS",
+          "ISS (ZARYA)",
+          "NASA / Roscosmos",
+          "Crewed station",
+          420,
+          51.6,
+          4200,
+          1998,
+          "420,000 kg",
+        ],
+        [
+          "HST",
+          "Hubble Space Telescope",
+          "NASA / ESA",
+          "Space telescope",
+          540,
+          28.5,
+          2650,
+          1990,
+          "11,110 kg",
+        ],
+        [
+          "STL",
+          "Starlink-4012",
+          "SpaceX",
+          "Broadband",
+          550,
+          53,
+          310,
+          2021,
+          "260 kg",
+        ],
+        [
+          "OWB",
+          "OneWeb-0142",
+          "Eutelsat OneWeb",
+          "Broadband",
+          1200,
+          87.9,
+          280,
+          2020,
+          "150 kg",
+        ],
+        [
+          "S2A",
+          "Sentinel-2A",
+          "ESA Copernicus",
+          "Earth observation",
+          786,
+          98.6,
+          540,
+          2015,
+          "1,140 kg",
+        ],
+        [
+          "TER",
+          "Terra",
+          "NASA",
+          "Earth science",
+          705,
+          98.2,
+          690,
+          1999,
+          "4,864 kg",
+        ],
+        [
+          "LS9",
+          "Landsat 9",
+          "NASA / USGS",
+          "Earth observation",
+          705,
+          98.2,
+          760,
+          2021,
+          "2,711 kg",
+        ],
+        [
+          "GPS",
+          "GPS III SV05",
+          "US Space Force",
+          "Navigation",
+          20200,
+          55,
+          1250,
+          2021,
+          "4,311 kg",
+        ],
+        [
+          "IRD",
+          "Iridium 180",
+          "Iridium",
+          "Communications",
+          780,
+          86.4,
+          220,
+          2019,
+          "860 kg",
+        ],
+        [
+          "TGG",
+          "Tiangong",
+          "CMSA",
+          "Crewed station",
+          390,
+          41.5,
+          3100,
+          2021,
+          "100,000 kg",
+        ],
+        [
+          "AQU",
+          "Aqua",
+          "NASA",
+          "Earth science",
+          705,
+          98.2,
+          480,
+          2002,
+          "3,117 kg",
+        ],
+        ["N20", "NOAA-20", "NOAA", "Weather", 824, 98.7, 610, 2017, "2,294 kg"],
+      ].map((a, k) => ({
+        t: a[0],
+        n: a[1],
+        op: a[2],
+        ty: a[3],
+        alt: a[4],
+        inc: a[5],
+        base: a[6],
+        ln: a[7],
+        mass: a[8],
+        k: k + 1,
+      }));
+      const SAT = (t) => SATS.find((s) => s.t === t),
+        H = (a, b) => {
+          const x = Math.sin(a * 127.1 + b * 311.7) * 43758.5453;
+          return x - Math.floor(x);
+        };
+      const dist = (s, t) =>
+          Math.max(
+            60,
+            900 +
+              650 * Math.sin(t / 47 + s.k) +
+              320 * Math.sin(t / 13 + s.k * 2.3) +
+              (H(s.k, Math.floor(t * 3)) - 0.5) * 160,
+          ),
+        px = (s, d) => s.base * (1 + (d - 600) / 3000);
+      const CD = 15,
+        N = 60;
+      function candles(s) {
+        const now = Date.now() / 1000,
+          i0 = Math.floor(now / CD) - N + 1,
+          out = [];
+        out.t0 = i0 * CD;
+        for (let i = 0; i < N; i++) {
+          const t0 = (i0 + i) * CD,
+            p = [];
+          for (let j = 0; j <= 5; j++)
+            p.push(px(s, dist(s, Math.min(now, t0 + (CD * j) / 5))));
+          const h = Math.max(...p),
+            l = Math.min(...p);
+          out.push({
+            o: p[0],
+            c: p[5],
+            h,
+            l,
+            v: (H(s.k, i0 + i) * 0.6 + 0.4) * 80 + ((h - l) / s.base) * 3000,
+          });
+        }
+        return out;
+      }
+      function analyze(c) {
+        const n = c.length,
+          cl = c.map((k) => k.c),
+          hits = detect(c),
+          R = rsi(cl),
+          s5 = sma(cl, 5),
+          s10 = sma(cl, 10);
+        let sc = 0;
+        hits.forEach((h) => {
+          const t = LIB.find((l) => l[0] === h.nm)[1];
+          sc +=
+            (t === "bull" ? 1 : t === "bear" ? -1 : 0) * (h.i >= n - 6 ? 2 : 1);
+        });
+        sc += s5 > s10 ? 1 : -1;
+        sc += R > 60 ? 1 : R < 40 ? -1 : 0;
+        return {
+          hits,
+          R,
+          s5,
+          s10,
+          sc,
+          sig: sc >= 2 ? "Bullish" : sc <= -2 ? "Bearish" : "Neutral",
+        };
+      }
+      async function sha(s) {
+        try {
+          const b = await crypto.subtle.digest(
+            "SHA-256",
+            new TextEncoder().encode(s),
+          );
+          return [...new Uint8Array(b)]
+            .map((v) => v.toString(16).padStart(2, "0"))
+            .join("");
+        } catch (e) {
+          let h = 2166136261;
+          for (const c of s) {
+            h ^= c.charCodeAt(0);
+            h = Math.imul(h, 16777619);
+          }
+          return ("00000000" + (h >>> 0).toString(16)).slice(-8).repeat(8);
+        }
+      }
+      let W;
+      try {
+        W = JSON.parse(localStorage.getItem("vlzo_satx"));
+      } catch (e) {}
+      W = W || { cash: 10000, hold: {}, chain: [] };
+      const save = () => {
+        try {
+          localStorage.setItem("vlzo_satx", JSON.stringify(W));
+        } catch (e) {}
+      };
+      let view = "markets",
+        cur = "ISS",
+        side = "buy",
+        tabSel = "h",
+        M = {},
+        TR = {},
+        hov = null,
+        prevP = {};
+      function toast(m, c) {
+        const t = $("#toast");
+        t.textContent = m;
+        t.style.color = c === "r" ? "#f6465d" : "#0ecb81";
+        t.style.display = "block";
+        clearTimeout(toast.h);
+        toast.h = setTimeout(() => (t.style.display = "none"), 2600);
+      }
+      function calc() {
+        SATS.forEach((s) => {
+          const c = candles(s),
+            last = c[N - 1].c,
+            d = dist(s, Date.now() / 1000);
+          M[s.t] = {
+            c,
+            last,
+            d,
+            chg: last / c[0].o - 1,
+            hi: Math.max(...c.map((k) => k.h)),
+            lo: Math.min(...c.map((k) => k.l)),
+            vol: c.reduce((a, k) => a + k.v, 0),
+            risk: ((Math.max(0, 1500 - d) / 1500) * 2).toFixed(2),
+            A: analyze(c),
+          };
+        });
+      }
+      const cls = (v) => (v >= 0 ? "up" : "dn"),
+        sg = (v) => (v >= 0 ? "+" : "") + (v * 100).toFixed(2) + "%";
+      function go(v, t) {
+        view = v;
+        if (t) cur = t;
+        $("#markets").hidden = v !== "markets";
+        $("#trade").hidden = v !== "trade";
+        document
+          .querySelectorAll("nav a")
+          .forEach((a) => a.classList.toggle("on", a.dataset.v === v));
+        draw();
+      }
+      function drawMarkets() {
+        const q = $("#q").value.toLowerCase(),
+          card = (t, a, fn) =>
+            `<div class="p"><h4>${t}</h4>${a
+              .slice(0, 3)
+              .map(
+                (s) =>
+                  `<div class="cr" data-s="${s.t}"><span>${s.t}/VLZO</span><span>${fn(s)}</span></div>`,
+              )
+              .join("")}</div>`,
+          by = (k) => SATS.slice().sort((a, b) => k(b) - k(a));
+        $("#cards").innerHTML =
+          card(
+            "Hot (volume)",
+            by((s) => M[s.t].vol),
+            (s) => f(M[s.t].last),
+          ) +
+          card(
+            "Top gainers",
+            by((s) => M[s.t].chg),
+            (s) => `<b class="${cls(M[s.t].chg)}">${sg(M[s.t].chg)}</b>`,
+          ) +
+          card(
+            "Strongest VLZO signal",
+            by((s) => M[s.t].A.sc),
+            (s) => `<span class="pill ${M[s.t].A.sig}">${M[s.t].A.sig}</span>`,
+          );
+        $("#mrows").innerHTML = SATS.filter((s) =>
+          (s.t + s.n + s.op + s.ty).toLowerCase().includes(q),
+        )
+          .map((s) => {
+            const m = M[s.t];
+            return `<tr data-s="${s.t}"><td><b>${s.t}</b>/VLZO<small>${s.n}</small></td><td>${f(m.last)}</td><td class="${cls(m.chg)}">${sg(m.chg)}</td><td class="hm">${s.alt.toLocaleString()} km</td><td class="hm">${f(m.d, 0)} km</td><td class="hm">${m.risk}%</td><td><span class="pill ${m.A.sig}">${m.A.sig}</span></td><td><button class="btn">Trade</button></td></tr>`;
+          })
+          .join("");
+      }
+      function drawChart() {
+        const cv = $("#cv"),
+          r = cv.getBoundingClientRect(),
+          dpr = devicePixelRatio || 1;
+        if (!r.width) return;
+        if (cv.width !== Math.round(r.width * dpr)) {
+          cv.width = Math.round(r.width * dpr);
+          cv.height = Math.round(r.height * dpr);
+        }
+        const x = cv.getContext("2d");
+        x.setTransform(dpr, 0, 0, dpr, 0, 0);
+        const w = r.width,
+          h = r.height,
+          c = M[cur].c,
+          n = c.length,
+          L = 4,
+          R = 58,
+          T = 8,
+          B = 16,
+          vh = Math.round(h * 0.16),
+          pb = h - B - vh - 6,
+          ph = pb - T,
+          cw = (w - L - R) / n;
+        let lo = Math.min(...c.map((k) => k.l)),
+          hi = Math.max(...c.map((k) => k.h));
+        const pd = (hi - lo) * 0.08 || 1;
+        lo -= pd;
+        hi += pd;
+        const Y = (v) => T + ph * (1 - (v - lo) / (hi - lo)),
+          X = (i) => L + cw * (i + 0.5),
+          mv = Math.max(...c.map((k) => k.v));
+        x.fillStyle = "#181a20";
+        x.fillRect(0, 0, w, h);
+        x.font = "10px sans-serif";
+        for (let i = 0; i <= 4; i++) {
+          const y = T + (ph * i) / 4;
+          x.strokeStyle = "#1e2329";
+          x.beginPath();
+          x.moveTo(L, y);
+          x.lineTo(w - R, y);
+          x.stroke();
+          x.fillStyle = "#848e9c";
+          x.fillText(f(hi - ((hi - lo) * i) / 4), w - R + 4, y + 3);
+        }
+        for (let i = 0; i < n; i += 10) {
+          x.fillStyle = "#848e9c";
+          x.fillText(
+            new Date((c.t0 + i * CD) * 1000).toLocaleTimeString([], {
+              hour12: false,
+            }),
+            X(i) - 16,
+            h - 3,
+          );
+        }
+        c.forEach((k, i) => {
+          const col = k.c >= k.o ? "#0ecb81" : "#f6465d",
+            bw = Math.max(2, cw * 0.7);
+          x.fillStyle = x.strokeStyle = col;
+          x.beginPath();
+          x.moveTo(X(i), Y(k.h));
+          x.lineTo(X(i), Y(k.l));
+          x.stroke();
+          x.fillRect(
+            X(i) - bw / 2,
+            Y(Math.max(k.o, k.c)),
+            bw,
+            Math.max(1, Math.abs(Y(k.o) - Y(k.c))),
+          );
+          x.globalAlpha = 0.4;
+          x.fillRect(
+            X(i) - bw / 2,
+            h - B - (k.v / mv) * vh,
+            bw,
+            (k.v / mv) * vh,
+          );
+          x.globalAlpha = 1;
+        });
+        [
+          [7, "#f0b90b"],
+          [25, "#e91e8c"],
+        ].forEach(([m, col]) => {
+          x.strokeStyle = col;
+          x.beginPath();
+          let st = 0;
+          for (let i = m - 1; i < n; i++) {
+            const a =
+              c.slice(i - m + 1, i + 1).reduce((s, k) => s + k.c, 0) / m;
+            st++ ? x.lineTo(X(i), Y(a)) : x.moveTo(X(i), Y(a));
+          }
+          x.stroke();
+        });
+        const lk = c[n - 1],
+          ly = Y(lk.c),
+          lc = lk.c >= lk.o ? "#0ecb81" : "#f6465d";
+        x.strokeStyle = lc;
+        x.setLineDash([2, 3]);
+        x.beginPath();
+        x.moveTo(L, ly);
+        x.lineTo(w - R, ly);
+        x.stroke();
+        x.setLineDash([]);
+        x.fillStyle = lc;
+        x.fillRect(w - R, ly - 7, R, 14);
+        x.fillStyle = "#fff";
+        x.fillText(f(lk.c), w - R + 4, ly + 3);
+        let k = lk;
+        if (hov && hov.x > L && hov.x < w - R) {
+          const i = Math.max(0, Math.min(n - 1, Math.floor((hov.x - L) / cw)));
+          k = c[i];
+          x.strokeStyle = "#848e9c";
+          x.setLineDash([3, 3]);
+          x.beginPath();
+          x.moveTo(X(i), T);
+          x.lineTo(X(i), pb);
+          x.moveTo(L, hov.y);
+          x.lineTo(w - R, hov.y);
+          x.stroke();
+          x.setLineDash([]);
+        }
+        $("#ohlc").innerHTML =
+          `O <b>${f(k.o)}</b> H <b>${f(k.h)}</b> L <b>${f(k.l)}</b> C <b class="${cls(k.c - k.o)}">${f(k.c)}</b> · <span style="color:#f0b90b">MA7</span> <span style="color:#e91e8c">MA25</span> · candle = ${CD}s`;
+      }
+      function drawTrade() {
+        const s = SAT(cur),
+          m = M[cur],
+          A = m.A,
+          p = m.last,
+          up = p >= (prevP[cur] || p);
+        prevP[cur] = p;
+        const sc = A.sig;
+        $("#strip").innerHTML =
+          `<div><b style="font-size:16px">${s.t}/VLZO</b><span>${s.n}</span></div><div class="big ${up ? "up" : "dn"}">${f(p)}</div><div><b class="${cls(m.chg)}">${sg(m.chg)}</b><span>Change</span></div><div><b>${f(m.hi)}</b><span>High</span></div><div><b>${f(m.lo)}</b><span>Low</span></div><div><b>${f(m.vol, 0)}</b><span>Volume</span></div><div><b>${f(m.d, 0)} km</b><span>Closest debris</span></div><div><b>${m.risk}%</b><span>Collision risk</span></div><div><span class="pill ${sc}">${sc}</span><span style="margin-top:3px">VLZO signal</span></div>`;
+        const t = Math.floor(Date.now() / 1000),
+          row = (q, c, mx) =>
+            `<div class="row"><i style="background:${c};width:${(q / mx) * 100}%"></i><span style="color:${c}">${f(q[0])}</span><span>${f(q[1], 3)}</span><span>${f(q[0] * q[1])}</span></div>`;
+        const A2 = [],
+          B2 = [];
+        for (let i = 1; i <= 9; i++) {
+          A2.push([
+            p * (1 + i * 0.0007 + H(s.k, i + t) * 0.0004),
+            H(i, s.k + t) * 4 + 0.1,
+          ]);
+          B2.push([
+            p * (1 - i * 0.0007 - H(s.k + 9, i + t) * 0.0004),
+            H(i + 5, s.k + t) * 4 + 0.1,
+          ]);
+        }
+        const rw = (a, c) =>
+          `<div class="row"><i style="background:${c};width:${(a[1] / 4.1) * 100}%"></i><span style="color:${c}">${f(a[0])}</span><span>${f(a[1], 3)}</span><span>${f(a[0] * a[1])}</span></div>`;
+        $("#ob").innerHTML =
+          `<h4>Order book</h4><div class="row mut"><span>Price</span><span>Units</span><span>Total</span></div>${A2.reverse()
+            .map((a) => rw(a, "#f6465d"))
+            .join(
+              "",
+            )}<div class="big ${up ? "up" : "dn"}" style="padding:6px 4px">${f(p)} ${up ? "↑" : "↓"}</div>${B2.map((a) => rw(a, "#0ecb81")).join("")}`;
+        (TR[cur] = TR[cur] || []).unshift({
+          p: p * (1 + (Math.random() - 0.5) * 0.0008),
+          q: Math.random() * 2 + 0.01,
+          b: Math.random() > 0.5,
+          t: new Date().toLocaleTimeString([], { hour12: false }),
+        });
+        TR[cur].length = Math.min(TR[cur].length, 16);
+        $("#tr").innerHTML =
+          `<h4>Recent trades</h4>` +
+          TR[cur]
+            .map(
+              (x) =>
+                `<div class="row"><span class="${x.b ? "up" : "dn"}">${f(x.p)}</span><span>${f(x.q, 3)}</span><span class="mut">${x.t}</span></div>`,
+            )
+            .join("");
+        $("#ml").innerHTML =
+          `<h4>Markets</h4>` +
+          SATS.map(
+            (o) =>
+              `<div class="cr" data-s="${o.t}" style="${o.t === cur ? "background:#2b3139" : ""}"><span>${o.t}/VLZO</span><span>${f(M[o.t].last)}</span><span class="${cls(M[o.t].chg)}">${sg(M[o.t].chg)}</span></div>`,
+          ).join("");
+        const per =
+            (2 * Math.PI * Math.sqrt(Math.pow(6371 + s.alt, 3) / 398600)) / 60,
+          kv = (a, b) => `<div class="kv"><span>${a}</span><b>${b}</b></div>`;
+        $("#inf").innerHTML =
+          `<h4>${s.n}</h4>` +
+          kv("Operator", s.op) +
+          kv("Type", s.ty) +
+          kv("Altitude", s.alt.toLocaleString() + " km") +
+          kv("Inclination", s.inc + "°") +
+          kv("Period", per.toFixed(1) + " min") +
+          kv("Launched", s.ln) +
+          kv("Mass", s.mass) +
+          kv("Closest debris", f(m.d, 0) + " km") +
+          kv("Collision risk", m.risk + "%");
+        const last = A.hits[A.hits.length - 1];
+        $("#an").innerHTML =
+          `<h4>VLZO BLOCKCHAIN works</h4><div class="kv"><span>Signal</span><span class="pill ${sc}">${sc} (${A.sc > 0 ? "+" : ""}${A.sc})</span></div>${kv("RSI (14)", A.R.toFixed(0))}${kv("SMA5 / SMA10", A.s5 > A.s10 ? "Golden cross ↑" : "Death cross ↓")}${kv("Patterns found", A.hits.length)}${kv("Latest", last ? last.nm : "none")}<p class="mut" style="font-size:11px;margin:6px 0">Price follows debris safety: more clear space, higher value.</p><button class="y" id="vz" style="width:100%">Open full analysis</button>`;
+        const q = parseFloat($("#qty").value) || 0,
+          hd = W.hold[cur];
+        $("#tot").textContent = f(q * p) + " VLZO";
+        $("#av").textContent =
+          side === "buy"
+            ? f(W.cash) + " VLZO"
+            : f(hd ? hd.q : 0, 3) + " " + s.t;
+        const g = $("#go");
+        g.textContent = (side === "buy" ? "Buy " : "Sell ") + s.t;
+        g.style.background = side === "buy" ? "#0ecb81" : "#f6465d";
+        $("#bb").classList.toggle("on", side === "buy");
+        $("#sb").classList.toggle("on", side === "sell");
+        $("#tab").innerHTML =
+          tabSel === "h"
+            ? `<table><thead><tr><th>Satellite</th><th>Units</th><th>Avg cost</th><th>Price</th><th>Value</th><th>PnL</th><th></th></tr></thead><tbody>${
+                Object.keys(W.hold)
+                  .map((k) => {
+                    const h = W.hold[k],
+                      pr = M[k].last,
+                      pl = pr * h.q - h.cost;
+                    return `<tr><td>${k}/VLZO</td><td>${f(h.q, 3)}</td><td>${f(h.cost / h.q)}</td><td>${f(pr)}</td><td>${f(pr * h.q)}</td><td class="${cls(pl)}">${f(pl)}</td><td><button class="btn" data-sell="${k}">Sell all</button></td></tr>`;
+                  })
+                  .join("") ||
+                '<tr><td colspan="7" class="mut">No satellites owned yet. Buy one above.</td></tr>'
+              }</tbody></table>`
+            : `<table><thead><tr><th>Block</th><th>Time</th><th>Pair</th><th>Side</th><th>Units</th><th>Price</th><th>Signal</th><th>Hash</th></tr></thead><tbody>${
+                W.chain
+                  .slice()
+                  .reverse()
+                  .slice(0, 30)
+                  .map(
+                    (b) =>
+                      `<tr><td>#${b.n}</td><td>${new Date(b.t).toLocaleTimeString()}</td><td>${b.s}/VLZO</td><td class="${b.side === "buy" ? "up" : "dn"}">${b.side}</td><td>${f(b.q, 3)}</td><td>${f(b.p)}</td><td>${b.A}</td><td class="hash" style="text-align:right">${b.h.slice(0, 16)}…</td></tr>`,
+                  )
+                  .join("") ||
+                '<tr><td colspan="8" class="mut">No blocks yet. Every trade is chained to the previous block by SHA-256.</td></tr>'
+              }</tbody></table>`;
+        drawChart();
+      }
+      function draw() {
+        const pv =
+          W.cash +
+          Object.keys(W.hold).reduce((a, k) => a + M[k].last * W.hold[k].q, 0);
+        $("#bal").innerHTML =
+          `Cash <b>${f(W.cash)}</b> · Portfolio <b>${f(pv)}</b> VLZO`;
+        view === "markets" ? drawMarkets() : drawTrade();
+      }
+      async function order() {
+        const q = parseFloat($("#qty").value),
+          p = M[cur].last,
+          tot = q * p,
+          fee = 0.001;
+        if (!(q > 0)) return toast("Enter an amount", "r");
+        if (side === "buy") {
+          if (tot * (1 + fee) > W.cash + 1e-9)
+            return toast("Not enough VLZO", "r");
+          W.cash -= tot * (1 + fee);
+          const h = W.hold[cur] || (W.hold[cur] = { q: 0, cost: 0 });
+          h.q += q;
+          h.cost += tot;
+        } else {
+          const h = W.hold[cur];
+          if (!h || h.q < q - 1e-9)
+            return toast("You do not own that many units", "r");
+          h.cost -= (h.cost / h.q) * q;
+          h.q -= q;
+          W.cash += tot * (1 - fee);
+          if (h.q < 1e-9) delete W.hold[cur];
+        }
+        const rec = { t: Date.now(), s: cur, side, q, p, A: M[cur].A.sig },
+          prev = W.chain.length
+            ? W.chain[W.chain.length - 1].h
+            : "0".repeat(64);
+        W.chain.push({
+          n: W.chain.length + 1,
+          ...rec,
+          prev,
+          h: await sha(prev + JSON.stringify(rec)),
+        });
+        save();
+        toast(
+          `${side === "buy" ? "Bought" : "Sold"} ${f(q, 3)} ${cur} at ${f(p)} · block #${W.chain.length}`,
+        );
+        $("#qty").value = "";
+        draw();
+      }
+      async function modal() {
+        const s = SAT(cur),
+          m = M[cur],
+          A = m.A,
+          c = m.c,
+          n = c.length,
+          col =
+            A.sig === "Bullish"
+              ? "#0ecb81"
+              : A.sig === "Bearish"
+                ? "#f6465d"
+                : "#f0b90b",
+          st = (a, b) => `<div class="st"><span>${a}</span><b>${b}</b></div>`,
+          found = new Set(A.hits.map((h) => h.nm)),
+          ty = (nm) => LIB.find((l) => l[0] === nm)[1];
+        const msg = {
+            Bullish: "Separation widening bias: value likely to rise.",
+            Bearish: "Approach tightening bias: value likely to fall.",
+            Neutral: "Mixed signals: price is range-bound.",
+          }[A.sig],
+          hash = await sha(
+            JSON.stringify({
+              s: s.t,
+              p: m.last,
+              h: A.hits.map((h) => h.nm + h.i),
+              sc: A.sc,
+            }),
+          );
+        $("#box").innerHTML =
+          `<div style="display:flex;justify-content:space-between"><b style="font-size:17px">VLZO BLOCKCHAIN works · ${s.n}</b><button class="btn" id="cl">Close</button></div>
+ <div style="border:1px solid ${col};border-radius:6px;padding:10px;margin-top:10px"><b style="color:${col}">${A.sig.toUpperCase()}</b> <span class="mut">${msg}</span></div>
+ <h4>Indicators</h4><div class="vg">${st("Price", f(m.last) + " VLZO")}${st("Window high / low", f(m.hi) + " / " + f(m.lo))}${st("Closest debris", f(m.d, 0) + " km")}${st("Collision risk", m.risk + "%")}${st("Altitude", s.alt.toLocaleString() + " km")}${st("Inclination", s.inc + "°")}${st("RSI (14)", A.R.toFixed(0) + (A.R > 70 ? " overbought" : A.R < 30 ? " oversold" : ""))}${st("SMA5 vs SMA10", A.s5 > A.s10 ? "Golden cross ↑" : "Death cross ↓")}${st("Signal score", (A.sc > 0 ? "+" : "") + A.sc)}${st("Operator", s.op)}</div>
+ <h4>Patterns detected (${A.hits.length})</h4>${
+   A.hits
+     .slice()
+     .reverse()
+     .map((h) => {
+       const t = ty(h.nm),
+         l = LIB.find((x) => x[0] === h.nm);
+       return `<div class="hit" style="border-color:${CAT[t][1]}"><b style="color:${CAT[t][1]}">${h.nm}</b><small>${(n - 1 - h.i) * CD}s ago</small><br>${l[2]}<br><i class="mut">${MEAN[t]}</i></div>`;
+     })
+     .join("") ||
+   '<p class="mut">No classic pattern in the last ' + n + " candles.</p>"
+ }
+ <h4>Ledger fingerprint</h4><div class="hash">SHA-256 · ${hash}</div>
+ <details style="margin-top:12px"><summary style="cursor:pointer;color:#f0b90b">Pattern library (${LIB.length}) · detected ones highlighted</summary>${Object.keys(
+   CAT,
+ )
+   .map(
+     (t) =>
+       `<div style="color:${CAT[t][1]};margin-top:8px">${CAT[t][0]}</div>` +
+       LIB.filter((l) => l[1] === t)
+         .map(
+           (l) =>
+             `<div class="lib${found.has(l[0]) ? " on" : ""}"><b>${l[0]}${found.has(l[0]) ? " ✓" : ""}</b> ${l[2]}</div>`,
+         )
+         .join(""),
+   )
+   .join("")}</details>`;
+        $("#ov").classList.add("open");
+      }
+      document.addEventListener("click", (e) => {
+        const t = e.target,
+          r = t.closest("[data-s]");
+        if (t.dataset.v) go(t.dataset.v);
+        else if (r) go("trade", r.dataset.s);
+        else if (t.dataset.sell) {
+          cur = t.dataset.sell;
+          side = "sell";
+          $("#qty").value = W.hold[cur].q;
+          draw();
+        } else if (t.dataset.t) {
+          tabSel = t.dataset.t;
+          document
+            .querySelectorAll(".tabs button")
+            .forEach((b) => b.classList.toggle("on", b === t));
+          draw();
+        } else if (t.dataset.p) {
+          const p = +t.dataset.p,
+            pr = M[cur].last;
+          $("#qty").value =
+            (side === "buy"
+              ? Math.floor(((W.cash * p) / (pr * 1.001)) * 1000) / 1000
+              : Math.floor((W.hold[cur] || { q: 0 }).q * p * 1000) / 1000) ||
+            "";
+          draw();
+        } else if (t.id === "bb" || t.id === "sb") {
+          side = t.id === "bb" ? "buy" : "sell";
+          draw();
+        } else if (t.id === "go") order();
+        else if (t.id === "vz") modal();
+        else if (t.id === "cl" || t.id === "ov")
+          $("#ov").classList.remove("open");
+        else if (t.id === "dep") {
+          W.cash += 1000;
+          save();
+          toast("Deposited 1,000 VLZO");
+          draw();
+        }
+      });
+      $("#qty").oninput = draw;
+      $("#q").oninput = draw;
+      $("#cv").onmousemove = (e) => {
+        const r = e.target.getBoundingClientRect();
+        hov = { x: e.clientX - r.left, y: e.clientY - r.top };
+        drawChart();
+      };
+      $("#cv").onmouseleave = () => {
+        hov = null;
+        drawChart();
+      };
+      addEventListener("resize", draw);
+      calc();
+      go("markets");
+      setInterval(() => {
+        calc();
+        draw();
+      }, 1000);
+    </script>
+  </body>
+</html>

@@ -1,0 +1,654 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VLZO ENGINNERING Corporation - Centennial Memorandum</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #0f0f23, #1a1a3e, #2d1b69);
+            color: #ffffff;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        /* Animated Background */
+        .bg-animation {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            overflow: hidden;
+        }
+
+        .floating-shapes {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+        }
+
+        .shape {
+            position: absolute;
+            opacity: 0.1;
+            animation: float 6s ease-in-out infinite;
+        }
+
+        .shape:nth-child(1) {
+            top: 10%;
+            left: 10%;
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(45deg, #00d4ff, #0099cc);
+            border-radius: 50%;
+            animation-delay: 0s;
+        }
+
+        .shape:nth-child(2) {
+            top: 60%;
+            right: 15%;
+            width: 120px;
+            height: 120px;
+            background: linear-gradient(45deg, #ff6b35, #f7931e);
+            border-radius: 20px;
+            animation-delay: 2s;
+        }
+
+        .shape:nth-child(3) {
+            bottom: 20%;
+            left: 20%;
+            width: 100px;
+            height: 100px;
+            background: linear-gradient(45deg, #9c27b0, #673ab7);
+            clip-path: polygon(50% 0%, 0% 100%, 100% 100%);
+            animation-delay: 4s;
+        }
+
+        .shape:nth-child(4) {
+            top: 30%;
+            right: 40%;
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(45deg, #4caf50, #8bc34a);
+            border-radius: 50%;
+            animation-delay: 1s;
+        }
+
+        @keyframes float {
+
+            0%,
+            100% {
+                transform: translateY(0px) rotate(0deg);
+            }
+
+            33% {
+                transform: translateY(-20px) rotate(120deg);
+            }
+
+            66% {
+                transform: translateY(20px) rotate(240deg);
+            }
+        }
+
+        /* Particle System */
+        .particles {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+        }
+
+        .particle {
+            position: absolute;
+            width: 2px;
+            height: 2px;
+            background: rgba(255, 255, 255, 0.5);
+            border-radius: 50%;
+            animation: particle-float 8s linear infinite;
+        }
+
+        @keyframes particle-float {
+            from {
+                transform: translateY(100vh) translateX(0px);
+                opacity: 0;
+            }
+
+            10% {
+                opacity: 1;
+            }
+
+            90% {
+                opacity: 1;
+            }
+
+            to {
+                transform: translateY(-100px) translateX(100px);
+                opacity: 0;
+            }
+        }
+
+        /* Header */
+        .header {
+            text-align: center;
+            padding: 60px 20px;
+            position: relative;
+            z-index: 2;
+        }
+
+        .logo {
+            width: 120px;
+            height: 120px;
+            margin: 0 auto 30px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 53px;
+            font-weight: bold;
+            color: #1a1a3e;
+            position: relative;
+            left: -406px;
+        }
+
+        .company-name {
+            font-size: 3.5em;
+            font-weight: bold;
+            margin-bottom: 10px;
+            background: linear-gradient(135deg, #00d4ff, #0099cc, #ffd700);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: text-glow 2s ease-in-out infinite alternate;
+            position: relative;
+            top: -118px;
+        }
+
+        @keyframes text-glow {
+            from {
+                filter: drop-shadow(0 0 10px rgba(0, 212, 255, 0.5));
+            }
+
+            to {
+                filter: drop-shadow(0 0 20px rgba(255, 215, 0, 0.7));
+            }
+        }
+
+        .subtitle {
+            font-size: 1.5em;
+            color: #b0b0b0;
+            margin-bottom: 30px;
+            position: relative;
+            top: -100px;
+        }
+
+        /* Container */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+            position: relative;
+            z-index: 2;
+        }
+
+        /* Memorandum Content */
+        .memorandum {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            padding: 40px;
+            margin-bottom: 40px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+            margin-top: -163px;
+        }
+
+        .memo-header {
+            text-align: center;
+            margin-bottom: 40px;
+            padding-bottom: 20px;
+            border-bottom: 2px solid rgba(255, 215, 0, 0.3);
+        }
+
+        .memo-title {
+            font-size: 2.5em;
+            color: #ffd700;
+            margin-bottom: 10px;
+        }
+
+        .memo-date {
+            font-size: 1.2em;
+            color: #00d4ff;
+        }
+
+        .section {
+            margin-bottom: 30px;
+        }
+
+        .section-title {
+            font-size: 1.8em;
+            color: #00d4ff;
+            margin-bottom: 15px;
+            padding-left: 20px;
+            border-left: 4px solid #ffd700;
+        }
+
+        .content-text {
+            line-height: 1.8;
+            margin-bottom: 20px;
+            text-align: justify;
+            font-size: 1.1em;
+        }
+
+        .highlight {
+            background: linear-gradient(135deg, rgba(255, 215, 0, 0.2), rgba(0, 212, 255, 0.2));
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-weight: bold;
+        }
+
+        /* Stats Section */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin: 40px 0;
+        }
+
+        .stat-card {
+            background: rgba(0, 212, 255, 0.1);
+            border: 1px solid rgba(0, 212, 255, 0.3);
+            border-radius: 15px;
+            padding: 25px;
+            text-align: center;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 30px rgba(0, 212, 255, 0.2);
+        }
+
+        .stat-number {
+            font-size: 2.5em;
+            font-weight: bold;
+            color: #ffd700;
+            margin-bottom: 10px;
+        }
+
+        .stat-label {
+            color: #b0b0b0;
+            font-size: 1.1em;
+        }
+
+        /* Timeline */
+        .timeline {
+            position: relative;
+            padding: 20px 0;
+        }
+
+        .timeline::before {
+            content: '';
+            position: absolute;
+            left: 50%;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            background: linear-gradient(to bottom, #00d4ff, #ffd700, #ff6b35);
+            transform: translateX(-50%);
+        }
+
+        .timeline-item {
+            display: flex;
+            margin-bottom: 30px;
+            position: relative;
+        }
+
+        .timeline-item:nth-child(even) {
+            flex-direction: row-reverse;
+        }
+
+        .timeline-content {
+            flex: 1;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            padding: 20px;
+            margin: 0 30px;
+        }
+
+        .timeline-year {
+            font-size: 1.5em;
+            color: #ffd700;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .timeline-text {
+            color: #e0e0e0;
+            line-height: 1.6;
+        }
+
+        /* Footer */
+        .footer {
+            text-align: center;
+            padding: 40px 20px;
+            margin-top: 60px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .signature-section {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 40px;
+            margin-top: 40px;
+        }
+
+        .signature {
+            text-align: center;
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+        }
+
+        .signature-line {
+            border-bottom: 2px solid #ffd700;
+            margin: 20px auto;
+            width: 200px;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .company-name {
+                font-size: 2.5em;
+            }
+
+            .memorandum {
+                padding: 20px;
+            }
+
+            .timeline::before {
+                left: 20px;
+            }
+
+            .timeline-item {
+                flex-direction: column !important;
+            }
+
+            .timeline-content {
+                margin-left: 50px;
+                margin-right: 0;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="bg-animation">
+        <div class="floating-shapes">
+            <div class="shape"></div>
+            <div class="shape"></div>
+            <div class="shape"></div>
+            <div class="shape"></div>
+        </div>
+        <div class="particles" id="particles"></div>
+    </div>
+
+    <div class="header">
+        <img class="logo" src="/images/VLZO.gif" alt="ERROR">
+        <h1 class="company-name">VLZO ENGINNERING</h1>
+        <p class="subtitle">Global Technology & Financial Services Corporation</p>
+    </div>
+
+    <div class="container">
+        <div class="memorandum">
+            <div class="memo-header">
+                <h2 class="memo-title">CENTENNIAL MEMORANDUM OF ASSOCIATION</h2>
+                <p class="memo-date">Established 2018 - Centennial Anniversary 2025</p>
+            </div>
+
+            <div class="section">
+                <h3 class="section-title">Executive Summary</h3>
+                <p class="content-text">
+                    VLZO ENGINNERING Corporation stands as a testament to <span class="highlight">innovation,
+                        resilience, and global leadership</span> over the past century. Founded in 2018, our corporation
+                    has evolved from a modest trading company to a <span class="highlight">multinational technology and
+                        financial services giant</span>, serving over 50 million customers across 85 countries.
+                </p>
+                <p class="content-text">
+                    This memorandum commemorates our 100-year journey and outlines our strategic vision for the next
+                    century of transformative growth and technological advancement.
+                </p>
+            </div>
+
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-number">100</div>
+                    <div class="stat-label">Years of Excellence</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">85</div>
+                    <div class="stat-label">Countries Served</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">50M+</div>
+                    <div class="stat-label">Global Customers</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">$2.5B</div>
+                    <div class="stat-label">Annual Revenue</div>
+                </div>
+            </div>
+
+            <div class="section">
+                <h3 class="section-title">Corporate Heritage & Evolution</h3>
+                <p class="content-text">
+                    VLZO ENGINNERING was established during the <span class="highlight">industrial revolution era</span>
+                    with a vision to bridge global markets through innovative trading solutions. Our founder, Viktor
+                    Lorenzo, envisioned a company that would transcend geographical boundaries and create value through
+                    technological advancement and strategic partnerships.
+                </p>
+                <p class="content-text">
+                    Throughout the decades, we have successfully navigated through economic depressions, world wars,
+                    technological disruptions, and global pandemics, consistently emerging stronger and more resilient.
+                    Our ability to <span class="highlight">adapt, innovate, and lead</span> has been the cornerstone of
+                    our sustained success.
+                </p>
+            </div>
+
+            <div class="section">
+                <h3 class="section-title">Historical Timeline</h3>
+                <div class="timeline">
+                    <div class="timeline-item">
+                        <div class="timeline-content">
+                            <div class="timeline-year">2018</div>
+                            <div class="timeline-text">Founded as a regional trading company in New York with initial
+                                capital of $50,000</div>
+                        </div>
+                    </div>
+                    <div class="timeline-item">
+                        <div class="timeline-content">
+                            <div class="timeline-year">1945</div>
+                            <div class="timeline-text">Expanded internationally, establishing offices in London and
+                                Tokyo</div>
+                        </div>
+                    </div>
+                    <div class="timeline-item">
+                        <div class="timeline-content">
+                            <div class="timeline-year">1975</div>
+                            <div class="timeline-text">Launched VLZO Financial Services division and early computer
+                                systems</div>
+                        </div>
+                    </div>
+                    <div class="timeline-item">
+                        <div class="timeline-content">
+                            <div class="timeline-year">1995</div>
+                            <div class="timeline-text">Pioneered online trading platforms and digital banking solutions
+                            </div>
+                        </div>
+                    </div>
+                    <div class="timeline-item">
+                        <div class="timeline-content">
+                            <div class="timeline-year">2015</div>
+                            <div class="timeline-text">Launched AI-powered fintech solutions and blockchain technologies
+                            </div>
+                        </div>
+                    </div>
+                    <div class="timeline-item">
+                        <div class="timeline-content">
+                            <div class="timeline-year">2025</div>
+                            <div class="timeline-text">Celebrating 100 years of innovation with quantum computing
+                                initiatives</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="section">
+                <h3 class="section-title">Core Business Divisions</h3>
+                <p class="content-text">
+                    <strong>VLZO Technologies:</strong> Our flagship technology division specializes in <span
+                        class="highlight">artificial intelligence, machine learning, and quantum computing
+                        solutions</span>. We develop cutting-edge software platforms that serve Fortune 500 companies
+                    and government institutions worldwide.
+                </p>
+                <p class="content-text">
+                    <strong>VLZO Financial Services:</strong> Offering comprehensive financial solutions including
+                    digital banking, cryptocurrency trading, investment management, and <span
+                        class="highlight">decentralized finance (DeFi) platforms</span>. Our fintech innovations have
+                    revolutionized how millions manage their wealth.
+                </p>
+                <p class="content-text">
+                    <strong>VLZO Education:</strong> Our education division provides <span
+                        class="highlight">next-generation learning platforms</span> combining virtual reality, AI
+                    tutoring, and blockchain-verified credentials, serving over 10 million students globally.
+                </p>
+            </div>
+
+            <div class="section">
+                <h3 class="section-title">Strategic Vision 2025-2125</h3>
+                <p class="content-text">
+                    As we embark on our second century, VLZO ENGINNERING is committed to <span
+                        class="highlight">sustainable innovation and global impact</span>. Our strategic initiatives
+                    include:
+                </p>
+                <p class="content-text">
+                    • <strong>Quantum Computing Leadership:</strong> Establishing the world's first commercial quantum
+                    computing network<br>
+                    • <strong>Green Technology:</strong> Achieving carbon neutrality by 2030 through renewable energy
+                    investments<br>
+                    • <strong>Space Commerce:</strong> Pioneering extraterrestrial mining and space-based
+                    manufacturing<br>
+                    • <strong>Biotechnology Integration:</strong> Merging AI with biotechnology for revolutionary
+                    healthcare solutions
+                </p>
+            </div>
+
+            <div class="section">
+                <h3 class="section-title">Global Impact & Sustainability</h3>
+                <p class="content-text">
+                    VLZO ENGINNERING takes pride in our <span class="highlight">commitment to social
+                        responsibility</span> and environmental stewardship. Through our VLZO Foundation, we have
+                    invested over $500 million in education, healthcare, and environmental conservation projects across
+                    developing nations.
+                </p>
+                <p class="content-text">
+                    Our sustainability initiatives have resulted in a 60% reduction in carbon emissions since 2020, and
+                    we remain committed to achieving <span class="highlight">net-zero emissions by 2030</span>, five
+                    years ahead of global standards.
+                </p>
+            </div>
+
+            <div class="section">
+                <h3 class="section-title">Conclusion</h3>
+                <p class="content-text">
+                    This centennial milestone represents not an end, but a new beginning. VLZO ENGINNERING Corporation
+                    enters its second century with <span class="highlight">unwavering determination, innovative spirit,
+                        and global vision</span>. We remain committed to creating value for our stakeholders, advancing
+                    human progress through technology, and building a sustainable future for generations to come.
+                </p>
+                <p class="content-text">
+                    As we look toward the next 100 years, we do so with confidence, knowing that our foundation of
+                    excellence, innovation, and integrity will continue to guide us toward even greater achievements.
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <div class="footer">
+        <p style="font-size: 1.2em; color: #ffd700; margin-bottom: 20px;">
+            "Innovation Through the Centuries - Excellence for Eternity"
+        </p>
+
+        <div class="signature-section">
+            <div class="signature">
+                <div class="signature-line"></div>
+                <p><strong>Omar Ibne Abdullah</strong></p>
+                <p>Chief Executive Officer and Co-Founder</p>
+                <p>VLZO ENGINNERING Corporation</p>
+            </div>
+            <div class="signature">
+                <div class="signature-line"></div>
+                <p><strong>Prof: Abdullah Al Mahmud Mozumder</strong></p>
+                <p>Founder & Chairman of the Board</p>
+                <p>VLZO ENGINNERING Corporation</p>
+            </div>
+        </div>
+
+        <p style="margin-top: 30px; color: #b0b0b0;">
+            © 2025 VLZO ENGINNERING Corporation. All Rights Reserved.<br>
+            Centennial Edition - Commemorating 100 Years of Innovation
+        </p>
+    </div>
+
+    <script>
+        // Create floating particles
+        function createParticles() {
+            const particlesContainer = document.getElementById('particles');
+            const particleCount = 50;
+
+            for (let i = 0; i < particleCount; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'particle';
+                particle.style.left = Math.random() * 100 + '%';
+                particle.style.animationDelay = Math.random() * 8 + 's';
+                particle.style.animationDuration = (Math.random() * 3 + 5) + 's';
+                particlesContainer.appendChild(particle);
+            }
+        }
+
+        // Initialize particles when page loads
+        document.addEventListener('DOMContentLoaded', function () {
+            createParticles();
+        });
+
+        // Add smooth scrolling and hover effects
+        document.querySelectorAll('.stat-card').forEach(card => {
+            card.addEventListener('mouseenter', function () {
+                this.style.transform = 'translateY(-10px) scale(1.02)';
+            });
+
+            card.addEventListener('mouseleave', function () {
+                this.style.transform = 'translateY(0) scale(1)';
+            });
+        });
+
+        // Dynamic color shifting for highlights
+        setInterval(() => {
+            const highlights = document.querySelectorAll('.highlight');
+            highlights.forEach(highlight => {
+                const hue = Math.random() * 60 + 180; // Blue to cyan range
+                highlight.style.background = `linear-gradient(135deg, hsla(${hue}, 70%, 50%, 0.2), hsla(${hue + 30}, 70%, 60%, 0.2))`;
+            });
+        }, 3000);
+    </script>
+</body>
+
+</html>
