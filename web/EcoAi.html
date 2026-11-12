@@ -1,0 +1,1671 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <title>EcoAi: ask about space, satellites and code</title>
+    <meta name="description" content="EcoAi is the assistant inside EcoOrbit. Ask about space, orbits and debris, watch animated explainers, and get website, software and plugin code." />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+    <style>
+      /* tokens: same space palette as EcoOrbit; cyan = orbit/AI accent, emerald = EcoOrbit brand */
+      :root {
+        --bg: #030712; --panel: #0b1329; --panel2: #0f1a36; --ink: #f3f4f6; --body: #d1d9e6; --mute: #8fa0b8;
+        --line: rgba(255,255,255,.09); --cyan: #00f2fe; --leaf: #10b981; --amber: #f59e0b; --rose: #f43f5e;
+        --mono: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+      }
+      * { box-sizing: border-box; }
+      html, body { height: 100%; }
+      body { margin: 0; font-family: "Inter", system-ui, sans-serif; font-size: 15.5px; line-height: 1.65; color: var(--body); background: var(--bg); overflow: hidden; }
+      button, input, textarea, select { font-family: inherit; font-size: inherit; color: inherit; }
+      button { cursor: pointer; }
+      a { color: var(--cyan); }
+      :focus-visible { outline: 2px solid var(--cyan); outline-offset: 2px; border-radius: 6px; }
+      ::-webkit-scrollbar { width: 8px; height: 8px; } ::-webkit-scrollbar-thumb { background: #1e293b; border-radius: 4px; } ::-webkit-scrollbar-track { background: transparent; }
+      #stars { position: fixed; inset: 0; width: 100%; height: 100%; z-index: 0; }
+      body::before { content: ""; position: fixed; inset: 0; z-index: 0; pointer-events: none; background: radial-gradient(55% 45% at 80% 0%, rgba(16,185,129,.12), transparent 70%), radial-gradient(45% 40% at 10% 100%, rgba(0,242,254,.08), transparent 70%); }
+
+      .app { position: relative; z-index: 1; display: grid; grid-template-columns: 272px minmax(0,1fr); height: 100dvh; }
+      /* sidebar */
+      .side { display: flex; flex-direction: column; min-height: 0; background: rgba(5,10,24,.88); border-right: 1px solid var(--line); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px); }
+      .side-top { display: flex; align-items: center; justify-content: space-between; padding: 16px 16px 8px; }
+      .brand { display: inline-flex; align-items: center; gap: 10px; font-weight: 800; font-size: 18px; letter-spacing: -.02em; color: var(--ink); text-decoration: none; }
+      .logo { position: relative; width: 34px; height: 34px; border-radius: 11px; background: linear-gradient(135deg, var(--leaf), var(--cyan)); display: grid; place-items: center; color: #03120d; font-size: 15px; flex: none; }
+      .logo.big { width: 76px; height: 76px; border-radius: 24px; font-size: 32px; box-shadow: 0 0 50px rgba(0,242,254,.35); }
+      .logo::after { content: ""; position: absolute; inset: -7px; border-radius: 50%; border: 1px dashed rgba(0,242,254,.5); animation: spin 9s linear infinite; }
+      .logo.big::after { inset: -16px; }
+      .logo i.o { position: absolute; width: 7px; height: 7px; border-radius: 50%; background: var(--cyan); box-shadow: 0 0 10px var(--cyan); top: -10px; left: 50%; margin-left: -3.5px; transform-origin: 50% calc(50% + 10px); animation: spin 9s linear infinite; }
+      .logo.big i.o { top: -19px; transform-origin: 50% calc(50% + 19px); width: 9px; height: 9px; }
+      @keyframes spin { to { transform: rotate(360deg); } }
+      .icon-btn { width: 36px; height: 36px; display: inline-grid; place-items: center; border-radius: 10px; border: 1px solid transparent; background: transparent; color: var(--mute); transition: all .2s; }
+      .icon-btn:hover { color: var(--ink); background: rgba(255,255,255,.06); }
+      .new { margin: 8px 12px 10px; display: flex; align-items: center; gap: 10px; padding: 10px 14px; border-radius: 12px; font-weight: 600; font-size: 14px; color: #03120d; background: linear-gradient(90deg, var(--leaf), var(--cyan)); border: 0; box-shadow: 0 6px 22px rgba(16,185,129,.22); transition: transform .15s, box-shadow .2s; }
+      .new:hover { transform: translateY(-1px); box-shadow: 0 8px 28px rgba(16,185,129,.4); }
+      .hist-h { padding: 8px 18px 4px; font-size: 12px; color: var(--mute); }
+      .hist { flex: 1; overflow-y: auto; padding: 4px 8px; display: flex; flex-direction: column; gap: 2px; }
+      .hist-i { display: flex; align-items: center; gap: 4px; border-radius: 10px; padding-left: 2px; }
+      .hist-i:hover, .hist-i.on { background: rgba(255,255,255,.06); }
+      .hist-i.on { box-shadow: inset 2px 0 0 var(--leaf); }
+      .hist-i > button:first-child { flex: 1; min-width: 0; text-align: left; padding: 9px 10px; border: 0; background: transparent; font-size: 13.5px; color: var(--body); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+      .hist-i .del { opacity: 0; width: 28px; height: 28px; margin-right: 4px; border-radius: 8px; border: 0; background: transparent; color: var(--mute); font-size: 12px; }
+      .hist-i:hover .del, .hist-i .del:focus-visible { opacity: 1; } .hist-i .del:hover { color: var(--rose); }
+      .hist-empty { padding: 14px; font-size: 13px; color: var(--mute); }
+      .side-foot { padding: 10px 12px 14px; border-top: 1px solid var(--line); display: flex; flex-direction: column; gap: 2px; }
+      .side-foot a, .side-foot button { display: flex; align-items: center; gap: 10px; padding: 9px 10px; border-radius: 10px; border: 0; background: transparent; color: var(--body); text-decoration: none; font-size: 13.5px; text-align: left; }
+      .side-foot a:hover, .side-foot button:hover { background: rgba(255,255,255,.06); color: var(--ink); }
+      .side-foot i { width: 18px; text-align: center; color: var(--leaf); }
+      .scrim { display: none; }
+
+      /* main */
+      .main { position: relative; display: flex; flex-direction: column; min-height: 0; min-width: 0; }
+      .top { display: flex; align-items: center; gap: 10px; padding: 10px 16px; border-bottom: 1px solid var(--line); background: rgba(3,7,18,.6); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); }
+      #open-side { display: none; }
+      .title { flex: 1; min-width: 0; font-weight: 600; color: var(--ink); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+      .mode { display: inline-flex; align-items: center; gap: 7px; padding: 5px 11px; border-radius: 99px; font-size: 12px; font-weight: 600; border: 1px solid var(--line); background: rgba(255,255,255,.04); color: var(--body); cursor: pointer; white-space: nowrap; }
+      .mode::before { content: ""; width: 7px; height: 7px; border-radius: 50%; background: var(--amber); }
+      .mode.api { border-color: rgba(16,185,129,.45); background: rgba(16,185,129,.1); } .mode.api::before { background: var(--leaf); box-shadow: 0 0 8px var(--leaf); }
+      .scroll { flex: 1; overflow-y: auto; scroll-behavior: smooth; }
+      .thread { max-width: 800px; margin: 0 auto; padding: 28px 18px 24px; display: flex; flex-direction: column; gap: 26px; }
+      #jump { position: absolute; left: 50%; bottom: 128px; transform: translateX(-50%); display: none; width: 38px; height: 38px; border-radius: 50%; border: 1px solid var(--line); background: var(--panel2); color: var(--ink); box-shadow: 0 8px 24px rgba(0,0,0,.5); z-index: 5; }
+      #jump.on { display: grid; place-items: center; }
+
+      /* welcome */
+      .welcome { text-align: center; padding: 6vh 0 0; animation: fadeUp .7s ease both; }
+      .welcome .logo { margin: 0 auto 28px; }
+      .welcome h1 { margin: 0; font-size: clamp(2rem, 5vw, 3rem); font-weight: 800; letter-spacing: -.04em; line-height: 1.08; color: var(--ink); }
+      .welcome h1 span { background: linear-gradient(90deg, var(--leaf), var(--cyan)); -webkit-background-clip: text; background-clip: text; color: transparent; }
+      .welcome p { margin: 12px auto 0; max-width: 52ch; color: var(--mute); }
+      .chips { display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: 10px; margin-top: 34px; text-align: left; }
+      .chip { display: flex; gap: 12px; align-items: flex-start; padding: 13px 14px; border-radius: 14px; border: 1px solid var(--line); background: rgba(11,19,41,.7); color: var(--body); font-size: 14px; line-height: 1.45; transition: border-color .2s, transform .2s, background .2s; animation: fadeUp .6s ease both; animation-delay: var(--d, 0s); }
+      .chip:hover { border-color: rgba(0,242,254,.5); transform: translateY(-2px); background: rgba(0,242,254,.05); }
+      .chip i { margin-top: 3px; color: var(--cyan); }
+      .chip b { display: block; color: var(--ink); font-weight: 600; }
+      @keyframes fadeUp { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: none; } }
+
+      /* messages */
+      .m { display: flex; gap: 14px; animation: fadeUp .35s ease both; }
+      .m.user { justify-content: flex-end; }
+      .m.user .bub { max-width: 82%; padding: 11px 16px; border-radius: 18px 18px 4px 18px; color: var(--ink); background: linear-gradient(135deg, rgba(16,185,129,.22), rgba(0,242,254,.16)); border: 1px solid rgba(16,185,129,.3); white-space: pre-wrap; overflow-wrap: anywhere; }
+      .m.ai .av { flex: none; width: 32px; height: 32px; margin-top: 2px; border-radius: 10px; display: grid; place-items: center; font-size: 14px; color: #03120d; background: linear-gradient(135deg, var(--leaf), var(--cyan)); }
+      .m.ai .av.live { animation: glow 1.6s ease-in-out infinite; }
+      @keyframes glow { 50% { box-shadow: 0 0 22px rgba(0,242,254,.7); } }
+      .m.ai .body { flex: 1; min-width: 0; }
+      .md > * + * { margin-top: 12px; }
+      .md h2, .md h3, .md h4, .md h5 { color: var(--ink); line-height: 1.3; letter-spacing: -.015em; margin: 0; }
+      .md h2 { font-size: 1.35rem; } .md h3 { font-size: 1.15rem; } .md h4, .md h5 { font-size: 1rem; }
+      .md p { margin: 0; } .md strong { color: var(--ink); font-weight: 650; }
+      .md ul, .md ol { margin: 0; padding-left: 22px; } .md li + li { margin-top: 4px; } .md li::marker { color: var(--leaf); }
+      .md blockquote { margin: 0; padding: 8px 14px; border-left: 3px solid var(--cyan); background: rgba(0,242,254,.06); border-radius: 0 10px 10px 0; color: var(--body); }
+      .md hr { border: 0; border-top: 1px solid var(--line); margin: 16px 0; }
+      .md code { font-family: var(--mono); font-size: .86em; padding: 2px 6px; border-radius: 6px; background: rgba(255,255,255,.08); color: #7ee7c7; }
+      .md .tw { overflow-x: auto; border: 1px solid var(--line); border-radius: 12px; }
+      .md table { border-collapse: collapse; width: 100%; font-size: 14px; min-width: 360px; }
+      .md th, .md td { text-align: left; padding: 9px 13px; border-bottom: 1px solid var(--line); } .md tr:last-child td { border-bottom: 0; }
+      .md th { color: var(--mute); font-weight: 600; font-size: 12.5px; background: rgba(11,19,41,.8); }
+      .caret { display: inline-block; width: 8px; height: 1.05em; margin-left: 2px; vertical-align: -3px; background: var(--cyan); border-radius: 2px; animation: blink 1s steps(2) infinite; }
+      @keyframes blink { 50% { opacity: 0; } }
+      .think { display: flex; align-items: center; gap: 12px; color: var(--mute); font-size: 14px; padding: 6px 0; }
+      .orb { position: relative; width: 22px; height: 22px; flex: none; }
+      .orb::before { content: ""; position: absolute; inset: 7px; border-radius: 50%; background: var(--cyan); box-shadow: 0 0 10px var(--cyan); }
+      .orb::after { content: ""; position: absolute; inset: 0; border-radius: 50%; border: 1px dashed rgba(143,160,184,.6); animation: spin 1.4s linear infinite; }
+      .orb i { position: absolute; width: 5px; height: 5px; border-radius: 50%; background: var(--leaf); left: 50%; top: -2px; margin-left: -2.5px; transform-origin: 50% 13px; animation: spin 1.4s linear infinite; z-index: 1; }
+      .think span.t { animation: fadeIn .4s ease; } @keyframes fadeIn { from { opacity: 0; } }
+      .acts { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 8px; }
+      .act { display: inline-flex; align-items: center; gap: 6px; padding: 5px 9px; border-radius: 8px; border: 0; background: transparent; font-size: 12.5px; color: var(--mute); }
+      .act:hover { color: var(--ink); background: rgba(255,255,255,.07); }
+      .rel { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
+      .rel button { padding: 7px 13px; border-radius: 99px; border: 1px solid var(--line); background: rgba(11,19,41,.7); font-size: 13px; color: var(--body); transition: all .2s; }
+      .rel button:hover { border-color: rgba(0,242,254,.5); color: var(--cyan); }
+      .err { padding: 11px 14px; border-radius: 12px; border: 1px solid rgba(244,63,94,.4); background: rgba(244,63,94,.08); color: #fecdd3; font-size: 14px; }
+
+      /* code blocks */
+      .code { border: 1px solid var(--line); border-radius: 14px; overflow: hidden; background: #040918; }
+      .code-h { display: flex; align-items: center; gap: 6px; padding: 7px 8px 7px 14px; background: #0b1530; border-bottom: 1px solid var(--line); font-size: 12px; color: var(--mute); }
+      .code-h .nm { flex: 1; font-family: var(--mono); min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+      .code-h button { display: inline-flex; align-items: center; gap: 6px; padding: 5px 10px; border-radius: 8px; border: 0; background: transparent; color: var(--mute); font-size: 12px; }
+      .code-h button:hover { color: var(--ink); background: rgba(255,255,255,.08); }
+      .code-h button.pv { color: var(--leaf); } .code-h button.pv:hover { background: rgba(16,185,129,.14); }
+      .code pre { margin: 0; padding: 14px 16px; overflow-x: auto; max-height: 520px; font-family: var(--mono); font-size: 13px; line-height: 1.6; color: #d6deeb; tab-size: 2; }
+      .tk-c { color: #5c6f8f; font-style: italic; } .tk-s { color: #a5e075; } .tk-n { color: #f78c6c; } .tk-k { color: #c792ea; } .tk-t { color: #7fdbca; } .tk-a { color: #ffcb6b; } .tk-f { color: #82aaff; }
+      .pvbox { border-top: 1px solid var(--line); background: #fff; }
+      .pvbox iframe { display: block; width: 100%; height: 380px; border: 0; background: #fff; resize: vertical; }
+      .pvbar { padding: 6px 12px; background: #0b1530; font-size: 12px; color: var(--mute); display: flex; justify-content: space-between; align-items: center; border-top: 1px solid var(--line); }
+      .pvbar button { border: 0; background: transparent; color: var(--cyan); font-size: 12px; padding: 3px 6px; }
+
+      /* widgets */
+      .widget { border: 1px solid rgba(0,242,254,.25); border-radius: 16px; overflow: hidden; background: linear-gradient(180deg, #060d22, #040918); box-shadow: 0 0 40px rgba(0,242,254,.06); }
+      .w-head { display: flex; justify-content: space-between; align-items: center; gap: 10px; flex-wrap: wrap; padding: 10px 14px; border-bottom: 1px solid var(--line); font-size: 13px; }
+      .w-head b { color: var(--ink); } .w-head span { color: var(--mute); font-size: 12px; }
+      .widget canvas { display: block; width: 100%; height: 300px; touch-action: none; }
+      .w-ctl { display: flex; flex-wrap: wrap; align-items: center; gap: 10px 16px; padding: 10px 14px; border-top: 1px solid var(--line); font-size: 12.5px; color: var(--mute); }
+      .w-ctl label { display: flex; align-items: center; gap: 8px; } .w-ctl input[type=range] { accent-color: var(--leaf); width: 130px; }
+      .w-ctl button { padding: 5px 11px; border-radius: 8px; border: 1px solid var(--line); background: rgba(255,255,255,.04); font-size: 12px; color: var(--body); }
+      .w-ctl button:hover { border-color: rgba(0,242,254,.5); color: var(--cyan); }
+      .w-read { margin-left: auto; color: var(--ink); font-variant-numeric: tabular-nums; }
+
+      /* composer */
+      .composer-wrap { padding: 0 16px calc(14px + env(safe-area-inset-bottom)); }
+      .composer { max-width: 800px; margin: 0 auto; display: flex; align-items: flex-end; gap: 8px; padding: 8px 8px 8px 16px; border-radius: 20px; border: 1px solid rgba(255,255,255,.14); background: rgba(11,19,41,.92); box-shadow: 0 10px 40px rgba(0,0,0,.45); transition: border-color .2s, box-shadow .2s; }
+      .composer:focus-within { border-color: rgba(0,242,254,.55); box-shadow: 0 0 0 3px rgba(0,242,254,.1), 0 10px 40px rgba(0,0,0,.45); }
+      #input { flex: 1; resize: none; max-height: 168px; padding: 9px 0; border: 0; outline: 0; background: transparent; line-height: 1.5; }
+      #input::placeholder { color: #64748b; }
+      #send { flex: none; width: 40px; height: 40px; border-radius: 13px; border: 0; display: grid; place-items: center; color: #03120d; background: linear-gradient(135deg, var(--leaf), var(--cyan)); transition: transform .15s, opacity .2s; }
+      #send:hover { transform: scale(1.06); } #send:disabled { opacity: .35; transform: none; cursor: default; }
+      #send.stop { background: var(--rose); color: #fff; }
+      .hint { max-width: 800px; margin: 8px auto 0; text-align: center; font-size: 12px; color: #64748b; }
+
+      /* settings */
+      .modal { position: fixed; inset: 0; z-index: 60; display: none; align-items: center; justify-content: center; padding: 18px; background: rgba(2,5,14,.75); backdrop-filter: blur(6px); }
+      .modal.on { display: flex; }
+      .card { width: min(560px, 100%); max-height: 92dvh; overflow-y: auto; padding: 22px; border-radius: 20px; background: #0a1226; border: 1px solid rgba(255,255,255,.14); box-shadow: 0 30px 80px rgba(0,0,0,.6); animation: fadeUp .3s ease; }
+      .card h2 { margin: 0 0 4px; font-size: 1.25rem; color: var(--ink); } .card > p { margin: 0 0 16px; font-size: 14px; color: var(--mute); }
+      .card label { display: block; margin-top: 14px; font-size: 13px; font-weight: 600; color: var(--ink); }
+      .card input[type=text], .card input[type=password], .card textarea, .card select { width: 100%; margin-top: 6px; padding: 10px 12px; border-radius: 10px; border: 1px solid var(--line); background: #050a18; outline: 0; }
+      .card input:focus, .card textarea:focus, .card select:focus { border-color: rgba(0,242,254,.55); }
+      .card textarea { min-height: 96px; resize: vertical; font-size: 13.5px; }
+      .card .note { margin-top: 8px; font-size: 12.5px; color: var(--mute); line-height: 1.5; }
+      .card .row { display: flex; gap: 10px; justify-content: space-between; margin-top: 20px; flex-wrap: wrap; }
+      .btn { padding: 9px 16px; border-radius: 10px; border: 1px solid var(--line); background: rgba(255,255,255,.05); font-weight: 600; font-size: 14px; }
+      .btn:hover { background: rgba(255,255,255,.1); } .btn.pri { border: 0; color: #03120d; background: linear-gradient(90deg, var(--leaf), var(--cyan)); } .btn.dng { color: #fda4af; }
+
+      @media (max-width: 860px) {
+        .app { grid-template-columns: 1fr; }
+        .side { position: fixed; z-index: 40; left: 0; top: 0; bottom: 0; width: min(300px, 86vw); transform: translateX(-102%); transition: transform .28s ease; }
+        .side.on { transform: none; }
+        .scrim.on { display: block; position: fixed; inset: 0; z-index: 35; background: rgba(2,5,14,.6); }
+        #open-side { display: inline-grid; }
+        .m.user .bub { max-width: 92%; }
+      }
+      @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition: none !important; } .scroll { scroll-behavior: auto; } }
+    </style>
+  </head>
+  <body>
+    <canvas id="stars" aria-hidden="true"></canvas>
+    <div class="app">
+      <aside class="side" id="side" aria-label="Chats">
+        <div class="side-top">
+          <a class="brand" href="EcoOrbit.html"><span class="logo"><i class="fa-solid fa-robot"></i><i class="o"></i></span>EcoAi</a>
+          <button class="icon-btn" id="close-side" aria-label="Close menu" style="display:none"><i class="fa-solid fa-xmark"></i></button>
+        </div>
+        <button class="new" id="new"><i class="fa-solid fa-plus"></i>New chat</button>
+        <div class="hist-h">Recent</div>
+        <div class="hist" id="hist"></div>
+        <div class="side-foot">
+          <a href="EcoOrbit.html#simulator"><i class="fa-solid fa-earth-asia"></i>EcoOrbit globe</a>
+          <a href="AgroOrbit.html"><i class="fa-solid fa-seedling"></i>AgroOrbit</a>
+          <button id="open-settings"><i class="fa-solid fa-sliders"></i>Settings and AI mode</button>
+        </div>
+      </aside>
+      <div class="scrim" id="scrim"></div>
+
+      <main class="main">
+        <header class="top">
+          <button class="icon-btn" id="open-side" aria-label="Open menu"><i class="fa-solid fa-bars"></i></button>
+          <div class="title" id="title">New chat</div>
+          <button class="mode" id="mode" title="Open settings">Built-in mode</button>
+        </header>
+        <div class="scroll" id="scroll"><div class="thread" id="thread"></div></div>
+        <button id="jump" aria-label="Jump to latest"><i class="fa-solid fa-arrow-down"></i></button>
+        <div class="composer-wrap">
+          <div class="composer">
+            <textarea id="input" rows="1" placeholder="Ask about space, satellites, orbits, or ask me to write code..." aria-label="Message EcoAi"></textarea>
+            <button id="send" aria-label="Send message" disabled><i class="fa-solid fa-arrow-up"></i></button>
+          </div>
+          <div class="hint" id="hint">Enter to send, Shift+Enter for a new line. Type /help for commands.</div>
+        </div>
+      </main>
+    </div>
+
+    <div class="modal" id="modal" role="dialog" aria-modal="true" aria-labelledby="set-h">
+      <div class="card">
+        <h2 id="set-h">Settings</h2>
+        <p>EcoAi works offline with a built-in engine. Add a Claude API key to get open-ended answers on any topic.</p>
+        <label for="s-key">Claude API key (optional)</label>
+        <input type="password" id="s-key" placeholder="sk-ant-..." autocomplete="off" spellcheck="false" />
+        <div class="note">Stored only in this browser (localStorage) and sent only to api.anthropic.com. Anyone who can use this device or edit this page can read it, so use a key with a spending limit and never publish this page with a key inside.</div>
+        <label for="s-model">Model</label>
+        <input type="text" id="s-model" placeholder="claude-sonnet-5-5" spellcheck="false" />
+        <label for="s-speed">Typing speed</label>
+        <select id="s-speed"><option value="slow">Slow, like thinking out loud</option><option value="normal">Natural</option><option value="fast">Fast</option><option value="instant">Instant</option></select>
+        <label for="s-sys">System prompt (API mode)</label>
+        <textarea id="s-sys" spellcheck="false"></textarea>
+        <div class="row">
+          <button class="btn dng" id="s-clear">Delete all chats</button>
+          <span style="display:flex;gap:10px"><button class="btn" id="s-cancel">Cancel</button><button class="btn pri" id="s-save">Save</button></span>
+        </div>
+      </div>
+    </div>
+    <script>
+(function () {
+  "use strict";
+  var $ = function (id) { return document.getElementById(id); };
+  var reduce = window.matchMedia && matchMedia("(prefers-reduced-motion: reduce)").matches;
+  var sleep = function (ms) { return new Promise(function (r) { setTimeout(r, ms); }); };
+  var rand = function (a, b) { return a + Math.random() * (b - a); };
+  var pick = function (arr) { return arr[Math.floor(Math.random() * arr.length)]; };
+  var clamp = function (v, a, b) { return Math.max(a, Math.min(b, v)); };
+  var esc = function (s) { return String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;"); };
+  var uid = function () { return Date.now().toString(36) + Math.random().toString(36).slice(2, 7); };
+
+  /* ================= storage ================= */
+  var LS = {
+    get: function (k, d) { try { var v = localStorage.getItem(k); return v ? JSON.parse(v) : d; } catch (e) { return d; } },
+    set: function (k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} }
+  };
+  var DEFAULT_SYS = "You are EcoAi, the friendly expert assistant inside the EcoOrbit website. You know space, satellites, orbital debris, Earth observation, farming from space and software development. Answer clearly and honestly, in plain language. Use Markdown. For code, always use fenced code blocks with a language tag (for multi-file answers put the file name after the language, like ```json manifest.json). You can show animated explainers by putting one of these on its own line: [[widget:solar]], [[widget:orbit]], [[widget:orbit:550]] (altitude in km), [[widget:moon]], [[widget:debris]]. Use them when they genuinely help.";
+  var settings = Object.assign({ key: "", model: "claude-sonnet-5-5", speed: "normal", sys: DEFAULT_SYS }, LS.get("eoai.settings", {}));
+  var chats = LS.get("eoai.chats", []);
+  var profile = LS.get("eoai.profile", {});
+  var activeId = null;
+
+  /* ================= starfield ================= */
+  (function () {
+    var cv = $("stars"), ctx = cv.getContext("2d"), W = 0, H = 0, stars = [], shoot = null, mx = 0, my = 0;
+    function size() {
+      var dpr = Math.min(devicePixelRatio || 1, 2); W = innerWidth; H = innerHeight;
+      cv.width = W * dpr; cv.height = H * dpr; ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      stars = []; var n = Math.round(W * H / 7000);
+      for (var i = 0; i < n; i++) stars.push({ x: Math.random() * W, y: Math.random() * H, z: Math.random() * 0.9 + 0.1, p: Math.random() * 6.28, s: Math.random() * 1.2 + 0.25 });
+    }
+    function draw(t) {
+      ctx.clearRect(0, 0, W, H);
+      for (var i = 0; i < stars.length; i++) {
+        var s = stars[i], a = 0.35 + 0.65 * (0.5 + 0.5 * Math.sin(t / 900 * s.z + s.p));
+        var x = s.x + mx * s.z * 14, y = s.y + my * s.z * 14;
+        ctx.globalAlpha = reduce ? 0.6 : a * s.z; ctx.fillStyle = s.z > 0.8 ? "#bfeeff" : "#ffffff";
+        ctx.beginPath(); ctx.arc(x, y, s.s * s.z + 0.2, 0, 6.283); ctx.fill();
+      }
+      if (!reduce) {
+        if (!shoot && Math.random() < 0.004) shoot = { x: rand(W * 0.2, W), y: rand(0, H * 0.4), l: 0 };
+        if (shoot) {
+          shoot.x -= 9; shoot.y += 4.5; shoot.l++;
+          var g = ctx.createLinearGradient(shoot.x, shoot.y, shoot.x + 90, shoot.y - 45);
+          g.addColorStop(0, "rgba(255,255,255,.9)"); g.addColorStop(1, "rgba(255,255,255,0)");
+          ctx.globalAlpha = 1; ctx.strokeStyle = g; ctx.lineWidth = 1.5; ctx.beginPath(); ctx.moveTo(shoot.x, shoot.y); ctx.lineTo(shoot.x + 90, shoot.y - 45); ctx.stroke();
+          if (shoot.l > 60) shoot = null;
+        }
+        requestAnimationFrame(draw);
+      }
+    }
+    size(); addEventListener("resize", size);
+    addEventListener("pointermove", function (e) { mx = e.clientX / W - 0.5; my = e.clientY / H - 0.5; });
+    if (reduce) draw(0); else requestAnimationFrame(draw);
+  })();
+
+  /* ================= syntax highlighting (light, dependency-free) ================= */
+  var KW = {
+    js: "const let var function return if else for while do switch case break continue new class extends import export from default async await try catch finally throw typeof instanceof in of this null undefined true false static get set yield void delete interface type enum implements public private readonly as",
+    py: "def class return if elif else for while in not and or is import from as with try except finally raise lambda None True False pass break continue yield global async await self print",
+    php: "function return if else elseif foreach for while echo class public private protected static new use namespace require include null true false array isset empty as",
+    css: "", json: "true false null", sh: "npm npx pip cd mkdir git echo export sudo install run"
+  };
+  function langKey(l) {
+    l = (l || "").toLowerCase();
+    if (/^(js|javascript|jsx|ts|tsx|typescript|node|mjs)$/.test(l)) return "js";
+    if (/^(py|python)$/.test(l)) return "py"; if (l === "php") return "php"; if (l === "css") return "css";
+    if (l === "json") return "json"; if (/^(sh|bash|shell|zsh|cmd)$/.test(l)) return "sh";
+    if (/^(html|xml|svg|htm)$/.test(l)) return "html"; return "";
+  }
+  function highlight(code, lang) {
+    var k = langKey(lang);
+    if (!k) return esc(code);
+    if (k === "html") {
+      return esc(code)
+        .replace(/(&lt;!--[\s\S]*?--&gt;)/g, '<span class="tk-c">$1</span>')
+        .replace(/(&lt;\/?)([A-Za-z][\w-]*)/g, '$1<span class="tk-t">$2</span>')
+        .replace(/([\w:@-]+)(=)(&quot;[^&]*?&quot;)/g, '<span class="tk-a">$1</span>$2<span class="tk-s">$3</span>');
+    }
+    var com = k === "py" || k === "sh" ? "#.*" : k === "css" ? "\\/\\*[\\s\\S]*?\\*\\/" : k === "json" ? "(?!)" : "\\/\\/.*|\\/\\*[\\s\\S]*?\\*\\/|#(?=\\s)";
+    var kw = KW[k] ? "\\b(?:" + KW[k].split(" ").join("|") + ")\\b" : "(?!)";
+    var re = new RegExp("(" + com + ")|(\"(?:\\\\.|[^\"\\\\\\n])*\"|'(?:\\\\.|[^'\\\\\\n])*'|`(?:\\\\.|[^`\\\\])*`)|(\\b\\d+(?:\\.\\d+)?\\b)|(" + kw + ")|(\\b[A-Za-z_$][\\w$]*(?=\\())", "g");
+    var out = "", last = 0, m;
+    while ((m = re.exec(code))) {
+      out += esc(code.slice(last, m.index));
+      var cls = m[1] ? "tk-c" : m[2] ? "tk-s" : m[3] ? "tk-n" : m[4] ? "tk-k" : "tk-f";
+      out += '<span class="' + cls + '">' + esc(m[0]) + "</span>"; last = re.lastIndex;
+      if (m[0] === "") re.lastIndex++;
+    }
+    return out + esc(code.slice(last));
+  }
+
+  /* ================= markdown ================= */
+  function inline(s) {
+    var codes = [];
+    s = s.replace(/`([^`]+)`/g, function (m, c) { codes.push(c); return "\u0000" + (codes.length - 1) + "\u0000"; });
+    s = esc(s);
+    s = s.replace(/\*\*([^*]+)\*\*/g, "<strong>$1</strong>").replace(/(^|[^*\w])\*([^*\s][^*]*?)\*(?!\w)/g, "$1<em>$2</em>");
+    s = s.replace(/\[([^\]]+)\]\((https?:\/\/[^\s)]+)\)/g, '<a href="$2" target="_blank" rel="noopener">$1</a>');
+    return s.replace(/\u0000(\d+)\u0000/g, function (m, i) { return "<code>" + esc(codes[i]) + "</code>"; });
+  }
+  function splitBlocks(text) {
+    var lines = text.split("\n"), blocks = [], cur = [], fence = null;
+    function flush() { if (cur.length) { blocks.push({ src: cur.join("\n"), fence: false }); cur = []; } }
+    for (var i = 0; i < lines.length; i++) {
+      var L = lines[i];
+      if (fence) {
+        fence.lines.push(L);
+        if (/^\s*```\s*$/.test(L)) { blocks.push({ src: fence.lines.join("\n"), fence: true, open: false }); fence = null; }
+      } else if (/^\s*```/.test(L)) { flush(); fence = { lines: [L] }; }
+      else if (/^\s*$/.test(L)) flush();
+      else cur.push(L);
+    }
+    flush();
+    if (fence) blocks.push({ src: fence.lines.join("\n"), fence: true, open: true });
+    return blocks;
+  }
+  function renderText(src) {
+    var lines = src.split("\n"), html = "", i = 0, m;
+    function startsBlock(L) { return /^(#{1,4})\s/.test(L) || /^\s*[-*]\s+/.test(L) || /^\s*\d+[.)]\s+/.test(L) || /^\s*>/.test(L) || /^\s*(---|\*\*\*)\s*$/.test(L); }
+    while (i < lines.length) {
+      var L = lines[i];
+      if ((m = L.match(/^(#{1,4})\s+(.*)$/))) { var lv = Math.min(m[1].length + 1, 5); html += "<h" + lv + ">" + inline(m[2]) + "</h" + lv + ">"; i++; }
+      else if (/^\s*(---|\*\*\*)\s*$/.test(L)) { html += "<hr>"; i++; }
+      else if (/^\s*>/.test(L)) { var q = []; while (i < lines.length && /^\s*>/.test(lines[i])) q.push(lines[i++].replace(/^\s*>\s?/, "")); html += "<blockquote>" + inline(q.join(" ")) + "</blockquote>"; }
+      else if (/^\s*[-*]\s+/.test(L)) { html += "<ul>"; while (i < lines.length && /^\s*[-*]\s+/.test(lines[i])) html += "<li>" + inline(lines[i++].replace(/^\s*[-*]\s+/, "")) + "</li>"; html += "</ul>"; }
+      else if (/^\s*\d+[.)]\s+/.test(L)) { html += "<ol>"; while (i < lines.length && /^\s*\d+[.)]\s+/.test(lines[i])) html += "<li>" + inline(lines[i++].replace(/^\s*\d+[.)]\s+/, "")) + "</li>"; html += "</ol>"; }
+      else if (L.indexOf("|") > -1 && i + 1 < lines.length && /^\s*\|?\s*:?-{2,}:?\s*(\|\s*:?-{2,}:?\s*)*\|?\s*$/.test(lines[i + 1])) {
+        var cells = function (r) { return r.trim().replace(/^\||\|$/g, "").split("|").map(function (c) { return c.trim(); }); };
+        var head = cells(L); i += 2; var rows = [];
+        while (i < lines.length && lines[i].indexOf("|") > -1) rows.push(cells(lines[i++]));
+        html += '<div class="tw"><table><thead><tr>' + head.map(function (c) { return "<th>" + inline(c) + "</th>"; }).join("") + "</tr></thead><tbody>" +
+          rows.map(function (r) { return "<tr>" + r.map(function (c) { return "<td>" + inline(c) + "</td>"; }).join("") + "</tr>"; }).join("") + "</tbody></table></div>";
+      } else {
+        var p = []; while (i < lines.length && !startsBlock(lines[i])) p.push(lines[i++]); if (!p.length) { p.push(lines[i++]); }
+        html += "<p>" + inline(p.join(" ")) + "</p>";
+      }
+    }
+    return html;
+  }
+  var EXT = { html: "index.html", py: "script.py", python: "script.py", js: "script.js", javascript: "script.js", ts: "extension.ts", typescript: "extension.ts", php: "plugin.php", css: "style.css", json: "data.json", jsx: "Component.jsx", sh: "setup.sh", bash: "setup.sh" };
+  function renderBlockHTML(b) {
+    if (b.fence) {
+      var lines = b.src.split("\n"), info = lines[0].replace(/^\s*```/, "").trim().split(/\s+/), lang = info[0] || "", fname = info[1] || "";
+      var body = lines.slice(1); if (!b.open) body.pop();
+      var code = body.join("\n"), label = fname || lang || "code";
+      var canPv = !b.open && /^(html|htm|svg)$/i.test(lang);
+      return '<div class="code" data-lang="' + esc(lang) + '" data-file="' + esc(fname) + '"><div class="code-h"><span class="nm">' + esc(label) + "</span>" +
+        (canPv ? '<button class="pv" data-a="pv"><i class="fa-solid fa-play"></i>Preview</button>' : "") +
+        (b.open ? "" : '<button data-a="dl" title="Download"><i class="fa-solid fa-download"></i>Download</button><button data-a="cp"><i class="fa-regular fa-copy"></i>Copy</button>') +
+        '</div><pre><code>' + highlight(code, lang) + "</code></pre></div>";
+    }
+    var w = b.src.trim().match(/^\[\[widget:(\w+)(?::([\w.]+))?\]\]$/);
+    if (w) return '<div class="widget" data-w="' + w[1] + '" data-p="' + (w[2] || "") + '"></div>';
+    return '<div class="md-t">' + renderText(b.src) + "</div>";
+  }
+  /* incremental render: unchanged blocks keep their DOM (so animated widgets and previews survive streaming) */
+  function renderInto(root, text, streaming) {
+    var blocks = splitBlocks(text), kids = Array.prototype.filter.call(root.children, function (c) { return !c.classList.contains("caret"); });
+    for (var i = 0; i < blocks.length; i++) {
+      var key = (blocks[i].open ? "o:" : "c:") + blocks[i].src, el = kids[i];
+      if (el && el.__key === key) continue;
+      var tmp = document.createElement("div"); tmp.innerHTML = renderBlockHTML(blocks[i]); var n = tmp.firstChild; n.__key = key;
+      if (el) root.replaceChild(n, el); else root.appendChild(n);
+    }
+    for (var j = kids.length - 1; j >= blocks.length; j--) root.removeChild(kids[j]);
+    var cs = root.querySelectorAll(".caret"), c = cs[0];
+    for (var q = 1; q < cs.length; q++) cs[q].remove();
+    if (streaming) {
+      if (!c) { c = document.createElement("span"); c.className = "caret"; }
+      var last = null; for (var z = root.children.length - 1; z >= 0; z--) { if (!root.children[z].classList.contains("caret")) { last = root.children[z]; break; } }
+      var tgt = last && last.classList.contains("md-t") ? last : root;
+      if (tgt !== root) { for (;;) { var lc = tgt.lastElementChild; if (lc && /^(UL|OL|LI|P|BLOCKQUOTE)$/.test(lc.tagName)) tgt = lc; else break; } }
+      tgt.appendChild(c);
+    } else if (c) c.remove();
+    mountWidgets(root);
+  }
+
+  /* ================= animated widgets ================= */
+  function fit(cv) {
+    var dpr = Math.min(devicePixelRatio || 1, 2), w = cv.clientWidth, h = cv.clientHeight;
+    if (!w || !h) return null;
+    if (cv.width !== Math.round(w * dpr) || cv.height !== Math.round(h * dpr)) { cv.width = Math.round(w * dpr); cv.height = Math.round(h * dpr); }
+    var ctx = cv.getContext("2d"); ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    return { ctx: ctx, w: w, h: h };
+  }
+  /* runs fn each frame while the widget is on the page; with reduced motion it draws on demand only */
+  function runLoop(box, fn) {
+    var last = performance.now();
+    function frame(now) {
+      if (!box.isConnected) return;
+      var dt = Math.min((now - last) / 1000, 0.1); last = now;
+      if (!document.hidden) fn(dt, now / 1000);
+      requestAnimationFrame(frame);
+    }
+    if (reduce) { box._kick = function () { fn(0, 0); }; fn(0, 0); } else { box._kick = function () {}; requestAnimationFrame(frame); }
+  }
+  function shell(box, title, sub, ctl) {
+    box.innerHTML = '<div class="w-head"><b>' + title + "</b><span>" + sub + '</span></div><canvas></canvas><div class="w-ctl">' + ctl + "</div>";
+    return box.querySelector("canvas");
+  }
+  function mountWidgets(root) {
+    var list = root.querySelectorAll ? root.querySelectorAll(".widget:not([data-m])") : [];
+    Array.prototype.forEach.call(list, function (box) {
+      box.setAttribute("data-m", "1");
+      var w = box.getAttribute("data-w"), p = box.getAttribute("data-p");
+      try { ({ solar: wSolar, orbit: wOrbit, moon: wMoon, debris: wDebris })[w](box, p); }
+      catch (e) { box.innerHTML = '<div class="w-head"><b>Animation unavailable</b></div>'; }
+    });
+  }
+
+  /* ---- solar system ---- */
+  function wSolar(box) {
+    var PL = [
+      { n: "Mercury", a: 0.387, T: 87.97, c: "#b9b9b9", r: 3 }, { n: "Venus", a: 0.723, T: 224.7, c: "#e8c883", r: 5 },
+      { n: "Earth", a: 1, T: 365.25, c: "#4aa3ff", r: 5.5 }, { n: "Mars", a: 1.524, T: 687, c: "#e0693f", r: 4 },
+      { n: "Jupiter", a: 5.204, T: 4332.6, c: "#d9b48a", r: 11 }, { n: "Saturn", a: 9.58, T: 10759, c: "#e8d49a", r: 9.5, ring: 1 },
+      { n: "Uranus", a: 19.2, T: 30687, c: "#8be6ee", r: 7 }, { n: "Neptune", a: 30.07, T: 60190, c: "#5b78f7", r: 7 }
+    ];
+    var phase = [0.4, 2.1, 4.0, 5.2, 1.1, 3.3, 0.2, 5.8], days = 0, speed = 40, paused = false, hov = -1, sel = -1, pos = [];
+    var cv = shell(box, "Solar system", "orbit sizes compressed, not to scale",
+      '<label>Speed <input type="range" min="0" max="100" value="40" aria-label="Simulation speed"></label><button type="button">Pause</button><span class="w-read"></span>');
+    var rng = box.querySelector("input"), btn = box.querySelector("button"), read = box.querySelector(".w-read");
+    var dps = function () { return Math.pow(10, speed / 100 * 3.2); };
+    rng.oninput = function () { speed = +rng.value; if (box._kick) box._kick(); };
+    btn.onclick = function () { paused = !paused; btn.textContent = paused ? "Play" : "Pause"; };
+    cv.addEventListener("pointermove", function (e) {
+      var r = cv.getBoundingClientRect(), x = e.clientX - r.left, y = e.clientY - r.top; hov = -1; var best = 18;
+      pos.forEach(function (p, i) { var d = Math.hypot(p.x - x, p.y - y); if (d < best) { best = d; hov = i; } });
+      cv.style.cursor = hov > -1 ? "pointer" : "default";
+    });
+    cv.addEventListener("pointerdown", function () { sel = hov; });
+    var stars = []; for (var i = 0; i < 70; i++) stars.push([Math.random(), Math.random(), Math.random()]);
+    runLoop(box, function (dt) {
+      var f = fit(cv); if (!f) return; var c = f.ctx, w = f.w, h = f.h, cx = w / 2, cy = h / 2, R = Math.min(w, h) / 2 - 14;
+      if (!paused) days += dt * dps();
+      c.clearRect(0, 0, w, h);
+      c.fillStyle = "#fff"; stars.forEach(function (s) { c.globalAlpha = 0.15 + s[2] * 0.4; c.fillRect(s[0] * w, s[1] * h, 1.2, 1.2); }); c.globalAlpha = 1;
+      var g = c.createRadialGradient(cx, cy, 2, cx, cy, 34); g.addColorStop(0, "#fff7c2"); g.addColorStop(0.3, "#ffb52e"); g.addColorStop(1, "rgba(255,150,30,0)");
+      c.fillStyle = g; c.beginPath(); c.arc(cx, cy, 34, 0, 6.283); c.fill();
+      c.fillStyle = "#ffd25e"; c.beginPath(); c.arc(cx, cy, 11, 0, 6.283); c.fill();
+      PL.forEach(function (p, i) {
+        var ro = 26 + (R - 26) * Math.sqrt(p.a / 30.07), th = phase[i] + 6.283 * days / p.T, x = cx + ro * Math.cos(th), y = cy + ro * Math.sin(th);
+        pos[i] = { x: x, y: y };
+        c.strokeStyle = i === (sel > -1 ? sel : hov) ? "rgba(0,242,254,.7)" : "rgba(255,255,255,.1)"; c.lineWidth = 1; c.beginPath(); c.arc(cx, cy, ro, 0, 6.283); c.stroke();
+        if (p.ring) { c.strokeStyle = "rgba(232,212,154,.8)"; c.lineWidth = 2; c.beginPath(); c.ellipse(x, y, p.r * 1.9, p.r * 0.6, -0.4, 0, 6.283); c.stroke(); }
+        c.fillStyle = p.c; c.beginPath(); c.arc(x, y, p.r, 0, 6.283); c.fill();
+        if (i === 2) { var mt = days / 27.32 * 6.283; c.fillStyle = "#ddd"; c.beginPath(); c.arc(x + 11 * Math.cos(mt), y + 11 * Math.sin(mt), 1.8, 0, 6.283); c.fill(); }
+        if (i === (sel > -1 ? sel : hov) || w > 520) { c.fillStyle = i === (sel > -1 ? sel : hov) ? "#00f2fe" : "rgba(255,255,255,.55)"; c.font = "11px Inter, sans-serif"; c.fillText(p.n, x + p.r + 4, y - p.r - 2); }
+      });
+      var k = sel > -1 ? sel : hov;
+      read.textContent = k > -1 ? PL[k].n + ": " + PL[k].a.toFixed(2) + " AU, year " + (PL[k].T < 1000 ? Math.round(PL[k].T) + " days" : (PL[k].T / 365.25).toFixed(1) + " years") : "1 second = " + (dps() < 10 ? dps().toFixed(1) : Math.round(dps())) + " days";
+    });
+  }
+
+  /* ---- satellite orbit simulator (real Kepler maths) ---- */
+  function wOrbit(box, p) {
+    var MU = 398600.4418, RE = 6371, alt = clamp(parseFloat(p) || 420, 200, 36000), warp = 1200, t = 0, trail = [];
+    var s0 = Math.round(Math.log(alt / 200) / Math.log(180) * 100);
+    var cv = shell(box, "Satellite orbit simulator", "orbit radius drawn on a log scale",
+      '<label>Altitude <input type="range" id="a" min="0" max="100" value="' + s0 + '" aria-label="Altitude"></label><label>Time warp <input type="range" id="b" min="200" max="4000" value="1200" aria-label="Time warp"></label>' +
+      '<button type="button" data-v="420">ISS</button><button type="button" data-v="550">Starlink</button><button type="button" data-v="20200">GPS</button><button type="button" data-v="35786">GEO</button><span class="w-read"></span>');
+    var ra = box.querySelector("#a"), rb = box.querySelector("#b"), read = box.querySelector(".w-read");
+    function setAlt(v) { alt = clamp(v, 200, 36000); ra.value = Math.round(Math.log(alt / 200) / Math.log(180) * 100); trail = []; if (box._kick) box._kick(); }
+    ra.oninput = function () { alt = 200 * Math.pow(180, +ra.value / 100); trail = []; if (box._kick) box._kick(); };
+    rb.oninput = function () { warp = +rb.value; if (box._kick) box._kick(); };
+    Array.prototype.forEach.call(box.querySelectorAll("button[data-v]"), function (b) { b.onclick = function () { setAlt(+b.getAttribute("data-v")); }; });
+    runLoop(box, function (dt) {
+      var f = fit(cv); if (!f) return; var c = f.ctx, w = f.w, h = f.h, cx = w / 2, cy = h / 2, hh = Math.min(w, h) / 2;
+      var a = RE + alt, T = 2 * Math.PI * Math.sqrt(a * a * a / MU), v = Math.sqrt(MU / a);
+      t += dt * warp; var th = 6.283 * t / T, rot = 6.283 * t / 86164;
+      var rpx = Math.min(36 + (hh - 48) * Math.log10(a / RE) / Math.log10(6.62), hh - 8);
+      c.clearRect(0, 0, w, h);
+      c.strokeStyle = "rgba(0,242,254,.35)"; c.setLineDash([4, 5]); c.lineWidth = 1; c.beginPath(); c.arc(cx, cy, rpx, 0, 6.283); c.stroke(); c.setLineDash([]);
+      var g = c.createRadialGradient(cx - 9, cy - 9, 4, cx, cy, 31); g.addColorStop(0, "#5fb4ff"); g.addColorStop(1, "#0b3d91");
+      c.fillStyle = g; c.beginPath(); c.arc(cx, cy, 30, 0, 6.283); c.fill();
+      c.fillStyle = "#3fae6a"; [[0.4, 0.5], [2.4, 0.4], [4.2, 0.55]].forEach(function (L) { c.beginPath(); c.arc(cx + 17 * Math.cos(L[0] + rot), cy + 17 * Math.sin(L[0] + rot), 6 * L[1] + 3, 0, 6.283); c.fill(); });
+      var gx = cx + 30 * Math.cos(rot), gy = cy + 30 * Math.sin(rot);
+      var sx = cx + rpx * Math.cos(th), sy = cy + rpx * Math.sin(th);
+      trail.push([sx, sy]); if (trail.length > 70) trail.shift();
+      trail.forEach(function (q, i) { c.globalAlpha = i / trail.length * 0.6; c.fillStyle = "#00f2fe"; c.fillRect(q[0] - 1, q[1] - 1, 2, 2); }); c.globalAlpha = 1;
+      c.strokeStyle = "rgba(255,255,255,.25)"; c.setLineDash([2, 4]); c.beginPath(); c.moveTo(gx, gy); c.lineTo(sx, sy); c.stroke(); c.setLineDash([]);
+      c.fillStyle = "#fff"; c.beginPath(); c.arc(gx, gy, 2.6, 0, 6.283); c.fill();
+      c.save(); c.translate(sx, sy); c.rotate(th + 1.57); c.fillStyle = "#10b981"; c.fillRect(-9, -2, 5, 4); c.fillRect(4, -2, 5, 4); c.fillStyle = "#e5e7eb"; c.fillRect(-3, -3, 6, 6); c.restore();
+      c.fillStyle = "rgba(255,255,255,.55)"; c.font = "11px Inter, sans-serif"; c.fillText("ground point", gx > cx ? gx + 6 : gx - 70, gy - 6);
+      var cls = alt < 2000 ? "LEO" : alt < 35586 ? "MEO" : alt <= 35986 ? "GEO: hovers over one spot" : "high orbit";
+      read.textContent = Math.round(alt) + " km | period " + (T < 10800 ? (T / 60).toFixed(1) + " min" : (T / 3600).toFixed(2) + " h") + " | " + v.toFixed(2) + " km/s | " + cls;
+    });
+  }
+
+  /* ---- Moon phases ---- */
+  function wMoon(box) {
+    var day = 4.5, playing = true, SYN = 29.53;
+    var cv = shell(box, "Moon phases", "one lunar cycle is 29.5 days",
+      '<label>Day <input type="range" min="0" max="29.5" step="0.1" value="4.5" aria-label="Day of the lunar cycle"></label><button type="button">Pause</button><span class="w-read"></span>');
+    var rng = box.querySelector("input"), btn = box.querySelector("button"), read = box.querySelector(".w-read");
+    rng.oninput = function () { day = +rng.value; playing = false; btn.textContent = "Play"; if (box._kick) box._kick(); };
+    btn.onclick = function () { playing = !playing; btn.textContent = playing ? "Pause" : "Play"; };
+    function name(f) { return f < 0.03 || f > 0.97 ? "New Moon" : f < 0.22 ? "Waxing crescent" : f < 0.28 ? "First quarter" : f < 0.47 ? "Waxing gibbous" : f < 0.53 ? "Full Moon" : f < 0.72 ? "Waning gibbous" : f < 0.78 ? "Third quarter" : "Waning crescent"; }
+    function disc(c, x, y, R, f) {
+      var waning = f > 0.5, ff = waning ? 1 - f : f, k = Math.cos(6.283 * ff);
+      c.save(); c.translate(x, y); if (waning) c.scale(-1, 1);
+      c.fillStyle = "#1b2440"; c.beginPath(); c.arc(0, 0, R, 0, 6.283); c.fill();
+      var g = c.createRadialGradient(-R * 0.2, -R * 0.2, R * 0.1, 0, 0, R); g.addColorStop(0, "#f4f1e6"); g.addColorStop(1, "#c9c4b3");
+      c.fillStyle = g; c.beginPath(); c.arc(0, 0, R, -1.5708, 1.5708, false); c.ellipse(0, 0, Math.abs(k) * R, R, 0, 1.5708, -1.5708, k > 0); c.closePath(); c.fill();
+      c.fillStyle = "rgba(0,0,0,.08)"; [[-.3, -.2, .18], [.25, .15, .22], [.1, -.4, .12]].forEach(function (m) { c.beginPath(); c.arc(m[0] * R, m[1] * R, m[2] * R, 0, 6.283); c.fill(); }); c.restore();
+    }
+    runLoop(box, function (dt) {
+      var f = fit(cv); if (!f) return; var c = f.ctx, w = f.w, h = f.h;
+      if (playing) { day = (day + dt * 2.2) % SYN; rng.value = day.toFixed(1); }
+      var fr = day / SYN, lit = (1 - Math.cos(6.283 * fr)) / 2;
+      c.clearRect(0, 0, w, h);
+      var ox = w * 0.28, oy = h / 2, orr = Math.min(w * 0.22, h * 0.36);
+      c.fillStyle = "rgba(255,210,90,.12)"; for (var i = -3; i <= 3; i++) { c.fillRect(6, oy + i * 26 - 1, ox - orr - 40, 2); }
+      c.fillStyle = "#ffd25e"; c.font = "11px Inter, sans-serif"; c.fillText("Sunlight", 8, oy - 92);
+      c.strokeStyle = "rgba(255,255,255,.18)"; c.beginPath(); c.arc(ox, oy, orr, 0, 6.283); c.stroke();
+      var g = c.createRadialGradient(ox - 4, oy - 4, 2, ox, oy, 15); g.addColorStop(0, "#5fb4ff"); g.addColorStop(1, "#0b3d91"); c.fillStyle = g; c.beginPath(); c.arc(ox, oy, 14, 0, 6.283); c.fill();
+      var ang = Math.PI - 6.283 * fr, mx = ox + orr * Math.cos(ang), my = oy + orr * Math.sin(ang);
+      c.fillStyle = "#1b2440"; c.beginPath(); c.arc(mx, my, 8, 0, 6.283); c.fill(); c.fillStyle = "#eee8d4"; c.beginPath(); c.arc(mx, my, 8, 1.5708, 4.712); c.closePath(); c.fill();
+      c.fillStyle = "rgba(255,255,255,.5)"; c.fillText("Earth", ox - 14, oy + 30); c.fillText("top-down view", ox - 36, oy + orr + 26);
+      disc(c, w * 0.7, h / 2, Math.min(h * 0.34, w * 0.18), fr);
+      c.fillStyle = "rgba(255,255,255,.5)"; c.fillText("as seen from Earth (northern sky)", w * 0.7 - 80, h - 12);
+      read.textContent = "Day " + day.toFixed(1) + ": " + name(fr) + ", " + Math.round(lit * 100) + "% lit";
+    });
+  }
+
+  /* ---- debris cascade (Kessler syndrome) ---- */
+  function wDebris(box) {
+    var K = 438.7, P = [], lost = 0, hits = 0, tnow = 0, MAXP = 700, cx = 0, cy = 0;
+    var cv = shell(box, "Orbital debris cascade", "click the orbits to cause a collision",
+      '<button type="button" id="r">Reset</button><button type="button" id="x">Smash a satellite</button><span class="w-read"></span>');
+    var read = box.querySelector(".w-read");
+    function mk(r, th, kind) { return { r: r, th: th, w: K / Math.pow(r, 1.5), k: kind, x: 0, y: 0, born: tnow }; }
+    function reset() {
+      P = []; lost = 0; hits = 0;
+      for (var i = 0; i < 85; i++) P.push(mk(rand(54, 128), rand(0, 6.283), "d"));
+      for (var j = 0; j < 12; j++) P.push(mk(rand(60, 122), rand(0, 6.283), "s"));
+    }
+    function burst(p, n) {
+      for (var i = 0; i < n && P.length < MAXP; i++) { var q = mk(clamp(p.r + rand(-14, 14), 46, 140), p.th + rand(-0.04, 0.04), "f"); P.push(q); }
+    }
+    function collide(a, b) {
+      hits++; if (a.k === "s") lost++; if (b.k === "s") lost++;
+      a.dead = b.dead = true; burst(a, 6); burst(b, 6);
+    }
+    function nearest(x, y, max) { var best = max, bp = null; P.forEach(function (p) { if (p.dead) return; var d = Math.hypot(p.x - x, p.y - y); if (d < best) { best = d; bp = p; } }); return bp; }
+    cv.addEventListener("pointerdown", function (e) {
+      var r = cv.getBoundingClientRect(), x = e.clientX - r.left, y = e.clientY - r.top, p = nearest(x, y, 40);
+      if (p) { p.dead = true; hits++; if (p.k === "s") lost++; burst(p, 16); }
+    });
+    box.querySelector("#r").onclick = reset;
+    box.querySelector("#x").onclick = function () { var s = P.filter(function (p) { return p.k === "s" && !p.dead; }); if (s.length) { var p = pick(s); p.dead = true; lost++; hits++; burst(p, 16); } };
+    reset();
+    var frameN = 0;
+    runLoop(box, function (dt) {
+      var f = fit(cv); if (!f) return; var c = f.ctx, w = f.w, h = f.h; cx = w / 2; cy = h / 2; tnow += dt; frameN++;
+      c.clearRect(0, 0, w, h);
+      var sc = Math.min(1.25, Math.min(w, h) / 300);
+      [60, 90, 125].forEach(function (r) { c.strokeStyle = "rgba(255,255,255,.06)"; c.beginPath(); c.arc(cx, cy, r * sc, 0, 6.283); c.stroke(); });
+      var g = c.createRadialGradient(cx - 8, cy - 8, 4, cx, cy, 34); g.addColorStop(0, "#5fb4ff"); g.addColorStop(1, "#0b3d91"); c.fillStyle = g; c.beginPath(); c.arc(cx, cy, 34 * sc * 0.8, 0, 6.283); c.fill();
+      P.forEach(function (p) { p.th += p.w * dt * 0.9; p.x = cx + p.r * sc * Math.cos(p.th); p.y = cy + p.r * sc * Math.sin(p.th); });
+      if (frameN % 2 === 0 && P.length < MAXP) {
+        for (var i = 0; i < P.length; i++) { var a = P[i]; if (a.dead) continue;
+          for (var j = i + 1; j < P.length; j++) { var b = P[j]; if (b.dead || Math.abs(a.r - b.r) < 1.5 || tnow - a.born < 1 || tnow - b.born < 1) continue;
+            var dx = a.x - b.x, dy = a.y - b.y; if (dx * dx + dy * dy < 14) { collide(a, b); break; } } }
+      }
+      P = P.filter(function (p) { return !p.dead; });
+      P.forEach(function (p) {
+        if (p.k === "s") { c.fillStyle = "#10b981"; c.fillRect(p.x - 2.5, p.y - 2.5, 5, 5); c.fillStyle = "rgba(16,185,129,.4)"; c.fillRect(p.x - 6, p.y - 1, 3, 2); c.fillRect(p.x + 3, p.y - 1, 3, 2); }
+        else { var age = clamp((tnow - p.born) / 5, 0, 1); c.fillStyle = p.k === "f" ? "rgb(" + Math.round(255 - 95 * age) + "," + Math.round(140 + 20 * age) + "," + Math.round(60 + 100 * age) + ")" : "#9aa5b8"; c.fillRect(p.x - 1, p.y - 1, 2, 2); }
+      });
+      read.textContent = P.length + " objects | collisions " + hits + " | satellites lost " + lost;
+    });
+  }
+
+  /* ================= built-in engine ================= */
+  var F = "```";
+  function fence(lang, code, fname) { return F + lang + (fname ? " " + fname : "") + "\n" + code.replace(/^\n+|\n+$/g, "") + "\n" + F; }
+  var SPACE_CHIPS = ["Show me the solar system", "Why is space debris dangerous?", "How do satellites stay in orbit?", "Explain black holes", "Moon phases", "Tell me a fun space fact"];
+  var DISTANCES = { moon: ["the Moon", "about 1.3 seconds", "384,400 km on average"], sun: ["the Sun", "about 8 minutes 20 seconds", "149.6 million km on average (1 AU)"], mars: ["Mars", "between roughly 3 and 22 minutes, depending on where both planets are", "from about 55 million km up to about 400 million km"], jupiter: ["Jupiter", "roughly 35 to 52 minutes", "from about 590 million to 970 million km"], saturn: ["Saturn", "roughly 70 to 90 minutes", "from about 1.2 to 1.67 billion km"], neptune: ["Neptune", "about 4 hours", "about 4.3 to 4.7 billion km"], pluto: ["Pluto", "roughly 4.5 to 7 hours", "from about 4.3 to 7.5 billion km"], proxima: ["Proxima Centauri", "4.24 years", "about 40 trillion km"], andromeda: ["the Andromeda galaxy", "about 2.5 million years", "about 24 quintillion km"], voyager: ["Voyager 1", "more than 22 hours, and growing", "more than 24 billion km, and growing"] };
+  var G = { mercury: 0.38, venus: 0.91, moon: 0.166, mars: 0.38, jupiter: 2.53, saturn: 1.07, uranus: 0.89, neptune: 1.14, pluto: 0.06, sun: 27.9 };
+  var JOKES = ["Why did the Sun go to school? To get a little brighter.", "How does the Moon cut its hair? Eclipse it.", "Why did the astronaut break up with her boyfriend? She needed space.", "What do you call a tick on the Moon? A luna-tick.", "Why can't you trust atoms in a black hole? They're always collapsing under pressure.", "Why don't aliens visit us? They read the reviews: only one star."];
+  var FACTS = [
+    "A day on **Venus** (about 243 Earth days) is longer than its year (about 225 Earth days).",
+    "A teaspoon of **neutron star** material would weigh billions of tonnes on Earth.",
+    "**Saturn** is less dense than water. In a big enough bathtub, it would float.",
+    "The light you see from the Sun left it about 8 minutes ago, but the energy in that light spent thousands of years working its way out of the Sun's core.",
+    "**Olympus Mons** on Mars is about 22 km high, roughly two and a half times the height of Everest above sea level.",
+    "The **ISS** orbits Earth about 16 times a day, so its crew sees around 16 sunrises every 24 hours.",
+    "Footprints left on the **Moon** will likely last for millions of years because there is no wind or water to erase them.",
+    "Sunsets on **Mars** look blue, because fine dust scatters red light differently than Earth's air does.",
+    "**Mercury** is the smallest planet and closest to the Sun, yet it has water ice in permanently shadowed craters at its poles.",
+    "**Voyager 1** carries a golden record with sounds and images of Earth, and it is now in interstellar space.",
+    "Earth's rotation is slowing by about 1.7 milliseconds per century because of tidal friction with the Moon.",
+    "The Moon is drifting away from Earth at about 3.8 cm a year, roughly the speed fingernails grow."
+  ];
+  function orbitStats(alt) {
+    var MU = 398600.4418, RE = 6371, a = RE + alt, T = 2 * Math.PI * Math.sqrt(a * a * a / MU), v = Math.sqrt(MU / a);
+    return { T: T, v: v, per: T < 10800 ? (T / 60).toFixed(1) + " minutes" : (T / 3600).toFixed(2) + " hours", orbitsDay: 86400 / T };
+  }
+  function evalMath(q) {
+    var m = q.replace(/[,]/g, "").replace(/\bx\b/g, "*").replace(/times|multiplied by/g, "*").replace(/divided by|over/g, "/").replace(/plus/g, "+").replace(/minus/g, "-").replace(/to the power of/g, "^").match(/[-+]?[\d.]+(?:\s*[-+*/^%]\s*[-+(]?[\d.]+\)?)+|\([\d\s.+\-*/^%()]+\)(?:\s*[-+*/^%]\s*[\d.()]+)*/);
+    if (!m) return null;
+    var ex = m[0].trim(); if (!/^[\d\s+\-*/().^%]+$/.test(ex) || !/[+\-*/^%]/.test(ex.replace(/^[-+]/, ""))) return null;
+    try { var r = Function('"use strict";return (' + ex.replace(/\^/g, "**") + ")")(); if (typeof r !== "number" || !isFinite(r)) return null; return { ex: ex, r: r }; } catch (e) { return null; }
+  }
+  var fmtN = function (n) { return Math.abs(n) >= 1e6 || (Math.abs(n) < 1e-3 && n !== 0) ? n.toExponential(4) : String(+n.toPrecision(10)); };
+
+  /* knowledge base. Each entry: id, patterns (any match scores), weight, answer, related questions */
+  var KB = [
+    { id: "greet", w: 4, re: [/^(hi+|hello+|hey+|yo|hola|salam|assalamu ?alaikum|namaste|good (morning|afternoon|evening)|sup)\b/], md: function () {
+      var n = profile.name ? ", " + profile.name : ""; return pick(["Hello", "Hi", "Hey there"]) + n + "! I'm **EcoAi**. Ask me about space, satellites and orbits, have me *show* an animated explainer, or tell me what you'd like to build and I'll write the code.";
+    }, rel: ["Show me the solar system", "Write a landing page for a space tour company", "What can you do?"] },
+    { id: "help", w: 2, re: [/\b(what can you do|help me|capabilit|your features|what do you know|how do (i|you) use)\b/, /^help\??$/], md: function () {
+      return "Here is what I can do in this window:\n\n- **Space and astronomy**: planets, stars, black holes, the ISS, telescopes, rockets, Mars, exoplanets and more\n- **Orbits and debris**: how satellites stay up, orbit maths, space junk and the Kessler syndrome\n- **Animated explainers**: ask to *show* the solar system, a satellite orbit, Moon phases or a debris cascade\n- **Calculators**: orbital period at any altitude, your weight on other worlds, light travel time, unit conversion, plain arithmetic\n- **Code**: websites, apps, APIs and **plugins** (Chrome, WordPress, VS Code, an AI tool server, an embeddable widget), with live preview for web pages\n- **EcoOrbit and AgroOrbit**: what they are and how satellites help farms and the climate\n\nI run on a built-in engine, so I know a lot about these topics but I am not an open-ended language model. For anything outside them, add a Claude API key in **Settings** and I will switch to a full AI.";
+    }, rel: ["Show me the solar system", "Write a landing page for a space tour company", "Make a Chrome extension"] },
+    { id: "who", w: 3, re: [/\b(who are you|what are you|your name|who (made|created|built) you|are you (claude|chatgpt|gpt|gemini|real|human|an ai|a bot))\b/], md: function () {
+      return "I am **EcoAi**, the assistant built into the EcoOrbit site. To be straightforward about what I am: in the default **built-in mode** I run entirely in your browser using a hand-written knowledge base and calculators, with no cloud model behind me. That makes me fast and private, but limited to the topics above.\n\nIf you add your own Claude API key in **Settings**, the same chat window sends your messages to Claude instead, and then I can talk about anything, review your code and write much longer answers.";
+    }, rel: ["What can you do?", "Tell me about EcoOrbit"] },
+    { id: "thanks", w: 3, re: [/\b(thanks|thank you|thx|ty|cheers|shukriya|dhonnobad)\b/], md: function () { return pick(["You're welcome! Want to explore something else, like how rockets reach orbit?", "Happy to help. Ask me anything else about space or code.", "Anytime. Next stop: black holes, Mars, or a code project?"]); }, rel: ["How do rockets work?", "Explain black holes"] },
+    { id: "joke", w: 3, re: [/\b(joke|make me laugh|something funny)\b/], md: function () { return pick(JOKES); }, rel: ["Tell me a fun space fact", "Another joke"] },
+    { id: "fact", w: 3, re: [/\b(fun fact|random fact|surprise me|tell me something|did you know|space fact)\b/], md: function () { return "**Fun fact:** " + pick(FACTS); }, rel: ["Another fun fact", "Show me the solar system"] },
+    { id: "time", w: 3, re: [/\b(what('?s| is) the (time|date)|today'?s date|current (time|date)|what day is it)\b/], md: function () { var d = new Date(); return "Your device says it is **" + d.toLocaleDateString(undefined, { weekday: "long", year: "numeric", month: "long", day: "numeric" }) + "**, **" + d.toLocaleTimeString() + "**.\n\nFun space angle: at this very second the ISS is moving at about 7.66 km/s relative to the ground."; }, rel: ["Tell me about the ISS"] },
+    { id: "solar", w: 3, re: [/solar system/, /\b(how many|list|order of|eight|8) planets\b/, /planets in order/], md: function () {
+      return "## The solar system\n\nOur solar system is the Sun plus everything bound to it by gravity: **eight planets**, five officially recognised dwarf planets (Pluto, Eris, Haumea, Makemake and Ceres), hundreds of moons, and countless asteroids and comets. The Sun holds about **99.86%** of all the mass.\n\n[[widget:solar]]\n\n| Planet | Type | Distance from Sun | Year length |\n|---|---|---|---|\n| Mercury | Rocky | 0.39 AU | 88 days |\n| Venus | Rocky | 0.72 AU | 225 days |\n| Earth | Rocky | 1.00 AU | 365.25 days |\n| Mars | Rocky | 1.52 AU | 687 days |\n| Jupiter | Gas giant | 5.20 AU | 11.9 years |\n| Saturn | Gas giant | 9.58 AU | 29.4 years |\n| Uranus | Ice giant | 19.2 AU | 84 years |\n| Neptune | Ice giant | 30.1 AU | 165 years |\n\nOne **AU** (astronomical unit) is the average Earth-Sun distance, about 150 million km. Hover or tap a planet in the animation to see its details, and drag the speed slider to watch years fly by.";
+    }, rel: ["Tell me about Mars", "Tell me about Jupiter", "What is the Sun made of?"] },
+    { id: "mercury", w: 2, re: [/\bmercury\b/], md: function () { return "## Mercury\n\nThe **smallest planet** and the closest to the Sun, only slightly larger than our Moon. It has almost no atmosphere, so temperatures swing from about **430 °C** in daylight to about **-180 °C** at night. A year lasts just **88 Earth days**. Despite the heat, NASA's MESSENGER found water ice in permanently shadowed craters near its poles."; }, rel: ["Tell me about Venus", "Show me the solar system"] },
+    { id: "venus", w: 2, re: [/\bvenus\b/], md: function () { return "## Venus\n\nEarth's size-twin and the **hottest planet**, with a surface around **465 °C**, hot enough to melt lead. Its thick carbon dioxide atmosphere crushes the surface with about **92 times** Earth's pressure, a runaway greenhouse effect. It also spins backwards and so slowly that a Venus day (about 243 Earth days) is longer than its year (about 225)."; }, rel: ["Tell me about Mars", "What is the greenhouse effect?"] },
+    { id: "earthp", w: 2, re: [/\b(planet earth|about earth|earth facts|tell me about (the )?earth|our planet|how big is (the )?earth)\b/], md: function () { return "## Earth\n\nThe third planet from the Sun and the only place we know to host life. About **71%** of the surface is ocean. It is roughly **12,742 km** across, about **4.54 billion years** old, and tilted **23.4°**, which is what gives us seasons. Its magnetic field and an atmosphere of mostly nitrogen and oxygen shield the surface from the solar wind and most harmful radiation.\n\nEarth is also the planet that satellites watch most closely, which is what EcoOrbit and AgroOrbit are about."; }, rel: ["Why do we have seasons?", "How do satellites help farming?"] },
+    { id: "mars", w: 2, re: [/\bmars\b/, /\bred planet\b/], md: function () { return "## Mars\n\nA cold desert world about half Earth's diameter with **38% of Earth's gravity**. Its thin carbon dioxide air is only about 1% as dense as ours. A Mars day (a *sol*) lasts **24 h 37 min**, a year **687 Earth days**. It has the solar system's tallest volcano, **Olympus Mons** (about 22 km), and a canyon system, **Valles Marineris**, stretching over 4,000 km.\n\nOrbiters, landers and rovers (Curiosity since 2012, Perseverance since February 2021 in Jezero crater) have found strong evidence of ancient rivers and lakes. Ingenuity, a small helicopter, made the first powered flight on another world in April 2021."; }, rel: ["Could humans live on Mars?", "How far is Mars?", "How do rockets work?"] },
+    { id: "jupiter", w: 2, re: [/\bjupiter\b/], md: function () { return "## Jupiter\n\nThe **largest planet**: more than 11 Earth diameters wide and over **2.5 times the mass of all other planets combined**. It is a gas giant with no solid surface. Its **Great Red Spot** is a storm that has raged for at least 150 years, and its moons include **Ganymede**, the biggest moon in the solar system, and **Europa**, which hides a salty ocean under its ice and is a top target in the search for life."; }, rel: ["Tell me about Saturn", "Is there life on other planets?"] },
+    { id: "saturn", w: 2, re: [/\bsaturn\b/], md: function () { return "## Saturn\n\nFamous for its rings, which are made mostly of **water-ice chunks** from dust-grain size to house size. They span hundreds of thousands of km but are often only about 10 metres thick. Saturn is the least dense planet, less dense than water. Its moon **Titan** has a thick atmosphere and lakes of liquid methane, and **Enceladus** shoots water geysers from a hidden ocean."; }, rel: ["Tell me about Uranus", "Show me the solar system"] },
+    { id: "uranus", w: 2, re: [/\buranus\b/], md: function () { return "## Uranus\n\nAn **ice giant** that rotates on its side, tilted about **98°**, so each pole gets 42 years of sunlight followed by 42 years of darkness. Methane in its atmosphere gives it a pale cyan colour. It has faint rings, 27 known moons named after Shakespeare and Pope characters, and was visited only once, by Voyager 2 in 1986."; }, rel: ["Tell me about Neptune"] },
+    { id: "neptune", w: 2, re: [/\bneptune\b/], md: function () { return "## Neptune\n\nThe most distant planet, discovered in 1846 by predicting its position from maths before anyone saw it. Winds reach over **2,000 km/h**, the fastest in the solar system. One Neptune year equals **165 Earth years**, so it only completed its first orbit since discovery in 2011. Voyager 2 flew past in 1989, the only visit so far."; }, rel: ["Show me the solar system"] },
+    { id: "pluto", w: 2, re: [/\bpluto\b/, /dwarf planet/], md: function () { return "## Pluto\n\nReclassified as a **dwarf planet** in 2006 because it has not cleared its orbital neighbourhood of other objects. It is smaller than our Moon, but NASA's New Horizons flyby in July 2015 revealed mountains of water ice, a huge heart-shaped plain of nitrogen ice called Tombaugh Regio, and a hazy blue atmosphere. Its biggest moon, Charon, is so large that the two orbit a point between them."; }, rel: ["Show me the solar system"] },
+    { id: "sun", w: 2, re: [/\b(the sun|our sun)\b/, /\bsun\b.*\b(hot|temperature|age|made of|fusion|star|big|size)\b/, /what is the sun/], md: function () { return "## The Sun\n\nA **G-type star** about **4.6 billion years old**, roughly halfway through its life. Its core reaches about **15 million °C**, where hydrogen fuses into helium and releases the energy that powers life on Earth. The visible surface is about **5,500 °C**. It is 109 times wider than Earth, and about a million Earths could fit inside it.\n\nIn roughly 5 billion years it will swell into a red giant, then shrink into a white dwarf."; }, rel: ["What is a white dwarf?", "How far is the Sun?"] },
+    { id: "moonphase", w: 4, re: [/moon phase|lunar cycle|new moon|full moon|waxing|waning|crescent|gibbous|phases of the moon/], md: function () { return "## Moon phases\n\nThe Moon makes its own light for nobody: we see **sunlight reflected** from it. Half of the Moon is always lit by the Sun, and the phase depends on how much of that lit half faces Earth as the Moon orbits us every **29.5 days**. Scrub the day slider to see the geometry on the left and the view from Earth on the right.\n\n[[widget:moon]]\n\nAt **new moon** the Moon sits between us and the Sun, so its lit side faces away. At **full moon** Earth is in the middle and we see the whole lit disc. Eclipses are rare because the Moon's orbit is tilted about 5° to Earth's."; }, rel: ["What causes an eclipse?", "Tell me about the Moon"] },
+    { id: "moon", w: 2, re: [/\bthe moon\b|\bmoon\b.*(far|distance|formed|form|tide|facts|big|made)|tell me about the moon|how far is the moon/], md: function () { return "## The Moon\n\nEarth's only natural satellite, on average **384,400 km** away, so light takes about **1.3 seconds** to reach it. It is thought to have formed about 4.5 billion years ago when a Mars-sized body hit the young Earth. Its gravity drives our **ocean tides**, and it is **tidally locked**, always showing us the same face. It drifts away from Earth about 3.8 cm each year.\n\nTwelve people walked on it during the Apollo missions between 1969 and 1972."; }, rel: ["Moon phases", "Tell me about the Apollo landings"] },
+    { id: "apollo", w: 3, re: [/apollo|moon landing|neil armstrong|first (man|person|human) on the moon|buzz aldrin|artemis/], md: function () { return "## Apollo and the Moon landings\n\n**Apollo 11** landed on **20 July 1969**; Neil Armstrong and Buzz Aldrin walked on the Moon while Michael Collins orbited above. Six crewed landings in total (Apollo 11, 12, 14, 15, 16, 17) put **twelve astronauts** on the surface, the last in December 1972. The Saturn V rocket that launched them stood **111 metres** tall.\n\nNASA's **Artemis** programme aims to return people to the Moon. Schedules shift often, so check NASA's website for the latest status."; }, rel: ["How do rockets work?", "Tell me about the Moon"] },
+    { id: "blackhole", w: 3, re: [/black ?hole/, /event horizon|singularity|spaghettification|hawking/], md: function () { return "## Black holes\n\nA black hole is a region where gravity is so strong that nothing, not even light, can escape once it crosses the **event horizon**. Stellar black holes form when a very massive star runs out of fuel and its core collapses. Supermassive ones, millions to billions of times the Sun's mass, sit at the centres of most large galaxies, including **Sagittarius A-star** in ours.\n\n- The size of the horizon (the Schwarzschild radius) is **2GM/c²**: about **2.95 km per solar mass**. Squeeze Earth to about 9 mm and it would become a black hole.\n- They are not cosmic vacuum cleaners: at a safe distance, a black hole's gravity is the same as any object of equal mass.\n- The Event Horizon Telescope imaged the black hole in galaxy **M87** in 2019 and our own galaxy's **Sagittarius A-star** in 2022.\n- Near a small black hole, tidal forces would stretch an object into a thin strand, nicknamed *spaghettification*."; }, rel: ["What is a neutron star?", "How big is the universe?", "What is gravity?"] },
+    { id: "stars", w: 3, re: [/neutron star|pulsar|white dwarf|supernova|life cycle of (a )?star|how (do )?stars (form|die|work)|red giant|nebula/], md: function () { return "## How stars live and die\n\nStars form when clouds of gas and dust collapse under gravity. While they fuse hydrogen they stay stable. What happens next depends on mass:\n\n- **Sun-like stars** swell into red giants, shed their outer layers as a glowing nebula, and leave a **white dwarf**: an Earth-sized core that slowly cools.\n- **Stars over about 8 solar masses** end in a **supernova**, a titanic explosion that forges and scatters heavy elements like iron, oxygen and the calcium in your bones.\n- What remains is a **neutron star** (a city-sized ball of neutrons so dense a teaspoon would weigh billions of tonnes) or, for the heaviest, a **black hole**.\n\nSpinning neutron stars that sweep beams of radio waves across Earth are called **pulsars**, some of the most precise natural clocks known."; }, rel: ["Explain black holes", "What is the Sun made of?"] },
+    { id: "galaxy", w: 3, re: [/milky way|galaxy|galaxies|andromeda/], md: function () { return "## Galaxies and the Milky Way\n\nA galaxy is a huge system of stars, gas, dust and dark matter held together by gravity. Our **Milky Way** is a barred spiral about **100,000 light-years** across, holding roughly **100 to 400 billion stars**. The Sun sits about 26,000 light-years from the centre and takes around **230 million years** to circle it once.\n\nThe nearest large galaxy, **Andromeda**, is about **2.5 million light-years** away and is heading toward us. The two should merge in about 4 to 5 billion years. The observable universe holds on the order of two trillion galaxies."; }, rel: ["How big is the universe?", "What is a light-year?"] },
+    { id: "universe", w: 3, re: [/big bang|how big is the universe|age of the universe|universe.*(old|age|size|expand)|dark matter|dark energy|observable universe|expanding/], md: function () { return "## The universe\n\n- **Age:** about **13.8 billion years**, since the Big Bang. It was not an explosion into empty space; space itself expanded from an extremely hot, dense state.\n- **Size:** the *observable* universe is about **93 billion light-years** across, bigger than its age suggests because space has been stretching while the light travelled. Beyond that edge, there may be much more we can never see.\n- **Contents:** only about **5%** is the ordinary matter that makes stars and people. About **27%** is **dark matter** (felt by its gravity, never seen) and about **68%** is **dark energy**, which is speeding up the expansion.\n- **Evidence:** the afterglow of the early universe, the *cosmic microwave background*, still reaches us as faint microwaves."; }, rel: ["What is a light-year?", "What is a galaxy?"] },
+    { id: "lightyear", w: 3, re: [/light.?year|speed of light|how fast is light|how far is (proxima|alpha centauri)|nearest star/], md: function () { return "## Light-years and the speed of light\n\nLight travels at **299,792 km/s** in a vacuum, about 7.5 trips around Earth every second. A **light-year** is the distance it covers in a year: about **9.46 trillion km**.\n\n- Moon: 1.3 light-**seconds**\n- Sun: 8.3 light-**minutes**\n- Neptune: about 4 light-**hours**\n- **Proxima Centauri**, the nearest star: **4.24 light-years**\n- Andromeda galaxy: 2.5 million light-years\n\nWhen you look at a distant star you are seeing it as it was when the light left. Ask me how long light takes from a specific place, for example *light from Mars*."; }, rel: ["How big is the universe?", "Light from Mars"] },
+    { id: "iss", w: 3, re: [/\b(iss|international space station|space station)\b/], md: function () { var s = orbitStats(420); return "## The International Space Station\n\nA research lab the size of a football field, orbiting at about **400 to 420 km** altitude at **7.66 km/s** (about 27,600 km/h). That gives one lap every **" + s.per + "**, roughly 15.5 orbits a day. It has been **continuously crewed since November 2000** by an international partnership of space agencies.\n\n[[widget:orbit:420]]\n\nIts orbit is slowly dragged lower by the thin upper atmosphere, so it needs periodic reboosts. You can often see it with the naked eye as a bright, steady, fast-moving star just after sunset or before sunrise."; }, rel: ["How can I see the ISS?", "How do satellites stay in orbit?", "Why is space debris dangerous?"] },
+    { id: "orbits", w: 3, re: [/orbit|satellite|leo\b|geo\b|geostationary|low earth|why (don'?t|doesn'?t) .*fall|how do satellites/], md: function () { return "## How satellites stay in orbit\n\nA satellite is not floating free of gravity. It is **falling around the Earth**: it moves sideways so fast that as it falls, the ground curves away beneath it. At 400 km altitude that sideways speed is about **7.7 km/s**. Higher orbits are slower and take longer.\n\n[[widget:orbit]]\n\nDrag the altitude slider. The satellite and its period obey real Kepler maths, and the dotted line connects it to a point on the ground that turns with the Earth.\n\n| Orbit | Altitude | Period | Used for |\n|---|---|---|---|\n| LEO | 160 to 2,000 km | 90 to 130 min | ISS, Earth imaging, Starlink |\n| MEO | 2,000 to 35,000 km | 2 to 24 h | GPS, Galileo (about 20,200 km) |\n| GEO | 35,786 km | 23 h 56 min | TV and weather satellites |\n\nAt **GEO** the period matches Earth's spin, so the satellite hovers over one spot. Try the GEO button and watch it stay above the ground point."; }, rel: ["What is a sun-synchronous orbit?", "Orbital period at 550 km", "Why is space debris dangerous?"] },
+    { id: "sso", w: 4, re: [/sun.?synchronous|polar orbit|earth observation orbit|landsat|sentinel/], md: function () { return "## Sun-synchronous orbits\n\nMany Earth-observation satellites (Landsat, Sentinel-2 and others) fly a near-polar orbit at about **600 to 800 km** that is tilted slightly so it precesses by about one degree a day, matching Earth's trip around the Sun. The result: the satellite passes over any given place at the **same local solar time** every visit, so shadows and lighting look similar from one image to the next. That is exactly what you need to compare a field's health week to week, which is how AgroOrbit-style monitoring works."; }, rel: ["How do satellites help farming?", "How do satellites stay in orbit?"] },
+    { id: "starlink", w: 3, re: [/starlink|megaconstellation|mega-constellation|oneweb|kuiper|satellite internet/], md: function () { return "## Satellite constellations\n\nConstellations like **Starlink** put thousands of small satellites in low Earth orbit (around 500 to 600 km) to beam broadband to places cables do not reach. Low orbits mean low delay, but you need a lot of satellites for continuous coverage.\n\nThe trade-offs are real:\n\n- **Debris and collisions:** more objects means more avoidance manoeuvres. Operators deorbit failed or retired satellites, and low altitudes help because drag brings them down within years.\n- **Astronomy:** bright satellite trails cross telescope images, so operators have tried darker coatings and sun-shields.\n- **Atmosphere:** burning up thousands of satellites deposits metals in the upper atmosphere, an area of active study."; }, rel: ["Why is space debris dangerous?", "How do satellites stay in orbit?"] },
+    { id: "debris", w: 4, re: [/debris|space junk|kessler|orbital clutter|space (waste|trash)|collision/], md: function () { return "## Space debris\n\nEvery rocket stage, dead satellite and fragment from a collision stays in orbit until drag pulls it down, which takes **years** at 500 km but **centuries** above 800 km. ESA estimates tens of thousands of tracked objects, around a **million pieces between 1 and 10 cm**, and well over a hundred million smaller than 1 cm.\n\nIt is dangerous because of speed: objects in low orbit move at about **7 to 8 km/s**, so even a bolt or a paint fleck hits with enormous energy, and head-on closing speeds can pass 10 km/s.\n\n[[widget:debris]]\n\nThis is the **Kessler syndrome**, proposed by Donald Kessler and Burton Cour-Palais in 1978: if the density gets high enough, collisions create fragments, which cause more collisions, in a chain reaction. Click the orbits to see a cascade grow.\n\nReal events: the **2009 Iridium 33 and Cosmos 2251** collision, and anti-satellite missile tests in **2007** and **2021** that added thousands of fragments.\n\n**What helps:** deorbiting satellites quickly after use (the older guideline was 25 years; the US FCC adopted a 5-year rule in 2022), passivating rocket stages, collision-avoidance manoeuvres, and active removal missions. Tracking and offsetting debris is exactly the problem space EcoOrbit is built around."; }, rel: ["How do satellites stay in orbit?", "Tell me about EcoOrbit", "Starlink and constellations"] },
+    { id: "rockets", w: 3, re: [/rocket|launch|saturn v|falcon|escape velocity|delta.?v|tsiolkovsky|how (do|does) .* reach (space|orbit)|spacex|reusab/], md: function () { return "## How rockets reach orbit\n\nGetting to space is easy; **staying there** is hard. To orbit at 400 km you need about **7.8 km/s sideways**, and once you add losses to gravity and air drag, a launch costs roughly **9.4 km/s of delta-v**.\n\nThe **Tsiolkovsky rocket equation** explains why rockets are mostly fuel:\n\n**Δv = vₑ · ln(m₀ / m₁)**\n\nwhere vₑ is the exhaust speed and m₀/m₁ is the full-to-empty mass ratio. Because of the logarithm, each extra km/s needs exponentially more propellant, which is why rockets use **stages**: they drop empty tanks to stop carrying them.\n\n- **Escape velocity** from Earth's surface is **11.2 km/s**; the Moon's is only 2.4 km/s.\n- **Reusability** changed the economics: SpaceX landed an orbital-class booster for the first time in December 2015, and boosters now fly many times.\n- The Apollo-era **Saturn V** was 111 m tall and still holds the record for the heaviest payload sent to the Moon."; }, rel: ["Explain orbital mechanics", "Tell me about Mars", "Tell me about the Apollo landings"] },
+    { id: "orbmech", w: 4, re: [/kepler|hohmann|orbital mechanics|vis-?viva|orbital (period|velocity|speed) formula|transfer orbit/], md: function () { return "## Orbital mechanics in five lines\n\n- **Kepler's 1st:** orbits are ellipses with the central body at one focus.\n- **Kepler's 2nd:** a line from the body to the satellite sweeps equal areas in equal times, so it moves **fastest at the closest point**.\n- **Kepler's 3rd:** T² ∝ a³. For Earth orbit, **T = 2π √(a³/μ)** with μ = 398,600 km³/s².\n- **Circular speed:** v = √(μ/r).\n- **Vis-viva:** v² = μ (2/r − 1/a), which gives the speed anywhere on an ellipse.\n\nTo move between orbits efficiently you use a **Hohmann transfer**: burn forward to stretch the orbit into an ellipse, coast to the far side, then burn again to circularise. Ask me for the orbital period at any altitude, e.g. *orbital period at 550 km*."; }, rel: ["Orbital period at 550 km", "How do rockets work?"] },
+    { id: "jwst", w: 3, re: [/webb|jwst|hubble|space telescope|telescope in space/], md: function () { return "## Space telescopes\n\n**James Webb Space Telescope (JWST)**, launched **25 December 2021**, has a **6.5 m** mirror made of 18 gold-coated beryllium segments. It observes in **infrared**, which lets it see through dust and catch the faint, stretched light of the earliest galaxies. It sits at the Sun-Earth **L2** point, about **1.5 million km** from Earth, behind a tennis-court-sized sunshield that keeps it near -233 °C.\n\n**Hubble**, launched **1990**, orbits at about 540 km with a 2.4 m mirror and mostly sees visible and ultraviolet light. Together they have transformed our picture of galaxies, exoplanet atmospheres and the age of the universe."; }, rel: ["Is there life on other planets?", "How big is the universe?"] },
+    { id: "voyager", w: 3, re: [/voyager|golden record|interstellar space|farthest (spacecraft|object)/], md: function () { return "## The Voyager probes\n\nLaunched in **1977**, Voyager 1 and 2 used a rare planetary alignment to tour the outer planets. Voyager 1 crossed into **interstellar space in August 2012** and Voyager 2 in November 2018. Voyager 1 is the most distant human-made object, well over **160 AU** from the Sun, with a signal that takes more than 22 hours to reach us. Both carry a **golden record** of sounds and images of Earth, and both still send data, powered by decaying plutonium generators."; }, rel: ["What is a light-year?", "Show me the solar system"] },
+    { id: "marslife", w: 4, re: [/(live|living|colon|settle|settlement|terraform|humans?).*(mars)|mars.*(colony|colonise|colonize|live|settle|humans)/], md: function () { return "## Could humans live on Mars?\n\nVisiting is plausible this century; living there is much harder. The obstacles:\n\n- **Air:** the atmosphere is about 1% as thick as Earth's and is mostly CO₂, so you need pressurised habitats and suits.\n- **Radiation:** with no global magnetic field and thin air, the surface gets far more cosmic radiation, so habitats may go underground or be covered with regolith.\n- **Cold and dust:** average about -60 °C, with global dust storms that cut solar power.\n- **Supplies:** a trip takes about 6 to 9 months each way, and launch windows open only every 26 months.\n- **Toxic soil:** Martian dust contains perchlorates that must be handled carefully.\n\nPromising ideas include making fuel and oxygen from local CO₂ and ice, which NASA's MOXIE experiment demonstrated on Perseverance."; }, rel: ["Tell me about Mars", "How do astronauts live in space?"] },
+    { id: "exo", w: 3, re: [/exoplanet|habitable zone|alien|extraterrestrial|life on other|seti|fermi paradox|trappist|goldilocks/], md: function () { return "## Exoplanets and the search for life\n\nWe have confirmed **well over 5,000 planets** around other stars. Most are found by two methods: **transits** (a planet dims its star slightly as it crosses in front) and **radial velocity** (the star wobbles from the planet's pull).\n\nThe **habitable zone** is the orbit range where liquid water could exist on a rocky surface. The **TRAPPIST-1** system, 40 light-years away, has seven Earth-sized planets, several in or near that zone. JWST can now study some exoplanet atmospheres for gases like water, carbon dioxide and methane.\n\nNobody has found life beyond Earth yet. The **Fermi paradox** asks: with so many planets, where is everybody? Honest answer: nobody knows. Prime places to look closer to home are Mars, and the ocean moons **Europa** and **Enceladus**."; }, rel: ["Tell me about Jupiter", "Could humans live on Mars?"] },
+    { id: "gravity", w: 3, re: [/gravity|relativity|spacetime|space-?time|time dilation|einstein|gps.*(time|relativ)/], md: function () { return "## Gravity and relativity\n\nNewton described gravity as a force between masses. Einstein's **general relativity** (1915) describes it as the **curvature of spacetime**: mass tells spacetime how to curve, and spacetime tells objects how to move. It predicted black holes, gravitational waves (first detected in 2015) and that clocks tick slower in stronger gravity.\n\nThis matters in daily life through **GPS**. Satellite clocks at about 20,200 km run roughly **45 microseconds a day fast** from weaker gravity and about **7 microseconds slow** from their speed, a net **+38 µs/day**. Without correction, position errors would grow by about **10 km every day**."; }, rel: ["Explain black holes", "How do satellites stay in orbit?"] },
+    { id: "eclipse", w: 3, re: [/eclipse/], md: function () { return "## Eclipses\n\nA **solar eclipse** happens when the Moon passes between the Sun and Earth and its shadow touches us. A **lunar eclipse** happens when Earth's shadow falls on the Moon. By cosmic coincidence the Sun is about **400 times wider** than the Moon and about **400 times farther**, so they look almost the same size in our sky, which makes total solar eclipses possible.\n\nWe do not get one every month because the Moon's orbit is tilted about **5°** to Earth's orbit, so the three bodies rarely line up exactly."; }, rel: ["Moon phases", "Why do we have seasons?"] },
+    { id: "seasons", w: 3, re: [/season|why is it (hot|cold)|summer|winter|equinox|solstice|day and night|why (do )?we have (day|night)/], md: function () { return "## Why we have seasons\n\nSeasons come from Earth's **23.4° axial tilt**, not from its distance to the Sun. When your hemisphere tilts toward the Sun, sunlight hits more directly and days are longer, which means summer. Earth is actually *closest* to the Sun in early January, during northern winter.\n\nNear the equator, as in Bangladesh, the tilt matters less for temperature, and the year is shaped instead by **monsoon winds**, producing wet and dry seasons. Day and night, by contrast, come from Earth spinning once every 24 hours."; }, rel: ["What causes an eclipse?", "Show me the solar system"] },
+    { id: "astro", w: 3, re: [/astronaut|microgravity|weightless|zero.?g|space sickness|how do astronauts|living in space|cosmonaut/], md: function () { return "## Life as an astronaut\n\nAstronauts on the ISS are not beyond gravity; they are in **continuous free fall**, which feels like weightlessness.\n\n- **Body:** without load, bones lose density (around 1% a month) and muscles shrink, so crews exercise about **2 hours a day**. Fluids shift toward the head, causing puffy faces and often temporary space sickness.\n- **Sleep:** in sleeping bags fixed to the wall. They see about **16 sunrises a day**.\n- **Food:** much of it is rehydrated or heat-stabilised. Crumbs are a problem because they float into equipment.\n- **Water:** the station recycles most of it, including urine and humidity from the air.\n- **Radiation:** beyond the Earth's magnetic field, exposure rises sharply, a main challenge for Moon and Mars trips."; }, rel: ["Tell me about the ISS", "Could humans live on Mars?"] },
+    { id: "asteroid", w: 3, re: [/asteroid|comet|meteor|dinosaur|planetary defen[cs]e|\bdart\b|halley|shooting star/], md: function () { return "## Asteroids, comets and meteors\n\n- **Asteroids** are rocky leftovers, mostly in the belt between Mars and Jupiter.\n- **Comets** are icy bodies that grow glowing tails when heated near the Sun. Halley's Comet returns every ~76 years (next around 2061).\n- A **meteoroid** is a small piece of either; when it burns up in our atmosphere it is a **meteor** (a shooting star), and if it reaches the ground it is a **meteorite**.\n\nAn asteroid about 10 km wide struck the Yucatán about **66 million years ago**, linked to the end of the dinosaurs. NASA's **DART** mission in September 2022 crashed a spacecraft into the asteroid moon Dimorphos and shortened its orbit by about 32 minutes, the first proof that we can nudge an asteroid."; }, rel: ["Tell me a fun space fact", "Show me the solar system"] },
+    { id: "stargaze", w: 3, re: [/stargaz|night sky|see (the )?(planets|stars|iss|milky way)|how (can|do) i (see|spot|find)|binocular|spot the station/], md: function () { return "## Seeing space yourself\n\n- **Get dark.** Move away from city lights, give your eyes **20 minutes** to adapt, and use red light on your phone.\n- **Planets** look like steady, bright \"stars\" that do not twinkle much. Venus, Jupiter and Mars are the easy ones. Free apps like Stellarium show where each is tonight.\n- **The ISS** is a bright, steady light crossing the sky in about 5 minutes. NASA's *Spot the Station* and the *Heavens-Above* website give pass times for your location.\n- **Binoculars** beat a cheap telescope at first: you can see Jupiter's four big moons, the Moon's craters and the Pleiades cluster.\n- **Milky Way:** from a dark site on a moonless night, the glowing band is visible with no equipment. In the northern hemisphere summer the core is highest."; }, rel: ["How can I see the ISS?", "Moon phases"] },
+    { id: "space", w: 2, re: [/sound in space|is space (cold|silent|empty)|temperature of space|vacuum|how hot is space/], md: function () { return "## What is space like?\n\n- **Sound:** sound needs a medium, so in the vacuum between stars it cannot travel. Inside a spacecraft, or in gas clouds, it can.\n- **Temperature:** the empty background is about **-270 °C** (2.7 K), the leftover heat of the Big Bang. But a vacuum has almost nothing to carry heat, so an object's temperature depends on sunlight: in direct sun a spacecraft can bake while its shadowed side freezes.\n- **Vacuum:** not perfectly empty. Interplanetary space has a few atoms per cubic centimetre, still a far better vacuum than any lab can make."; }, rel: ["How do astronauts live in space?", "Tell me a fun space fact"] },
+    { id: "ghg", w: 3, re: [/greenhouse|global warming|climate change|co2|carbon dioxide|methane|carbon (offset|credit|footprint)/], md: function () { return "## Greenhouse gases and the climate\n\nGases like **CO₂** and **methane** let sunlight in but slow the escape of heat, keeping Earth habitable, but extra emissions warm the planet. Satellites are essential for tracking it: they measure sea level, ice sheets, ocean temperature, land cover and even CO₂ and methane concentrations from orbit.\n\n**Carbon offsets** pay for emission reductions or removals elsewhere, such as farming practices that cut methane from rice paddies. Their value depends entirely on honest measurement, which is where satellite evidence helps. Venus is the cautionary tale: a runaway greenhouse effect pushed its surface past 460 °C."; }, rel: ["How do satellites help farming?", "Tell me about EcoOrbit"] },
+    { id: "agrosat", w: 4, re: [/(satellite|space|orbit).*(farm|agricultur|crop|field|rice|harvest|soil)|(farm|agricultur|crop).*(satellite|space|from orbit)|\bndvi\b|precision (farming|agriculture)|remote sensing/], md: function () { return "## How satellites help farming\n\nPlants reflect near-infrared light strongly and absorb red light for photosynthesis. Satellites compare the two to compute **NDVI** (a greenness index from about 0 to 1): healthy dense crops score high, stressed or bare fields score low. Other sensors add the rest:\n\n- **Optical** imagery (about 10 m detail every few days) shows crop vigour and growth stage.\n- **Radar** sees through monsoon cloud and detects **standing water** and soil moisture, vital for rice.\n- **Weather data** adds rainfall and heat.\n\nTogether they tell a farmer which part of a field needs water, drainage or a closer look, long before it shows from the path. That is the idea behind **AgroOrbit**: open it from the sidebar to try the field scanner."; }, rel: ["Tell me about AgroOrbit", "What is a sun-synchronous orbit?"] },
+    { id: "agro", w: 5, re: [/agro ?orbit/], md: function () { return "## AgroOrbit\n\nAgroOrbit is the farming side of EcoOrbit: it turns satellite images into short, plain advice for farmers, such as which corner of a field is thirsty, where water is standing, and what to check next. It covers crop health, soil moisture, flood and drought warnings, yield forecasts and farm records that can support carbon programs.\n\nYou can open it from this site's sidebar or go straight to the [AgroOrbit page](AgroOrbit.html)."; }, rel: ["How do satellites help farming?", "Tell me about EcoOrbit"] },
+    { id: "eco", w: 5, re: [/eco ?orbit|this (site|website|platform)|what is this/], md: function () { return "## EcoOrbit\n\nEcoOrbit is the site you are on: an interactive **orbit globe** with live satellite views, plus tools around satellites, orbital debris and carbon. Press **Fullscreen** on the globe to open the side bar, where **AgroOrbit** (satellite crop intelligence) and **EcoAi** (this assistant) live.\n\nAsk me about orbits and debris, or try *Show me the solar system*."; }, rel: ["Tell me about AgroOrbit", "Why is space debris dangerous?"] },
+    { id: "bd", w: 4, re: [/bangladesh|bangabandhu|bss-?1|sparrso|dhaka/], md: function () { return "## Bangladesh and space\n\n**Bangabandhu Satellite-1 (BSS-1)** is Bangladesh's first geostationary communications satellite, launched on **11 May 2018** on a SpaceX Falcon 9 (the first flight of the Block 5 version) and stationed at **119.1° East**. National agencies such as **SPARRSO** (Space Research and Remote Sensing Organization) use satellite data for weather, disaster monitoring and agriculture.\n\nBangladesh is also one of the places that gains most from satellites: flood forecasting, cyclone tracking, crop monitoring and coastal salinity mapping all depend on them. Radar satellites are especially useful during the monsoon when cloud blocks optical cameras."; }, rel: ["How do satellites help farming?", "What is a geostationary orbit?"] },
+    { id: "career", w: 3, re: [/(become|be) an? (astronaut|astronomer|astrophysicist|aerospace)|space career|study (space|astronomy|aerospace)|learn (astronomy|space)|how to learn/], md: function () { return "## Getting into space work\n\nThere are many paths, and most do not involve being an astronaut.\n\n- **Build the base:** physics, maths and programming. Python is the common language for data and orbit work.\n- **Learn by doing:** simulate orbits (ask me for a Python orbit script), analyse free satellite images from **Sentinel Hub**, **Copernicus** or **Landsat**, and try NASA's open APIs.\n- **Join communities:** local astronomy clubs, cubesat teams, and student competitions.\n- **Study:** aerospace or electrical engineering, physics, computer science or earth observation.\n- **Free resources:** NASA, ESA and ISRO education sites, MIT OpenCourseWare, and Coursera or edX space courses."; }, rel: ["Write a Python orbit calculator", "Fetch NASA's picture of the day"] }
+  ];
+
+  var FOLLOW = { debris: "Two more things worth knowing: **active removal** missions (like ESA's ClearSpace-1 concept) aim to grab and deorbit large dead objects, and **tracking** by radar and telescopes lets operators move satellites away from close approaches, which happens thousands of times a year across the major constellations.",
+    blackhole: "More detail: a black hole can also **spin**, dragging spacetime around it in a way that lets matter orbit closer than it otherwise could. Matter swirling in forms a hot **accretion disk** that glows brightly in X-rays, which is how astronomers find them. Merging black holes produce **gravitational waves**, first detected by LIGO in 2015.",
+    iss: "More about the ISS: it is made of modules from the US, Russia, Europe, Japan and Canada, assembled in orbit from 1998. It generates its power from about 2,500 m² of solar arrays, holds roughly 900 m³ of habitable volume, and is planned to be retired and deorbited in a controlled way in the early 2030s.",
+    orbits: "A quick extra: a satellite's **speed changes with altitude the opposite way you might expect**. To go higher you burn forward, and then it ends up moving *slower*. Atmospheric drag does the reverse: it pulls a satellite lower, which makes it speed up.",
+    mars: "A bit more on Mars: its two tiny moons **Phobos** and **Deimos** are probably captured asteroids, and Phobos is slowly spiralling inward, expected to break up or crash in tens of millions of years.",
+    solar: "More on the solar system: beyond Neptune lies the **Kuiper belt** of icy bodies, and far beyond it the hypothesised **Oort cloud**, the likely home of long-period comets, perhaps a light-year or more from the Sun.",
+    moon: "More on the Moon: its far side is not dark but simply never faces us, and its crust is thicker there. In 2019 China's Chang'e-4 made the first soft landing on it, and ice has been detected in permanently shadowed craters near the poles." };
+
+  /* ================= code templates ================= */
+  var CODE = {};
+  CODE.landing = `<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Nebula Voyages | Space tours</title>
+<style>
+  :root{--bg:#050816;--ink:#f5f7ff;--mute:#9aa8c7;--a:#7c5cff;--b:#00e5ff}
+  *{box-sizing:border-box}
+  body{margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,sans-serif;background:var(--bg);color:var(--ink);line-height:1.6}
+  canvas#sky{position:fixed;inset:0;z-index:-1}
+  nav{display:flex;justify-content:space-between;align-items:center;padding:18px 6vw;position:sticky;top:0;backdrop-filter:blur(10px);background:rgba(5,8,22,.6)}
+  nav b{letter-spacing:.06em}
+  nav a{color:var(--mute);text-decoration:none;margin-left:22px}
+  nav a:hover{color:var(--ink)}
+  .hero{min-height:84vh;display:grid;place-content:center;text-align:center;padding:0 6vw}
+  h1{font-size:clamp(2.4rem,7vw,5rem);line-height:1.05;margin:0 0 16px;background:linear-gradient(90deg,var(--b),var(--a));-webkit-background-clip:text;background-clip:text;color:transparent}
+  .hero p{max-width:56ch;margin:0 auto 28px;color:var(--mute);font-size:1.15rem}
+  .btn{display:inline-block;padding:14px 28px;border-radius:999px;font-weight:700;text-decoration:none;color:#06101f;background:linear-gradient(90deg,var(--b),var(--a));transition:transform .2s,box-shadow .2s}
+  .btn:hover{transform:translateY(-2px);box-shadow:0 10px 30px rgba(124,92,255,.45)}
+  .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:18px;padding:60px 6vw}
+  .card{padding:24px;border-radius:18px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);transition:transform .25s,border-color .25s}
+  .card:hover{transform:translateY(-6px);border-color:var(--b)}
+  .card h3{margin:0 0 8px}
+  .card p{margin:0;color:var(--mute)}
+  .stats{display:flex;flex-wrap:wrap;justify-content:center;gap:40px;padding:20px 6vw 60px;text-align:center}
+  .stats b{display:block;font-size:2.4rem;color:var(--b)}
+  footer{text-align:center;padding:30px;color:var(--mute);border-top:1px solid rgba(255,255,255,.08)}
+</style>
+</head>
+<body>
+<canvas id="sky"></canvas>
+<nav><b>NEBULA VOYAGES</b><div><a href="#trips">Trips</a><a href="#why">Why us</a><a href="#book">Book</a></div></nav>
+<header class="hero">
+  <h1>See Earth<br>from the edge of space</h1>
+  <p>Suborbital flights and orbital stays designed for first-time travellers. Training, safety and an unforgettable view included.</p>
+  <div><a class="btn" href="#book">Reserve your seat</a></div>
+</header>
+<section class="grid" id="trips">
+  <article class="card"><h3>Edge of Space</h3><p>An 11-minute suborbital hop with four minutes of weightlessness.</p></article>
+  <article class="card"><h3>Orbital Weekend</h3><p>Two days in a private station module, about 32 sunrises included.</p></article>
+  <article class="card"><h3>Lunar Flyby</h3><p>A looping trip around the Moon and back in six days.</p></article>
+</section>
+<section class="stats" id="why">
+  <div><b data-n="1200">0</b>travellers trained</div>
+  <div><b data-n="99">0</b>% smooth landings</div>
+  <div><b data-n="52">0</b>flights completed</div>
+</section>
+<footer id="book">&copy; 2026 Nebula Voyages. Demo page: add your booking form here.</footer>
+<script>
+  /* animated starfield */
+  var c=document.getElementById('sky'),x=c.getContext('2d'),S=[];
+  function size(){c.width=innerWidth;c.height=innerHeight;S=[];for(var i=0;i<160;i++)S.push([Math.random()*c.width,Math.random()*c.height,Math.random()*1.6+.3,Math.random()*6])}
+  function draw(t){x.clearRect(0,0,c.width,c.height);S.forEach(function(s){x.globalAlpha=.4+.6*Math.abs(Math.sin(t/1200+s[3]));x.fillStyle='#fff';x.fillRect(s[0],(s[1]+t*.005*s[2])%c.height,s[2],s[2])});requestAnimationFrame(draw)}
+  size();addEventListener('resize',size);requestAnimationFrame(draw);
+  /* count-up numbers when they scroll into view */
+  var io=new IntersectionObserver(function(es){es.forEach(function(e){if(!e.isIntersecting)return;var el=e.target,end=+el.dataset.n,v=0;var id=setInterval(function(){v+=Math.ceil(end/60);if(v>=end){v=end;clearInterval(id)}el.textContent=v},20);io.unobserve(el)})});
+  document.querySelectorAll('[data-n]').forEach(function(el){io.observe(el)});
+<\/script>
+</body>
+</html>`;
+
+  CODE.solar = `<!DOCTYPE html>
+<html><head><meta charset="utf-8"><title>Solar system</title>
+<style>
+  html,body{margin:0;height:100%;background:#02030a;overflow:hidden}
+  canvas{display:block;width:100%;height:100%}
+  #i{position:fixed;left:12px;top:10px;color:#9fb3d9;font:13px system-ui}
+</style></head>
+<body><canvas id="c"></canvas><div id="i"></div>
+<script>
+var cv=document.getElementById('c'),g=cv.getContext('2d');
+/* name, distance (AU), period (days), colour, size */
+var P=[['Mercury',.387,87.97,'#b9b9b9',3],['Venus',.723,224.7,'#e8c883',5],['Earth',1,365.25,'#4aa3ff',5.5],['Mars',1.524,687,'#e0693f',4],['Jupiter',5.204,4332.6,'#d9b48a',11],['Saturn',9.58,10759,'#e8d49a',9],['Uranus',19.2,30687,'#8be6ee',7],['Neptune',30.07,60190,'#5b78f7',7]];
+var days=0,speed=20;
+function size(){cv.width=innerWidth;cv.height=innerHeight}
+size();addEventListener('resize',size);
+addEventListener('mousemove',function(e){speed=2+e.clientX/innerWidth*120});
+function frame(){
+  var w=cv.width,h=cv.height,cx=w/2,cy=h/2,R=Math.min(w,h)/2-30;
+  days+=speed/60;
+  g.clearRect(0,0,w,h);
+  var s=g.createRadialGradient(cx,cy,2,cx,cy,40);
+  s.addColorStop(0,'#fff6bf');s.addColorStop(.4,'#ffb52e');s.addColorStop(1,'rgba(255,150,30,0)');
+  g.fillStyle=s;g.beginPath();g.arc(cx,cy,40,0,7);g.fill();
+  P.forEach(function(p,i){
+    var r=30+(R-30)*Math.sqrt(p[1]/30.07),a=i*1.3+6.283*days/p[2];
+    var px=cx+r*Math.cos(a),py=cy+r*Math.sin(a);
+    g.strokeStyle='rgba(255,255,255,.12)';g.beginPath();g.arc(cx,cy,r,0,7);g.stroke();
+    g.fillStyle=p[3];g.beginPath();g.arc(px,py,p[4],0,7);g.fill();
+    g.fillStyle='rgba(255,255,255,.6)';g.font='11px system-ui';g.fillText(p[0],px+p[4]+3,py-p[4]);
+  });
+  document.getElementById('i').textContent='Mouse left = slow, right = fast ('+Math.round(speed)+' days per second)';
+  requestAnimationFrame(frame);
+}
+frame();
+<\/script></body></html>`;
+
+  CODE.todo = `<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Mission checklist</title>
+<style>
+  body{margin:0;min-height:100vh;display:grid;place-items:center;background:#070b1a;color:#e8ecff;font-family:system-ui,sans-serif}
+  .app{width:min(440px,92vw);padding:24px;border-radius:20px;background:#0f1630;border:1px solid #243058}
+  h1{margin:0 0 14px;font-size:1.4rem}
+  form{display:flex;gap:8px}
+  input{flex:1;padding:11px 14px;border-radius:12px;border:1px solid #2c3a6b;background:#0a1128;color:inherit}
+  button{padding:10px 16px;border:0;border-radius:12px;font-weight:700;color:#04130d;background:#10b981;cursor:pointer}
+  ul{list-style:none;margin:16px 0;padding:0}
+  li{display:flex;align-items:center;gap:10px;padding:10px 4px;border-bottom:1px solid #1f2a52}
+  li.done span{text-decoration:line-through;opacity:.5}
+  li span{flex:1}
+  li button{background:transparent;color:#f87171;padding:2px 8px;font-size:18px}
+  .filters{display:flex;gap:8px;font-size:.9rem}
+  .filters button{background:#1a2550;color:#c7d2fe;padding:6px 12px}
+  .filters button.on{background:#10b981;color:#04130d}
+  small{color:#8fa0c8}
+</style></head>
+<body><div class="app">
+  <h1>Mission checklist</h1>
+  <form id="f"><input id="t" placeholder="Add a task..." autocomplete="off" required><button>Add</button></form>
+  <ul id="list"></ul>
+  <div class="filters" id="flt"></div>
+  <p><small id="count"></small></p>
+</div>
+<script>
+var tasks=[],filter='all';
+try{tasks=JSON.parse(localStorage.getItem('tasks')||'[]')}catch(e){}
+function save(){try{localStorage.setItem('tasks',JSON.stringify(tasks))}catch(e){}}
+function render(){
+  var ul=document.getElementById('list');ul.innerHTML='';
+  tasks.filter(function(t){return filter==='all'||(filter==='done')===t.done}).forEach(function(t){
+    var li=document.createElement('li');li.className=t.done?'done':'';
+    var cb=document.createElement('input');cb.type='checkbox';cb.checked=t.done;
+    cb.onchange=function(){t.done=cb.checked;save();render()};
+    var sp=document.createElement('span');sp.textContent=t.text;
+    var del=document.createElement('button');del.textContent='x';del.setAttribute('aria-label','Delete');
+    del.onclick=function(){tasks=tasks.filter(function(x){return x!==t});save();render()};
+    li.append(cb,sp,del);ul.appendChild(li);
+  });
+  var fl=document.getElementById('flt');fl.innerHTML='';
+  ['all','active','done'].forEach(function(n){var b=document.createElement('button');b.textContent=n;b.className=n===filter?'on':'';b.onclick=function(){filter=n;render()};fl.appendChild(b)});
+  var left=tasks.filter(function(t){return !t.done}).length;
+  document.getElementById('count').textContent=left+' task'+(left===1?'':'s')+' left';
+}
+document.getElementById('f').onsubmit=function(e){e.preventDefault();var i=document.getElementById('t');tasks.push({text:i.value.trim(),done:false});i.value='';save();render()};
+render();
+<\/script></body></html>`;
+
+  CODE.loader = `<!DOCTYPE html>
+<html><head><meta charset="utf-8"><title>Orbit loader</title>
+<style>
+  body{margin:0;height:100vh;display:grid;place-items:center;background:#050816;color:#9aa8c7;font-family:system-ui,sans-serif}
+  .orbit{position:relative;width:120px;height:120px}
+  .planet{position:absolute;inset:40px;border-radius:50%;background:radial-gradient(circle at 30% 30%,#7ee8ff,#0b5cff);box-shadow:0 0 30px rgba(0,229,255,.5)}
+  .ring{position:absolute;inset:0;border-radius:50%;border:1px dashed rgba(255,255,255,.3);animation:spin 3s linear infinite}
+  .ring::after{content:"";position:absolute;top:-6px;left:50%;width:12px;height:12px;margin-left:-6px;border-radius:50%;background:#10b981;box-shadow:0 0 14px #10b981}
+  .ring.r2{inset:-18px;animation-duration:5s;animation-direction:reverse}
+  .ring.r2::after{background:#f59e0b;box-shadow:0 0 14px #f59e0b;width:8px;height:8px;margin-left:-4px;top:-4px}
+  @keyframes spin{to{transform:rotate(360deg)}}
+  p{margin-top:56px;animation:pulse 1.6s ease-in-out infinite}
+  @keyframes pulse{50%{opacity:.35}}
+  @media (prefers-reduced-motion:reduce){.ring,p{animation:none}}
+</style></head>
+<body><div style="text-align:center">
+  <div class="orbit"><div class="planet"></div><div class="ring"></div><div class="ring r2"></div></div>
+  <p>Contacting satellite...</p>
+</div></body></html>`;
+
+  CODE.pyorbit = `"""Orbital period and speed for a circular orbit around Earth.
+
+Usage:
+    python orbit.py 550
+    python orbit.py 400 20200 35786
+"""
+import argparse
+import math
+
+MU = 398600.4418   # Earth's gravitational parameter, km^3/s^2
+R_EARTH = 6371.0   # mean radius, km
+
+
+def orbit_stats(altitude_km: float) -> dict:
+    r = R_EARTH + altitude_km
+    period_s = 2 * math.pi * math.sqrt(r ** 3 / MU)
+    return {
+        "radius_km": r,
+        "period_min": period_s / 60,
+        "speed_km_s": math.sqrt(MU / r),
+        "escape_km_s": math.sqrt(2 * MU / r),
+        "orbits_per_day": 86400 / period_s,
+    }
+
+
+def classify(altitude_km: float) -> str:
+    if altitude_km < 2000:
+        return "LEO"
+    if abs(altitude_km - 35786) < 200:
+        return "GEO"
+    return "MEO" if altitude_km < 35786 else "HEO"
+
+
+def main() -> None:
+    parser = argparse.ArgumentParser(description="Circular orbit calculator")
+    parser.add_argument("altitudes", nargs="+", type=float, help="altitude(s) above the surface in km")
+    args = parser.parse_args()
+    for alt in args.altitudes:
+        s = orbit_stats(alt)
+        print(f"{alt:>8.0f} km  {classify(alt)}  period {s['period_min']:.1f} min  "
+              f"speed {s['speed_km_s']:.2f} km/s  {s['orbits_per_day']:.2f} orbits/day")
+
+
+if __name__ == "__main__":
+    main()`;
+
+  CODE.flask = `# pip install flask
+import math
+
+from flask import Flask, jsonify, request
+
+app = Flask(__name__)
+MU, R_EARTH = 398600.4418, 6371.0
+
+
+@app.get("/api/orbit")
+def orbit():
+    try:
+        alt = float(request.args.get("altitude_km", 400))
+    except ValueError:
+        return jsonify(error="altitude_km must be a number"), 400
+    if not 100 <= alt <= 400000:
+        return jsonify(error="altitude_km must be between 100 and 400000"), 400
+    r = R_EARTH + alt
+    period = 2 * math.pi * math.sqrt(r ** 3 / MU)
+    return jsonify(
+        altitude_km=alt,
+        period_minutes=round(period / 60, 2),
+        speed_km_s=round(math.sqrt(MU / r), 3),
+    )
+
+
+@app.get("/api/health")
+def health():
+    return jsonify(status="ok")
+
+
+if __name__ == "__main__":
+    app.run(debug=True)`;
+
+  CODE.express = `// npm init -y && npm install express
+const express = require("express");
+const app = express();
+const MU = 398600.4418, R_EARTH = 6371;
+
+app.get("/api/orbit", (req, res) => {
+  const alt = Number(req.query.altitude_km ?? 400);
+  if (!Number.isFinite(alt) || alt < 100 || alt > 400000) {
+    return res.status(400).json({ error: "altitude_km must be between 100 and 400000" });
+  }
+  const r = R_EARTH + alt;
+  const period = 2 * Math.PI * Math.sqrt(r ** 3 / MU);
+  res.json({
+    altitude_km: alt,
+    period_minutes: +(period / 60).toFixed(2),
+    speed_km_s: +Math.sqrt(MU / r).toFixed(3),
+  });
+});
+
+app.get("/api/health", (req, res) => res.json({ status: "ok" }));
+
+app.listen(3000, () => console.log("Try http://localhost:3000/api/orbit?altitude_km=550"));`;
+
+  CODE.react = `import { useState } from "react";
+
+const PLANETS = {
+  Mercury: { au: 0.39, year: "88 days", fact: "Temperatures swing from about -180 C to 430 C." },
+  Venus: { au: 0.72, year: "225 days", fact: "A day is longer than its year." },
+  Earth: { au: 1.0, year: "365.25 days", fact: "About 71% of the surface is ocean." },
+  Mars: { au: 1.52, year: "687 days", fact: "Home of Olympus Mons, about 22 km high." },
+  Jupiter: { au: 5.2, year: "11.9 years", fact: "More massive than all other planets combined." },
+  Saturn: { au: 9.58, year: "29.4 years", fact: "Less dense than water." },
+  Uranus: { au: 19.2, year: "84 years", fact: "Rotates on its side, tilted about 98 degrees." },
+  Neptune: { au: 30.1, year: "165 years", fact: "Winds exceed 2,000 km/h." },
+};
+
+export default function PlanetExplorer() {
+  const [name, setName] = useState("Earth");
+  const p = PLANETS[name];
+
+  return (
+    <section style={{ maxWidth: 420, margin: "2rem auto", fontFamily: "system-ui" }}>
+      <h2>Planet explorer</h2>
+      <label>
+        Planet{" "}
+        <select value={name} onChange={(e) => setName(e.target.value)}>
+          {Object.keys(PLANETS).map((n) => (
+            <option key={n}>{n}</option>
+          ))}
+        </select>
+      </label>
+      <dl>
+        <dt>Distance from the Sun</dt>
+        <dd>{p.au} AU</dd>
+        <dt>Year length</dt>
+        <dd>{p.year}</dd>
+      </dl>
+      <p>{p.fact}</p>
+    </section>
+  );
+}`;
+
+  CODE.chromeManifest = `{
+  "manifest_version": 3,
+  "name": "Space Picture of the Day",
+  "version": "1.0.0",
+  "description": "Shows NASA's Astronomy Picture of the Day in a popup.",
+  "action": { "default_popup": "popup.html", "default_title": "Space picture" },
+  "permissions": ["storage"],
+  "host_permissions": ["https://api.nasa.gov/*"]
+}`;
+  CODE.chromeHtml = `<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <style>
+    body { width: 340px; margin: 0; padding: 14px; font: 14px system-ui; background: #070b1a; color: #e8ecff; }
+    h2 { margin: 0 0 8px; font-size: 16px; }
+    img { border-radius: 10px; }
+  </style>
+</head>
+<body>
+  <div id="out">Loading...</div>
+  <script src="popup.js"><\/script>
+</body>
+</html>`;
+  CODE.chromeJs = `const KEY = "DEMO_KEY"; // get your own free key at https://api.nasa.gov
+
+async function load() {
+  const out = document.getElementById("out");
+  const today = new Date().toISOString().slice(0, 10);
+  const cached = await chrome.storage.local.get(today);
+  let data = cached[today];
+
+  if (!data) {
+    const res = await fetch("https://api.nasa.gov/planetary/apod?api_key=" + KEY);
+    if (!res.ok) { out.textContent = "Could not load (" + res.status + ")"; return; }
+    data = await res.json();
+    await chrome.storage.local.set({ [today]: data });
+  }
+
+  out.innerHTML = "";
+  const h = document.createElement("h2");
+  h.textContent = data.title;
+  out.append(h);
+  if (data.media_type === "image") {
+    const img = new Image();
+    img.src = data.url;
+    img.alt = data.title;
+    img.style.width = "100%";
+    out.append(img);
+  }
+  const p = document.createElement("p");
+  p.textContent = data.explanation.slice(0, 280) + "...";
+  out.append(p);
+}
+
+load();`;
+
+  CODE.wp = `<?php
+/**
+ * Plugin Name: Space Fact Shortcode
+ * Description: Adds a [space_fact] shortcode that shows a random space fact.
+ * Version: 1.0.0
+ * Author: Your Name
+ * License: GPL-2.0-or-later
+ */
+
+if ( ! defined( 'ABSPATH' ) ) {
+    exit; // block direct access
+}
+
+function sfs_random_fact() {
+    $facts = array(
+        'A day on Venus is longer than its year.',
+        'Saturn is less dense than water.',
+        'The ISS orbits Earth about 16 times a day.',
+        'Light from the Sun takes about 8 minutes to reach Earth.',
+        'Olympus Mons on Mars is about 22 km high.',
+    );
+    return $facts[ array_rand( $facts ) ];
+}
+
+function sfs_shortcode( $atts ) {
+    $atts = shortcode_atts( array( 'label' => 'Space fact' ), $atts, 'space_fact' );
+    return '<div class="sfs-box"><strong>' . esc_html( $atts['label'] ) . ':</strong> ' . esc_html( sfs_random_fact() ) . '</div>';
+}
+add_shortcode( 'space_fact', 'sfs_shortcode' );
+
+function sfs_styles() {
+    wp_register_style( 'sfs-style', false );
+    wp_enqueue_style( 'sfs-style' );
+    wp_add_inline_style( 'sfs-style', '.sfs-box{padding:14px 18px;border-left:4px solid #10b981;background:#f0fdf4;border-radius:8px}' );
+}
+add_action( 'wp_enqueue_scripts', 'sfs_styles' );`;
+
+  CODE.vscPkg = `{
+  "name": "space-facts",
+  "displayName": "Space Facts",
+  "version": "0.0.1",
+  "engines": { "vscode": "^1.85.0" },
+  "main": "./out/extension.js",
+  "contributes": {
+    "commands": [
+      { "command": "spaceFacts.show", "title": "Space Facts: Show a fact" }
+    ]
+  },
+  "scripts": { "compile": "tsc -p ./" },
+  "devDependencies": { "@types/vscode": "^1.85.0", "typescript": "^5.4.0" }
+}`;
+  CODE.vscTs = `import * as vscode from "vscode";
+
+const FACTS = [
+  "A day on Venus is longer than its year.",
+  "Saturn is less dense than water.",
+  "The ISS orbits Earth about 16 times a day.",
+  "Light from the Sun takes about 8 minutes to reach Earth.",
+];
+
+export function activate(context: vscode.ExtensionContext) {
+  const cmd = vscode.commands.registerCommand("spaceFacts.show", () => {
+    const fact = FACTS[Math.floor(Math.random() * FACTS.length)];
+    vscode.window.showInformationMessage(fact);
+  });
+  context.subscriptions.push(cmd);
+}
+
+export function deactivate() {}`;
+  CODE.vscCfg = `{
+  "compilerOptions": {
+    "module": "commonjs",
+    "target": "ES2020",
+    "outDir": "out",
+    "rootDir": "src",
+    "strict": true
+  }
+}`;
+
+  CODE.mcp = `# pip install "mcp[cli]"
+import math
+
+from mcp.server.fastmcp import FastMCP
+
+mcp = FastMCP("space-tools")
+
+MU = 398600.4418
+R_EARTH = 6371.0
+
+
+@mcp.tool()
+def orbital_period(altitude_km: float) -> str:
+    """Orbital period and speed of a circular Earth orbit at the given altitude in km."""
+    r = R_EARTH + altitude_km
+    period_min = 2 * math.pi * math.sqrt(r ** 3 / MU) / 60
+    speed = math.sqrt(MU / r)
+    return f"At {altitude_km:.0f} km: period {period_min:.1f} min, speed {speed:.2f} km/s"
+
+
+@mcp.tool()
+def light_travel_time(distance_km: float) -> str:
+    """How long light takes to travel the given distance in km."""
+    seconds = distance_km / 299792.458
+    return f"{seconds:.2f} s ({seconds / 60:.2f} min)"
+
+
+if __name__ == "__main__":
+    mcp.run()`;
+  CODE.mcpCfg = `{
+  "mcpServers": {
+    "space-tools": {
+      "command": "python",
+      "args": ["/full/path/to/server.py"]
+    }
+  }
+}`;
+
+  CODE.embed = `<!-- paste before </body> on any page -->
+<script>
+(function () {
+  var HREF = "EcoAi.html"; // change to the full URL where you host the page
+  var a = document.createElement("a");
+  a.href = HREF;
+  a.target = "_blank";
+  a.rel = "noopener";
+  a.textContent = "Ask EcoAi";
+  a.setAttribute("aria-label", "Ask EcoAi (opens in a new tab)");
+  a.style.cssText = "position:fixed;right:18px;bottom:18px;z-index:99999;padding:12px 18px;border-radius:999px;font:600 14px system-ui;color:#03120d;background:linear-gradient(90deg,#10b981,#00f2fe);text-decoration:none;box-shadow:0 8px 24px rgba(0,0,0,.35)";
+  document.body.appendChild(a);
+})();
+<\/script>`;
+
+  CODE.utils = `export const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+
+export function debounce(fn, wait = 250) {
+  let timer;
+  return (...args) => {
+    clearTimeout(timer);
+    timer = setTimeout(() => fn(...args), wait);
+  };
+}
+
+export function throttle(fn, wait = 250) {
+  let last = 0;
+  return (...args) => {
+    const now = Date.now();
+    if (now - last >= wait) {
+      last = now;
+      fn(...args);
+    }
+  };
+}
+
+export async function fetchJSON(url, { retries = 2, timeout = 8000 } = {}) {
+  for (let attempt = 0; ; attempt++) {
+    const ctrl = new AbortController();
+    const timer = setTimeout(() => ctrl.abort(), timeout);
+    try {
+      const res = await fetch(url, { signal: ctrl.signal });
+      if (!res.ok) throw new Error("HTTP " + res.status);
+      return await res.json();
+    } catch (err) {
+      if (attempt >= retries) throw err;
+      await sleep(500 * 2 ** attempt);
+    } finally {
+      clearTimeout(timer);
+    }
+  }
+}`;
+
+  CODE.apod = `<!DOCTYPE html>
+<html><head><meta charset="utf-8"><title>NASA picture of the day</title>
+<style>
+  body{margin:0;min-height:100vh;display:grid;place-items:center;background:#050816;color:#e8ecff;font-family:system-ui,sans-serif}
+  main{width:min(560px,92vw);padding:20px;border-radius:18px;background:#0e1530;border:1px solid #243058}
+  img{width:100%;border-radius:12px;display:block}
+  h1{font-size:1.2rem;margin:14px 0 6px}
+  p{color:#a8b4d8;line-height:1.55}
+</style></head>
+<body><main id="m">Loading today's picture...</main>
+<script>
+fetch('https://api.nasa.gov/planetary/apod?api_key=DEMO_KEY')
+  .then(function(r){if(!r.ok)throw new Error('HTTP '+r.status);return r.json()})
+  .then(function(d){
+    var m=document.getElementById('m');m.innerHTML='';
+    if(d.media_type==='image'){var i=new Image();i.src=d.url;i.alt=d.title;m.appendChild(i)}
+    var h=document.createElement('h1');h.textContent=d.title;
+    var p=document.createElement('p');p.textContent=d.explanation;
+    m.append(h,p);
+  })
+  .catch(function(e){document.getElementById('m').textContent='Could not load: '+e.message+' (DEMO_KEY is rate limited, get a free key at api.nasa.gov)'});
+<\/script></body></html>`;
+
+  function codeAnswer(intro, blocks, outro) {
+    return intro + "\n\n" + blocks.map(function (b) { return (b.title ? "**" + b.title + "**\n\n" : "") + fence(b.lang, b.code, b.file); }).join("\n\n") + (outro ? "\n\n" + outro : "");
+  }
+  var CODE_REL = ["Make a Chrome extension", "Write a Python orbit calculator", "Give me a WordPress plugin"];
+  KB.push(
+    { id: "c-solar", w: 9, re: [/(solar system|planets).*(html|canvas|code|animation|animate|website|page|javascript)|(html|canvas|code|animate|animation|website|javascript).*(solar system|planets)/], md: function () {
+      return codeAnswer("Here is a complete animated **solar system** in one HTML file. It uses real orbital periods (compressed distances), and the mouse position controls the speed. Press **Preview** to run it right here.", [{ lang: "html", file: "solar.html", code: CODE.solar }], "Save it as `solar.html` and open it in any browser. To extend it: add moons, click-to-select planets, or draw Saturn's rings with `ctx.ellipse`.");
+    }, rel: ["Write a landing page for a space tour company", "Show me the solar system"] },
+    { id: "c-landing", w: 6, re: [/landing page|html page|portfolio (site|page)|(make|build|create|write|design|code|generate|need|want).*(web ?site|web ?page|home ?page)/], md: function () {
+      return codeAnswer("Here is a responsive, animated **landing page** (starfield background, sticky nav, hover cards, count-up stats) in a single HTML file. Press **Preview** to see it running.", [{ lang: "html", file: "index.html", code: CODE.landing }], "**How to customise it**\n\n- Change the colours in the `:root` variables at the top.\n- Replace the three `.card` articles with your own offers.\n- It is one file with no dependencies, so you can host it on GitHub Pages or Netlify as is.\n\nThis starter is space-themed; tell me your real topic and I can adapt it, and in API mode I will rewrite the copy and layout to match.");
+    }, rel: ["Build a to-do app", "Make a CSS loading animation", "Embed EcoAi on my site"] },
+    { id: "c-todo", w: 7, re: [/to-?do|task list|checklist|task manager/], md: function () {
+      return codeAnswer("A complete **to-do app** with add, complete, delete, filters and saved tasks (uses `localStorage` when the page is opened normally; inside the preview it simply keeps tasks in memory).", [{ lang: "html", file: "todo.html", code: CODE.todo }], "It builds elements with `textContent` instead of `innerHTML`, so pasted text can never inject HTML.");
+    }, rel: CODE_REL },
+    { id: "c-loader", w: 7, re: [/loader|spinner|loading animation|css animation|css.*(animate|animation)|animated (button|card)/], md: function () {
+      return codeAnswer("A pure-CSS **orbit loader**: two satellites circling a planet, with a pulsing label and `prefers-reduced-motion` support.", [{ lang: "html", file: "loader.html", code: CODE.loader }], "Change `animation-duration` on the rings to speed them up, or reuse the `.orbit` block inside any button or page that needs a loading state.");
+    }, rel: CODE_REL },
+    { id: "c-py", w: 8, re: [/python.*(orbit|satellite|period|space|calculator|script|program)|(orbit|satellite|period).*python/], md: function () {
+      return codeAnswer("A small **Python command-line orbit calculator**. It uses the real two-body formulas: period T = 2π√(r³/μ), circular speed v = √(μ/r), and escape speed √(2μ/r).", [{ lang: "python", file: "orbit.py", code: CODE.pyorbit }], "**Run it**\n\n" + fence("bash", "python orbit.py 550\npython orbit.py 400 20200 35786") + "\n\nThe first number is a Starlink-like altitude; the second set gives you the ISS, a GPS satellite and a geostationary one.");
+    }, rel: ["Make a Flask API for it", "Make an MCP server plugin", "Orbital period at 550 km"] },
+    { id: "c-api", w: 7, re: [/flask|fastapi|rest api|api server|backend|python (api|server)|express (api|server|app)|node\.?js|\bnpm\b/], md: function (q) {
+      if (/express|node|npm|javascript|\bjs\b/.test(q)) return codeAnswer("A minimal **Node.js and Express REST API** that returns orbit data for any altitude, with input validation.", [{ lang: "javascript", file: "server.js", code: CODE.express }], "Run `node server.js`, then open `http://localhost:3000/api/orbit?altitude_km=550`.");
+      return codeAnswer("A minimal **Flask REST API** (Python) that returns orbit data for any altitude, with input validation.", [{ lang: "python", file: "app.py", code: CODE.flask }], "**Run it**\n\n" + fence("bash", "pip install flask\npython app.py") + "\n\nThen open `http://127.0.0.1:5000/api/orbit?altitude_km=550`. Want the Node.js version instead? Ask for *an Express API*.");
+    }, rel: ["Write a Python orbit calculator", "Make a React component"] },
+    { id: "c-react", w: 7, re: [/\breact\b|jsx|next\.?js|(make|build|write|create).*component/], md: function () {
+      return codeAnswer("A **React component** with state: pick a planet from a dropdown and the details update instantly.", [{ lang: "jsx", file: "PlanetExplorer.jsx", code: CODE.react }], "Create a project with `npm create vite@latest my-app -- --template react`, drop the file into `src/`, and render `<PlanetExplorer />` from `App.jsx`.");
+    }, rel: CODE_REL },
+    { id: "c-chrome", w: 8, re: [/chrome|browser (extension|add-?on)|manifest|firefox add-?on|edge add-?on/], md: function () {
+      return codeAnswer("A complete **Chrome extension (Manifest V3)** that shows NASA's Astronomy Picture of the Day in a popup and caches it for the day. Create a folder with these three files:", [
+        { title: "1. manifest.json", lang: "json", file: "manifest.json", code: CODE.chromeManifest },
+        { title: "2. popup.html", lang: "html", file: "popup.html", code: CODE.chromeHtml },
+        { title: "3. popup.js", lang: "javascript", file: "popup.js", code: CODE.chromeJs }],
+        "**Install it**\n\n1. Open `chrome://extensions` and switch on **Developer mode**.\n2. Click **Load unpacked** and choose your folder.\n3. Pin the extension and click its icon.\n\nManifest V3 does not allow inline scripts, which is why the code lives in `popup.js`. `DEMO_KEY` is rate limited, so get a free key at api.nasa.gov for real use.");
+    }, rel: ["Give me a WordPress plugin", "Make a VS Code extension", "Make an MCP server plugin"] },
+    { id: "c-wp", w: 8, re: [/wordpress|wp plugin|shortcode|woocommerce/], md: function () {
+      return codeAnswer("A complete **WordPress plugin** that adds a `[space_fact]` shortcode. It follows WordPress practice: direct-access guard, escaped output and styles enqueued the proper way.", [{ lang: "php", file: "space-fact.php", code: CODE.wp }], "**Install it**\n\n1. Save the file as `wp-content/plugins/space-fact/space-fact.php`.\n2. Activate **Space Fact Shortcode** under *Plugins*.\n3. Add `[space_fact]` or `[space_fact label=\"Did you know\"]` to any post or page.");
+    }, rel: ["Make a Chrome extension", "Make a VS Code extension"] },
+    { id: "c-vsc", w: 9, re: [/vs ?code|visual studio/], md: function () {
+      return codeAnswer("A minimal **VS Code extension** with one command, *Space Facts: Show a fact*. Create these three files:", [
+        { title: "1. package.json", lang: "json", file: "package.json", code: CODE.vscPkg },
+        { title: "2. src/extension.ts", lang: "ts", file: "src/extension.ts", code: CODE.vscTs },
+        { title: "3. tsconfig.json", lang: "json", file: "tsconfig.json", code: CODE.vscCfg }],
+        "**Run it**\n\n" + fence("bash", "npm install\nnpm run compile") + "\n\nThen open the folder in VS Code and press **F5** to start an Extension Development Host. Open the Command Palette and run *Space Facts: Show a fact*. To publish later, use `vsce`.");
+    }, rel: ["Make a Chrome extension", "Make an MCP server plugin"] },
+    { id: "c-mcp", w: 9, re: [/\bmcp\b|model context protocol|claude plugin|ai plugin|plugin for (claude|ai)|tool server|ai tool/], md: function () {
+      return codeAnswer("An **MCP server**, the open plugin format that lets AI assistants such as Claude call your own tools. This one exposes two space-maths tools using the official Python SDK:", [
+        { title: "server.py", lang: "python", file: "server.py", code: CODE.mcp },
+        { title: "Claude Desktop config (claude_desktop_config.json)", lang: "json", file: "claude_desktop_config.json", code: CODE.mcpCfg }],
+        "Install the SDK with `pip install \"mcp[cli]\"`, point the config at your real file path, and restart the app. The assistant will then be able to call `orbital_period` and `light_travel_time` whenever a question needs them. The docstrings matter: they are what the AI reads to decide when to use each tool.");
+    }, rel: ["Write a Python orbit calculator", "Make a Chrome extension"] },
+    { id: "c-embed", w: 7, re: [/embed|add (you|this|the bot|the chatbot|ecoorbit ai) to my|chat ?widget|floating (button|chat)/], md: function () {
+      return codeAnswer("A tiny **embed snippet** that adds a floating *Ask EcoAi* button to any website and opens this assistant in a new tab.", [{ lang: "html", file: "snippet.html", code: CODE.embed }], "Paste it before `</body>` and change `HREF` to the full address where you host `EcoAi.html`.");
+    }, rel: ["Write a landing page for a space tour company", "Make a Chrome extension"] },
+    { id: "c-utils", w: 7, re: [/debounce|throttle|javascript (function|helper|util)|js (function|helper|util)|utility functions|fetch (with )?retry/], md: function () {
+      return codeAnswer("Four **JavaScript utilities** that almost every project ends up needing: `sleep`, `debounce`, `throttle` and `fetchJSON` (with timeout and exponential-backoff retries).", [{ lang: "javascript", file: "utils.js", code: CODE.utils }], "They are ES modules, so import them with `import { debounce } from \"./utils.js\"`.");
+    }, rel: CODE_REL },
+    { id: "c-apod", w: 8, re: [/nasa api|apod|picture of the day|astronomy picture/], md: function () {
+      return codeAnswer("A web page that fetches **NASA's Astronomy Picture of the Day** from the public NASA API and displays it. Press **Preview** to try it.", [{ lang: "html", file: "apod.html", code: CODE.apod }], "`DEMO_KEY` works for light testing but is rate limited; request a free key at api.nasa.gov and replace it.");
+    }, rel: ["Make a Chrome extension", "Write a landing page for a space tour company"] },
+    { id: "c-plugin", w: 5, re: [/plugin|add-?on/], md: function () {
+      return "I can write complete, working **plugins** in several formats. Pick one:\n\n- **Chrome extension** (Manifest V3, with NASA picture popup)\n- **WordPress plugin** (shortcode, escaped output, enqueued styles)\n- **VS Code extension** (a command in the palette)\n- **MCP server**, the plugin format AI assistants like Claude use to call your tools\n- **Embed snippet** that adds an *Ask EcoAi* button to any site\n\nJust say, for example, *make a Chrome extension* or *write an MCP server*.";
+    }, rel: ["Make a Chrome extension", "Give me a WordPress plugin", "Make an MCP server plugin"] },
+    { id: "c-menu", w: 3, re: [/\b(code|coding|program|programming|software|app|script|develop|developer|html|css|javascript|python)\b|build me|make me|write (me )?a|create a/], md: function () {
+      return "Happy to code. Here is what I can write complete, runnable examples of right now:\n\n- **Websites:** a landing page, a to-do app, a CSS orbit loader, an animated solar system (all with live **Preview**)\n- **Backends:** a Flask API or an Express API\n- **Frontend:** a React component\n- **Scripts:** a Python orbit calculator, JavaScript utilities, a NASA picture fetcher\n- **Plugins:** Chrome, WordPress, VS Code, MCP server, embed widget\n\nPick one, or describe what you want. For fully custom projects and reviewing your own code, add a Claude API key in **Settings** and I'll switch to a full AI.";
+    }, rel: ["Write a landing page for a space tour company", "Make a Chrome extension", "Write a Python orbit calculator"] }
+  );
+
+  /* ================= answer router ================= */
+  var cap = function (s) { return s.charAt(0).toUpperCase() + s.slice(1); };
+  function convert(v, a, b) {
+    var U = { km: "km", kilometer: "km", kilometers: "km", mi: "mi", mile: "mi", miles: "mi", kg: "kg", kilogram: "kg", kilograms: "kg", lb: "lb", lbs: "lb", pound: "lb", pounds: "lb", c: "c", celsius: "c", f: "f", fahrenheit: "f", m: "m", meter: "m", meters: "m", ft: "ft", feet: "ft", foot: "ft" };
+    a = U[a.replace("°", "")]; b = U[b.replace("°", "")]; if (!a || !b) return null;
+    var k = a + ">" + b, T = { "km>mi": v * 0.621371, "mi>km": v / 0.621371, "kg>lb": v * 2.20462, "lb>kg": v / 2.20462, "c>f": v * 9 / 5 + 32, "f>c": (v - 32) * 5 / 9, "m>ft": v * 3.28084, "ft>m": v / 3.28084 };
+    return T[k] !== undefined ? { r: T[k], a: a, b: b } : null;
+  }
+  function answer(raw, ctx) {
+    var q = raw.toLowerCase().trim().replace(/\s+/g, " "), m;
+    if ((m = q.match(/\bmy name is ([a-z][a-z'-]{1,20})/)) || (m = q.match(/\bcall me ([a-z][a-z'-]{1,20})/))) {
+      profile.name = cap(m[1]); LS.set("eoai.profile", profile);
+      return { md: "Nice to meet you, **" + profile.name + "**! I'll remember your name in this browser. What would you like to explore?", rel: SPACE_CHIPS.slice(0, 3), id: "name" };
+    }
+    if (/\bwhat('s| is) my name\b|\bdo you know my name\b/.test(q)) return { md: profile.name ? "You told me your name is **" + profile.name + "**." : "I don't know yet. Tell me with *my name is ...*", id: "name2" };
+    if (raw.indexOf("```") > -1 || (raw.split("\n").length > 5 && /[{};=]/.test(raw))) {
+      return { md: "It looks like you pasted code. In built-in mode I can't read or debug arbitrary code, because I'm not a language model. I can write fresh, working examples of websites, APIs and plugins (just ask), and if you add a **Claude API key** in Settings I'll be able to review, explain and fix your own code.", rel: ["What can you do?", "Write a landing page for a space tour company"], id: "pastedcode" };
+    }
+    /* calculators */
+    if ((m = q.match(/(\d+(?:\.\d+)?)\s*(?:km|kilomet)/)) && /orbit|period|altitude|satellite|speed|velocity|fly/.test(q) && !/how far|distance to/.test(q)) {
+      var alt = parseFloat(m[1]);
+      if (alt >= 100 && alt <= 400000) {
+        var s = orbitStats(alt), cls = alt < 2000 ? "low Earth orbit (LEO)" : alt < 35586 ? "medium Earth orbit (MEO)" : alt <= 35986 ? "geostationary orbit (GEO)" : "high Earth orbit";
+        return { md: "## Circular orbit at " + alt.toLocaleString() + " km\n\n| Quantity | Value |\n|---|---|\n| Orbit class | " + cls + " |\n| Orbital radius | " + (6371 + alt).toLocaleString() + " km |\n| Period | **" + s.per + "** |\n| Speed | **" + s.v.toFixed(2) + " km/s** (" + Math.round(s.v * 3600).toLocaleString() + " km/h) |\n| Orbits per day | " + s.orbitsDay.toFixed(2) + " |\n\nComputed with T = 2π√(r³/μ), μ = 398,600 km³/s², Earth radius 6,371 km.\n\n[[widget:orbit:" + Math.round(alt) + "]]", rel: ["Orbital period at 35786 km", "Explain orbital mechanics"], id: "orbitcalc" };
+      }
+    }
+    if (/\b(weigh|weight)\b/.test(q) && /\b(on|at)\b|planet|worlds/.test(q)) {
+      var nm = q.match(/(\d+(?:\.\d+)?)\s*(kg|kilos?|lbs?|pounds?)?/), mass = nm ? parseFloat(nm[1]) : 60, unit = nm && nm[2] && /lb|pound/.test(nm[2]) ? "lb" : "kg";
+      var body = Object.keys(G).filter(function (k) { return new RegExp("\\b" + k + "\\b").test(q); })[0];
+      if (body) return { md: "At **" + mass + " " + unit + "** on Earth, you would feel like **" + (mass * G[body]).toFixed(1) + " " + unit + "** on " + (body === "moon" || body === "sun" ? "the " : "") + cap(body) + ", because surface gravity there is about **" + Math.round(G[body] * 100) + "%** of Earth's. Your *mass* doesn't change; only the pull on it does.", rel: ["What would I weigh on all planets?", "Tell me about Jupiter"], id: "weight" };
+      return { md: "## Your weight on other worlds (starting from " + mass + " " + unit + ")\n\n| World | Gravity vs Earth | You would weigh |\n|---|---|---|\n" + Object.keys(G).map(function (k) { return "| " + cap(k) + " | " + Math.round(G[k] * 100) + "% | " + (mass * G[k]).toFixed(1) + " " + unit + " |"; }).join("\n") + "\n\nTry *I weigh 70 kg, what do I weigh on Mars?*", rel: ["Tell me about Jupiter"], id: "weight2" };
+    }
+    if ((m = q.match(/\b(proxima|andromeda|voyager|moon|sun|mars|jupiter|saturn|neptune|pluto)\b/)) && /how far|distance|light (from|to|take)|how long (does|would|will) light|light travel|how long (to|does it take) (get|reach|travel)/.test(q) && DISTANCES[m[1]]) {
+      var D = DISTANCES[m[1]]; return { md: "## Distance to " + D[0] + "\n\n- **Distance:** " + D[2] + "\n- **Light travel time:** " + D[1] + "\n\nFor scale, light moves at 299,792 km/s. " + (m[1] === "mars" ? "That's why radio commands to Mars rovers have a delay of several minutes each way." : "Everything we see out there is the past, delayed by that travel time."), rel: ["What is a light-year?", "Show me the solar system"], id: "dist" };
+    }
+    if ((m = q.match(/(-?\d+(?:\.\d+)?)\s*(°?\s?[a-z]+)\s*(?:to|in|into)\s*(°?\s?[a-z]+)\b/))) {
+      var cv = convert(parseFloat(m[1]), m[2].replace(/\s/g, ""), m[3].replace(/\s/g, ""));
+      if (cv) return { md: "**" + m[1] + " " + cv.a + " = " + fmtN(cv.r) + " " + cv.b + "**", rel: ["Orbital period at 550 km"], id: "convert" };
+    }
+    var cleaned = q.replace(/what('s| is)|calculate|compute|equals?|how much is|solve|[?=]/g, "").trim();
+    if (/^[\d\s.,+\-*/()^%x]+$/.test(cleaned) || /\d\s*(times|plus|minus|divided by|multiplied by|to the power of)\s*\d/.test(cleaned)) {
+      var ev = evalMath(cleaned); if (ev) return { md: "**" + ev.ex.replace(/\*/g, "×") + " = " + fmtN(ev.r) + "**", rel: ["Orbital period at 550 km", "What would I weigh on Mars?"], id: "math" };
+    }
+    /* follow-ups */
+    if (/^(more|tell me more|go on|continue|elaborate|explain more|expand|more details?|and\??|keep going)\b/.test(q)) {
+      if (ctx.last && FOLLOW[ctx.last]) return { md: FOLLOW[ctx.last], rel: ctx.lastRel || [], id: ctx.last };
+      return { md: "More about what? Pick a topic and I'll go deeper, for example:", rel: SPACE_CHIPS.slice(0, 4), id: "more" };
+    }
+    /* knowledge base scoring: weight first, then how specific the matched text is */
+    var best = null, bestScore = 0;
+    KB.forEach(function (e) {
+      var sc = 0;
+      e.re.forEach(function (re) { var mm = q.match(re); if (mm) sc += e.w + Math.min(mm[0].length, 30) / 30; });
+      if (sc > bestScore) { bestScore = sc; best = e; }
+    });
+    if (best && bestScore >= 2) {
+      var md = best.md(q); if (FOLLOW[best.id]) md += "\n\n*Ask for \"more\" to go deeper.*";
+      return { md: md, rel: best.rel || [], id: best.id };
+    }
+    return { md: "I don't have a solid answer for that in built-in mode, and I'd rather say so than guess. Here is what I'm good at:\n\n- **Space:** planets, stars, black holes, the ISS, telescopes, Mars, exoplanets\n- **Orbits and debris**, with animated explainers\n- **Calculators:** orbital period at any altitude, weight on other planets, light travel time\n- **Code:** websites, APIs and plugins\n\nTry rephrasing with a space or coding keyword. For open-ended questions on any subject, add a **Claude API key** in Settings and I'll answer with a full AI model.", rel: SPACE_CHIPS.slice(0, 3).concat(["Write a landing page for a space tour company"]), id: "fallback" };
+  }
+
+  /* ================= Claude API mode (optional, user's own key) ================= */
+  function useApi() { return !!(settings.key && settings.key.trim()); }
+  async function streamClaude(history, onDelta, ac) {
+    var res = await fetch("https://api.anthropic.com/v1/messages", {
+      method: "POST", signal: ac.signal,
+      headers: { "content-type": "application/json", "x-api-key": settings.key.trim(), "anthropic-version": "2023-06-01", "anthropic-dangerous-direct-browser-access": "true" },
+      body: JSON.stringify({ model: settings.model || "claude-sonnet-5-5", max_tokens: 4096, stream: true, system: settings.sys || DEFAULT_SYS, messages: history })
+    });
+    if (!res.ok) {
+      var t = ""; try { t = await res.text(); } catch (e) {}
+      var detail = ""; try { detail = JSON.parse(t).error.message; } catch (e) { detail = t.slice(0, 200); }
+      var hint = res.status === 401 ? "The API key looks invalid." : res.status === 429 ? "Rate limit or spend limit reached." : res.status === 404 ? "Check the model name in Settings." : "";
+      throw new Error("API error " + res.status + (detail ? ": " + detail : "") + (hint ? " " + hint : ""));
+    }
+    var reader = res.body.getReader(), dec = new TextDecoder(), buf = "";
+    for (;;) {
+      var r = await reader.read(); if (r.done) break;
+      buf += dec.decode(r.value, { stream: true });
+      var parts = buf.split("\n"); buf = parts.pop();
+      for (var i = 0; i < parts.length; i++) {
+        var ln = parts[i].trim(); if (ln.indexOf("data:") !== 0) continue;
+        var js = ln.slice(5).trim(); if (!js || js === "[DONE]") continue;
+        try { var ev = JSON.parse(js); if (ev.type === "content_block_delta" && ev.delta && ev.delta.type === "text_delta") onDelta(ev.delta.text); else if (ev.type === "error") throw new Error(ev.error && ev.error.message || "stream error"); }
+        catch (e) { if (e.message && /stream error|overloaded|error/i.test(e.message) && !(e instanceof SyntaxError)) throw e; }
+      }
+    }
+  }
+
+  /* ================= chat UI ================= */
+  var thread = $("thread"), scrollEl = $("scroll"), input = $("input"), sendBtn = $("send"), jump = $("jump");
+  var busy = false, ctrl = null, stick = true, lastCtx = { last: null, lastRel: null }, variant = 0;
+  var srEl = document.createElement("div"); srEl.setAttribute("aria-live", "polite"); srEl.style.cssText = "position:absolute;left:-9999px;width:1px;height:1px;overflow:hidden"; document.body.appendChild(srEl);
+  var SPEED = { slow: 1.8, normal: 1, fast: 0.45, instant: 0 };
+  var speedF = function () { var f = SPEED[settings.speed]; return f === undefined ? 1 : f; };
+
+  function saveChats() { chats = chats.slice(0, 40); LS.set("eoai.chats", chats); }
+  function curChat() { return chats.filter(function (c) { return c.id === activeId; })[0]; }
+  function scrollDown(force) { if (force || stick) scrollEl.scrollTop = scrollEl.scrollHeight; }
+  scrollEl.addEventListener("scroll", function () { stick = scrollEl.scrollHeight - scrollEl.scrollTop - scrollEl.clientHeight < 90; jump.classList.toggle("on", !stick); });
+  jump.onclick = function () { stick = true; scrollDown(true); };
+
+  function updateMode() {
+    var api = useApi(), m = $("mode");
+    m.className = "mode" + (api ? " api" : ""); m.textContent = api ? "Claude API: " + (settings.model || "claude") : "Built-in mode";
+    $("hint").textContent = api ? "Connected to Claude with your API key. Enter to send, Shift+Enter for a new line." : "Built-in mode covers space and code topics. Add a Claude API key in Settings for anything else. Type /help for commands.";
+  }
+  function renderHistory() {
+    var h = $("hist"); h.innerHTML = "";
+    if (!chats.length) { h.innerHTML = '<div class="hist-empty">Your chats will appear here.</div>'; return; }
+    chats.slice().sort(function (a, b) { return b.updated - a.updated; }).forEach(function (c) {
+      var row = document.createElement("div"); row.className = "hist-i" + (c.id === activeId ? " on" : "");
+      var b = document.createElement("button"); b.textContent = c.title; b.title = c.title; b.onclick = function () { openChat(c.id); };
+      var d = document.createElement("button"); d.className = "del"; d.setAttribute("aria-label", "Delete chat"); d.innerHTML = '<i class="fa-solid fa-trash"></i>';
+      d.onclick = function (e) { e.stopPropagation(); chats = chats.filter(function (x) { return x.id !== c.id; }); saveChats(); if (activeId === c.id) newChat(); else renderHistory(); };
+      row.appendChild(b); row.appendChild(d); h.appendChild(row);
+    });
+  }
+  var SUGG = [
+    ["fa-satellite-dish", "Explain space debris", "Why is space debris dangerous?"],
+    ["fa-earth-asia", "Show the solar system", "Show me the solar system"],
+    ["fa-satellite", "How orbits work", "How do satellites stay in orbit?"],
+    ["fa-moon", "Moon phases, animated", "Moon phases"],
+    ["fa-code", "Build a website", "Write a landing page for a space tour company"],
+    ["fa-puzzle-piece", "Write a plugin", "Make a Chrome extension"],
+    ["fa-seedling", "Space and farming", "How do satellites help farming?"],
+    ["fa-calculator", "Orbit calculator", "Orbital period at 550 km"]
+  ];
+  function welcome() {
+    var w = document.createElement("div"); w.className = "welcome";
+    w.innerHTML = '<div class="logo big"><i class="fa-solid fa-robot"></i><i class="o"></i></div><h1>Hello' + (profile.name ? ", " + esc(profile.name) : "") + '.<br><span>What shall we explore?</span></h1><p>Ask about space, satellites and orbits, watch animated explainers, or have me write websites, software and plugins.</p><div class="chips"></div>';
+    var box = w.querySelector(".chips");
+    SUGG.forEach(function (s, i) {
+      var b = document.createElement("button"); b.className = "chip"; b.style.setProperty("--d", (0.05 * i + 0.15) + "s");
+      b.innerHTML = '<i class="fa-solid ' + s[0] + '"></i><span><b>' + esc(s[1]) + "</b>" + esc(s[2]) + "</span>"; b.onclick = function () { send(s[2]); }; box.appendChild(b);
+    });
+    return w;
+  }
+  function renderThread() {
+    thread.innerHTML = ""; var c = curChat();
+    $("title").textContent = c ? c.title : "New chat";
+    if (!c || !c.messages.length) { thread.appendChild(welcome()); renderHistory(); return; }
+    c.messages.forEach(function (m, i) { addMsg(m, i === c.messages.length - 1); });
+    renderHistory(); stick = true; scrollDown(true);
+  }
+  function openChat(id) { if (busy) return; activeId = id; renderThread(); closeSide(); }
+  function newChat() { if (busy) return; activeId = null; lastCtx = { last: null, lastRel: null }; renderThread(); closeSide(); input.focus(); }
+
+  function addMsg(m, isLast) {
+    var el = document.createElement("div");
+    if (m.role === "user") { el.className = "m user"; var b = document.createElement("div"); b.className = "bub"; b.textContent = m.content; el.appendChild(b); thread.appendChild(el); return el; }
+    el.className = "m ai"; el.innerHTML = '<div class="av"><i class="fa-solid fa-robot"></i></div><div class="body"><div class="md"></div></div>';
+    var md = el.querySelector(".md"); renderInto(md, m.content || "", false); thread.appendChild(el);
+    finishAi(el, m, isLast); return el;
+  }
+  function finishAi(el, m, isLast) {
+    var body = el.querySelector(".body"); var old = body.querySelector(".acts"); if (old) old.remove(); var oldr = body.querySelector(".rel"); if (oldr) oldr.remove();
+    var acts = document.createElement("div"); acts.className = "acts";
+    var cp = document.createElement("button"); cp.className = "act"; cp.innerHTML = '<i class="fa-regular fa-copy"></i>Copy'; cp.onclick = function () { copyText(m.content, cp, "Copy"); };
+    acts.appendChild(cp);
+    if (isLast) { var rg = document.createElement("button"); rg.className = "act"; rg.innerHTML = '<i class="fa-solid fa-rotate"></i>Regenerate'; rg.onclick = regen; acts.appendChild(rg); }
+    body.appendChild(acts);
+    if (isLast && m.rel && m.rel.length) {
+      var r = document.createElement("div"); r.className = "rel";
+      m.rel.forEach(function (t) { var b = document.createElement("button"); b.textContent = t; b.onclick = function () { send(t); }; r.appendChild(b); });
+      body.appendChild(r);
+    }
+  }
+  function copyText(t, btn, label) {
+    function done() { if (btn) { btn.innerHTML = '<i class="fa-solid fa-check"></i>Copied'; setTimeout(function () { btn.innerHTML = (label === "Copy" ? '<i class="fa-regular fa-copy"></i>' : '<i class="fa-regular fa-copy"></i>') + label; }, 1400); } }
+    if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(t).then(done, fallback); else fallback();
+    function fallback() { var ta = document.createElement("textarea"); ta.value = t; ta.style.cssText = "position:fixed;opacity:0"; document.body.appendChild(ta); ta.select(); try { document.execCommand("copy"); } catch (e) {} ta.remove(); done(); }
+  }
+  /* code block buttons: copy, download, live preview */
+  thread.addEventListener("click", function (e) {
+    var b = e.target.closest && e.target.closest("button[data-a]"); if (!b) return;
+    var box = b.closest(".code"); if (!box) return; var code = box.querySelector("pre code").textContent, a = b.getAttribute("data-a");
+    var lang = box.getAttribute("data-lang"), file = box.getAttribute("data-file");
+    if (a === "cp") copyText(code, b, "Copy");
+    else if (a === "dl") { var url = URL.createObjectURL(new Blob([code], { type: "text/plain" })), l = document.createElement("a"); l.href = url; l.download = file || EXT[(lang || "").toLowerCase()] || "code.txt"; document.body.appendChild(l); l.click(); l.remove(); setTimeout(function () { URL.revokeObjectURL(url); }, 2000); }
+    else if (a === "pv") {
+      var ex = box.querySelector(".pvbox"); if (ex) { ex.remove(); b.innerHTML = '<i class="fa-solid fa-play"></i>Preview'; return; }
+      var pv = document.createElement("div"); pv.className = "pvbox";
+      pv.innerHTML = '<iframe sandbox="allow-scripts" title="Live preview"></iframe><div class="pvbar"><span>Live preview (sandboxed)</span><span><button data-a="open">Open in new tab</button><button data-a="closepv">Close</button></span></div>';
+      pv.querySelector("iframe").srcdoc = code; box.appendChild(pv); b.innerHTML = '<i class="fa-solid fa-eye-slash"></i>Hide preview';
+    } else if (a === "closepv") { var p = box.querySelector(".pvbox"); if (p) p.remove(); var pb = box.querySelector("button.pv"); if (pb) pb.innerHTML = '<i class="fa-solid fa-play"></i>Preview'; }
+    else if (a === "open") { var u = URL.createObjectURL(new Blob([code], { type: "text/html" })); window.open(u, "_blank", "noopener"); setTimeout(function () { URL.revokeObjectURL(u); }, 60000); }
+  });
+
+  function setBusy(v) {
+    busy = v; sendBtn.classList.toggle("stop", v); sendBtn.setAttribute("aria-label", v ? "Stop generating" : "Send message");
+    sendBtn.innerHTML = v ? '<i class="fa-solid fa-stop"></i>' : '<i class="fa-solid fa-arrow-up"></i>'; sendBtn.disabled = !v && !input.value.trim();
+  }
+  async function isleep(ms, c) { var t0 = Date.now(); while (Date.now() - t0 < ms && !c.stop) await sleep(Math.min(40, ms - (Date.now() - t0))); }
+  var STATUS_TXT = ["Reading your question...", "Searching the star catalogue...", "Computing trajectories...", "Checking the orbits...", "Writing it up..."];
+  var STATUS_CODE = ["Planning the structure...", "Writing the code...", "Checking the syntax...", "Adding comments..."];
+  function thinkEl(list) {
+    var t = document.createElement("div"); t.className = "think"; t.innerHTML = '<span class="orb"><i></i></span><span class="t"></span>';
+    var i = 0, tt = t.querySelector(".t"); tt.textContent = list[0];
+    t._iv = setInterval(function () { i = (i + 1) % list.length; tt.textContent = list[i]; }, 650);
+    return t;
+  }
+  function aiShell() {
+    var el = document.createElement("div"); el.className = "m ai"; el.innerHTML = '<div class="av live"><i class="fa-solid fa-robot"></i></div><div class="body"><div class="md"></div></div>';
+    thread.appendChild(el); return { el: el, md: el.querySelector(".md"), body: el.querySelector(".body"), av: el.querySelector(".av") };
+  }
+
+  async function replyLocal(text, msg, node, c) {
+    var res = answer(text, lastCtx); lastCtx.last = res.id; lastCtx.lastRel = res.rel;
+    var f = speedF(), th = thinkEl(res.id.indexOf("c-") === 0 ? STATUS_CODE : STATUS_TXT);
+    if (f > 0) { node.body.insertBefore(th, node.md); scrollDown(); await isleep((450 + Math.min(1000, text.length * 14) + rand(0, 350)) * f, c); }
+    clearInterval(th._iv); th.remove();
+    if (c.stop) return;
+    var toks = res.md.match(/\s+|[^\s]+/g) || [], out = "", i = 0, pending = false;
+    function paint(final) { msg.content = out; renderInto(node.md, out, !final); scrollDown(); }
+    if (f === 0) { out = res.md; paint(true); }
+    else {
+      while (i < toks.length && !c.stop) {
+        var inCode = (out.split("```").length - 1) % 2 === 1, n = inCode ? 9 : Math.floor(rand(1, 4)), chunk = "";
+        for (var k = 0; k < n && i < toks.length; k++) chunk += toks[i++];
+        out += chunk; paint(false);
+        var d = inCode ? 7 : 26 + rand(0, 30), tail = chunk.trim();
+        if (/[.!?]$/.test(tail)) d += rand(150, 280); else if (/[,;:]$/.test(tail)) d += rand(60, 120);
+        if (/\n\s*\n/.test(chunk)) d += rand(100, 220);
+        await isleep(d * f, c);
+      }
+    }
+    if (!c.stop) { out = res.md; msg.rel = res.rel; }
+    paint(true);
+  }
+  async function replyApi(chat, msg, node, c) {
+    var hist = []; chat.messages.forEach(function (m) { if (m === msg || !m.content) return; if (!hist.length && m.role !== "user") return; hist.push({ role: m.role, content: m.content }); });
+    hist = hist.slice(-24);
+    var th = thinkEl(["Connecting to Claude...", "Thinking..."]); node.body.insertBefore(th, node.md);
+    var ac = new AbortController(), first = true; c.abort = ac;
+    try {
+      await streamClaude(hist, function (d) {
+        if (first) { first = false; clearInterval(th._iv); th.remove(); }
+        msg.content += d; renderInto(node.md, msg.content, true); scrollDown();
+      }, ac);
+    } finally { clearInterval(th._iv); th.remove(); }
+    renderInto(node.md, msg.content, false);
+  }
+  function showError(node, e) {
+    var d = document.createElement("div"); d.className = "err"; var m = e && e.message || "Something went wrong";
+    if (/Failed to fetch|NetworkError|Load failed/i.test(m)) m = "Could not reach api.anthropic.com. Check your connection, and note that some browsers or networks block direct API calls.";
+    d.textContent = m; node.body.appendChild(d);
+  }
+
+  async function send(text, regen) {
+    text = (text || "").trim(); if (!text || busy) return;
+    if (!regen && handleSlash(text)) return;
+    var chat = curChat(); if (!chat) { chat = { id: uid(), title: text.slice(0, 44), messages: [], updated: Date.now() }; chats.unshift(chat); activeId = chat.id; $("title").textContent = chat.title; }
+    var w = thread.querySelector(".welcome"); if (w) w.remove();
+    if (!regen) { var um = { role: "user", content: text, ts: Date.now() }; chat.messages.push(um); addMsg(um, false); }
+    Array.prototype.forEach.call(thread.querySelectorAll(".acts,.rel"), function (n) { n.remove(); });
+    var msg = { role: "assistant", content: "", ts: Date.now() }; chat.messages.push(msg);
+    var node = aiShell(); chat.updated = Date.now(); renderHistory();
+    input.value = ""; autosize(); setBusy(true); stick = true; scrollDown(true);
+    ctrl = { stop: false, abort: null }; var c = ctrl;
+    try { if (useApi()) await replyApi(chat, msg, node, c); else await replyLocal(text, msg, node, c); }
+    catch (e) { if (!c.stop) showError(node, e); }
+    finally {
+      node.av.classList.remove("live"); renderInto(node.md, msg.content, false);
+      if (!msg.content) { chat.messages.pop(); if (c.stop) node.el.remove(); } else finishAi(node.el, msg, true);
+      chat.updated = Date.now(); saveChats(); renderHistory(); setBusy(false); ctrl = null; scrollDown();
+      srEl.textContent = msg.content ? "Reply complete." : ""; input.focus();
+    }
+  }
+  function regen() {
+    if (busy) return; var c = curChat(); if (!c) return;
+    var last = c.messages[c.messages.length - 1]; if (!last || last.role !== "assistant") return;
+    c.messages.pop(); var els = thread.querySelectorAll(".m.ai"); if (els.length) els[els.length - 1].remove();
+    var u = c.messages[c.messages.length - 1]; if (u && u.role === "user") { variant++; send(u.content, true); }
+  }
+  function say(md) {
+    var c = curChat(); if (!c) { c = { id: uid(), title: "Commands", messages: [], updated: Date.now() }; chats.unshift(c); activeId = c.id; }
+    var w = thread.querySelector(".welcome"); if (w) w.remove();
+    var m = { role: "assistant", content: md, ts: Date.now() }; c.messages.push(m); addMsg(m, true); saveChats(); renderHistory(); scrollDown(true);
+  }
+  function handleSlash(t) {
+    if (t.charAt(0) !== "/") return false;
+    var p = t.slice(1).trim().split(/\s+/), cmd = p[0].toLowerCase();
+    input.value = ""; autosize(); sendBtn.disabled = true;
+    if (cmd === "new") { newChat(); return true; }
+    if (cmd === "clear") { var c = curChat(); if (c) { c.messages = []; saveChats(); } renderThread(); return true; }
+    if (cmd === "settings") { openSettings(); return true; }
+    if (cmd === "speed") { var s = (p[1] || "").toLowerCase(); if (SPEED[s] !== undefined) { settings.speed = s; LS.set("eoai.settings", settings); say("Typing speed set to **" + s + "**."); } else say("Use `/speed slow`, `/speed normal`, `/speed fast` or `/speed instant`."); return true; }
+    if (cmd === "help") { say("**Commands**\n\n- `/new` start a new chat\n- `/clear` clear this chat\n- `/speed slow|normal|fast|instant` change typing speed\n- `/settings` open settings and add a Claude API key\n\nTip: ask me to *show* the solar system, a satellite orbit, Moon phases or a debris cascade, or to *write* a website or plugin."); return true; }
+    return false;
+  }
+
+  /* composer */
+  function autosize() { input.style.height = "auto"; input.style.height = Math.min(input.scrollHeight, 168) + "px"; }
+  input.addEventListener("input", function () { autosize(); sendBtn.disabled = !busy && !input.value.trim(); });
+  input.addEventListener("keydown", function (e) { if (e.key === "Enter" && !e.shiftKey && !e.isComposing) { e.preventDefault(); if (!busy) send(input.value); } });
+  sendBtn.onclick = function () { if (busy) { if (ctrl) { ctrl.stop = true; if (ctrl.abort) ctrl.abort.abort(); } } else send(input.value); };
+  $("new").onclick = newChat;
+
+  /* sidebar (mobile) + settings */
+  function openSide() { $("side").classList.add("on"); $("scrim").classList.add("on"); $("close-side").style.display = ""; }
+  function closeSide() { $("side").classList.remove("on"); $("scrim").classList.remove("on"); }
+  $("open-side").onclick = openSide; $("close-side").onclick = closeSide; $("scrim").onclick = closeSide;
+  function openSettings() { $("s-key").value = settings.key; $("s-model").value = settings.model; $("s-speed").value = settings.speed; $("s-sys").value = settings.sys; $("modal").classList.add("on"); $("s-key").focus(); closeSide(); }
+  function closeSettings() { $("modal").classList.remove("on"); }
+  $("open-settings").onclick = openSettings; $("mode").onclick = openSettings; $("s-cancel").onclick = closeSettings;
+  $("modal").addEventListener("click", function (e) { if (e.target === $("modal")) closeSettings(); });
+  $("s-save").onclick = function () {
+    settings.key = $("s-key").value.trim(); settings.model = $("s-model").value.trim() || "claude-sonnet-5-5"; settings.speed = $("s-speed").value; settings.sys = $("s-sys").value.trim() || DEFAULT_SYS;
+    LS.set("eoai.settings", settings); updateMode(); closeSettings();
+  };
+  $("s-clear").onclick = function () { if (confirm("Delete all saved chats in this browser?")) { chats = []; saveChats(); activeId = null; renderThread(); closeSettings(); } };
+  document.addEventListener("keydown", function (e) { if (e.key === "Escape") { closeSettings(); closeSide(); } });
+
+  /* boot */
+  updateMode(); renderThread(); sendBtn.disabled = true;
+  var qs = new URLSearchParams(location.search).get("q"); if (qs) setTimeout(function () { send(qs); }, 400);
+  /* test hook (harmless in production) */
+  window.__eoai = { answer: answer, KB: KB, renderBlockHTML: renderBlockHTML, splitBlocks: splitBlocks, send: send, settings: settings, CODE: CODE, highlight: highlight, setSpeed: function (s) { settings.speed = s; } };
+})();
+    </script>
+  </body>
+</html>

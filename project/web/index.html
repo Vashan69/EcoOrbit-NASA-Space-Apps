@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>The Third World Peace — Overview</title>
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<div class="app">
+  <div class="topbar">
+    <div class="brand"><span class="dot"></span><b>THE THIRD</b><span>WORLD PEACE</span></div>
+    <div class="nav">
+      <a class="active" href="index.html">Overview</a>
+      <a href="tracking.html">Tracking</a>
+      <a href="assets.html">Assets</a>
+      <a href="alerts.html">Alerts</a>
+    </div>
+    <div class="top-icons">
+      <div class="icon-wrap">
+        <button class="icon-btn" id="alertsBtn" title="Alerts">&#9888;<span class="icon-badge" id="alertsBadge">3</span></button>
+        <div class="panel" id="alertsPanel">
+          <h4>Alerts</h4>
+          <div id="alertsList"></div>
+        </div>
+      </div>
+      <div class="icon-wrap">
+        <button class="icon-btn" id="settingsBtn" title="Settings">&#9881;</button>
+        <div class="panel" id="settingsPanel">
+          <h4>Settings</h4>
+          <div class="field-row">
+            <label>Units</label>
+            <div class="seg" id="unitsSeg">
+              <button data-unit="km" class="active">km</button>
+              <button data-unit="mi">mi</button>
+            </div>
+          </div>
+          <div class="field-row">
+            <label>Refresh rate</label>
+            <select id="refreshRate">
+              <option value="0">Off</option>
+              <option value="5000" selected>5s</option>
+              <option value="15000">15s</option>
+              <option value="30000">30s</option>
+            </select>
+          </div>
+        </div>
+      </div>
+      <button class="icon-btn" id="themeBtn" title="Toggle theme">&#9789;</button>
+      <span class="icon-btn">&#128269;</span>
+      <span class="avatar"></span>
+    </div>
+  </div>
+
+  <div class="layout">
+
+    <!-- Sidebar -->
+    <div class="sidebar">
+      <div class="card">
+        <div class="thumb"></div>
+        <div class="thumb-meta"><span>ORBIT-4</span><b>Active</b></div>
+      </div>
+
+      <div class="card side-nav">
+        <div class="item active" data-nav="dashboard"><span class="ic"></span> Dashboard</div>
+        <div class="item" id="satellitesNavItem" data-nav="satellites"><span class="ic"></span> Satellites</div>
+        <div class="sat-search" id="satSearch">
+          <input type="text" id="satSearchInput" placeholder="Search satellites...">
+          <div class="sat-list" id="satList"></div>
+        </div>
+        <div class="item"><span class="ic"></span> Ground Stations</div>
+        <div class="item"><span class="ic"></span> Flight Paths</div>
+        <div class="item"><span class="ic"></span> Reports</div>
+        <div class="item"><span class="ic"></span> Archive</div>
+      </div>
+
+      <div class="card">
+        <div class="region-map">
+          <svg viewBox="0 0 200 120"><path d="M20,90 L40,60 L60,70 L80,40 L100,55 L120,30 L140,45 L160,25 L180,35" fill="none" stroke="#3fd0ff" stroke-width="1" opacity="0.5"/></svg>
+        </div>
+        <div class="region-stats"><span>2 Corridors</span><b>27K km</b></div>
+      </div>
+    </div>
+
+    <!-- Center -->
+    <div class="center">
+      <div class="globe-card">
+        <div class="badge">TRACKING &nbsp;<b>● LIVE</b></div>
+        <div class="globe-wrap" id="globeWrap">
+          <div class="tag" id="selTag">TRACKING <b id="selTagName">Vertex 250x</b></div>
+          <div class="globe-hint">drag to rotate</div>
+        </div>
+      </div>
+
+      <div class="mid-row">
+        <div class="card stat-card">
+          <div class="ring" id="signalRing"><span id="signalRingVal">82%</span></div>
+          <div class="label">Signal Strength</div>
+          <div class="value" id="signalValue">82%</div>
+          <div class="sub">▲ 4.2% today</div>
+        </div>
+        <div class="card stat-card">
+          <div class="label">Active Satellites</div>
+          <div class="value" id="activeKmValue">27K km</div>
+          <div class="sub">▲ 1.1% today</div>
+        </div>
+        <div class="card stat-card">
+          <div class="label">Orbits Today</div>
+          <div class="value" id="orbitsValue">14</div>
+          <div class="sub" style="color:var(--muted);">On schedule</div>
+        </div>
+      </div>
+
+      <div class="card table-card">
+        <table>
+          <thead><tr><th>Timeline</th><th>Location</th><th>Status</th></tr></thead>
+          <tbody>
+            <tr><td>08:12 UTC</td><td class="dim">Nairobi, KE</td><td><span class="status on"></span>Nominal</td></tr>
+            <tr><td>08:47 UTC</td><td class="dim">Lisbon, PT</td><td><span class="status on"></span>Nominal</td></tr>
+            <tr><td>09:21 UTC</td><td class="dim">Manila, PH</td><td><span class="status warn"></span>Degraded</td></tr>
+            <tr><td>10:04 UTC</td><td class="dim">Quito, EC</td><td><span class="status on"></span>Nominal</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Right -->
+    <div class="right">
+      <div class="card sat-card">
+        <div class="sat-art">
+          <svg viewBox="0 0 100 100"><rect x="30" y="10" width="8" height="80" fill="#cfe3ff" opacity="0.8"/><rect x="10" y="35" width="20" height="30" fill="#8fb4e8" opacity="0.7"/><rect x="70" y="35" width="20" height="30" fill="#8fb4e8" opacity="0.7"/><circle cx="34" cy="50" r="7" fill="#e8ecf4"/></svg>
+        </div>
+        <div class="sat-body">
+          <div class="name" id="satName">Vertex 250x</div>
+          <div class="id" id="satId">ID · VX-250-A4</div>
+          <div class="row"><span>Altitude</span><b id="satAltitude">512 km</b></div>
+          <div class="row"><span>Velocity</span><b id="satVelocity">7.6 km/s</b></div>
+          <div class="row"><span>Next pass</span><b id="satNextPass">04:32</b></div>
+        </div>
+      </div>
+
+      <div class="card chart-card">
+        <div class="head"><span>Signal Detail</span><span style="color:var(--muted); font-size:11px;">Last 24h</span></div>
+        <svg viewBox="0 0 260 90" preserveAspectRatio="none">
+          <polyline id="upLine" fill="none" stroke="#3fd0ff" stroke-width="2" points="0,60 20,50 40,55 60,30 80,40 100,20 120,35 140,25 160,45 180,30 200,50 220,38 240,55 260,42"/>
+          <polyline id="downLine" fill="none" stroke="#ff5a5f" stroke-width="1.5" opacity="0.7" points="0,75 20,70 40,72 60,65 80,68 100,60 120,66 140,58 160,70 180,62 200,74 220,66 240,72 260,68"/>
+        </svg>
+        <div class="legend"><span><i style="background:var(--accent)"></i>Uplink</span><span><i style="background:var(--red)"></i>Downlink</span></div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script src="js/app.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="js/globe.js"></script>
+</body>
+</html>

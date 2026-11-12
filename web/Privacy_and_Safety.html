@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Privacy & Safety | The Third World Peace VLZO UFO</title>
+<link rel="icon" type="image/png" href="favicon.png">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Sora:wght@500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#050b1a;--surface:#0c1630;--raised:#111f42;--line:#1e2e57;--text:#e8eefc;--muted:#a3b3d6;--accent:#4fd1ff;--accent-ink:#04101f;--ok:#34d399;--warn:#fbbf24;--bad:#fb7185;--r:14px}
+[data-theme=light]{--bg:#f5f7fc;--surface:#fff;--raised:#eef2fb;--line:#d8e0f0;--text:#0e1a35;--muted:#4f5f80;--accent:#0a66d0;--accent-ink:#fff;--ok:#0f9d6a;--warn:#b7791f;--bad:#d1365a}
+*{box-sizing:border-box}html{scroll-behavior:smooth;scroll-padding-top:88px}
+body{margin:0;background:var(--bg);color:var(--text);font:16px/1.65 Inter,system-ui,sans-serif;transition:background .25s,color .25s}
+h1,h2,h3{font-family:Sora,Inter,sans-serif;line-height:1.2;margin:0}
+a{color:var(--accent)}button{font:inherit;cursor:pointer}
+:focus-visible{outline:3px solid var(--accent);outline-offset:2px;border-radius:6px}
+header{position:sticky;top:0;z-index:20;background:color-mix(in srgb,var(--bg) 88%,transparent);backdrop-filter:blur(12px);border-bottom:1px solid var(--line)}
+.bar{max-width:1180px;margin:auto;padding:12px 20px;display:flex;align-items:center;gap:16px}
+.brand{display:flex;align-items:center;gap:10px;text-decoration:none;color:var(--text);font:600 15px Sora,sans-serif}
+.brand small{display:block;font:400 12px Inter;color:var(--muted)}
+.grow{flex:1}
+.search{position:relative;width:min(320px,40vw)}
+.search input{width:100%;padding:10px 14px 10px 38px;border-radius:99px;border:1px solid var(--line);background:var(--surface);color:var(--text);font:inherit;font-size:14px}
+.search svg{position:absolute;left:13px;top:11px;color:var(--muted)}
+.btn{padding:10px 16px;border-radius:99px;border:1px solid var(--line);background:var(--surface);color:var(--text);font-size:14px;font-weight:500;text-decoration:none;display:inline-flex;align-items:center;gap:8px;transition:background .15s,transform .15s}
+.btn:hover{background:var(--raised)}.btn:active{transform:scale(.97)}
+.btn.primary{background:var(--accent);color:var(--accent-ink);border-color:transparent}.btn.primary:hover{filter:brightness(1.1)}
+.btn.danger{color:var(--bad);border-color:color-mix(in srgb,var(--bad) 45%,var(--line))}
+.hero{max-width:1180px;margin:auto;padding:64px 20px 40px;display:grid;grid-template-columns:1.25fr 1fr;gap:40px;align-items:center}
+.hero h1{font-size:clamp(34px,5vw,56px);letter-spacing:-.02em}
+.hero p{color:var(--muted);font-size:18px;max-width:52ch;margin:16px 0 26px}
+.status{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:22px}
+.status h2{font-size:16px;margin-bottom:4px}.status .sub{color:var(--muted);font-size:13px;margin-bottom:14px}
+.row{display:flex;justify-content:space-between;gap:12px;padding:11px 0;border-top:1px solid var(--line);font-size:14.5px}
+.row b{font-weight:600}.pill{padding:2px 10px;border-radius:99px;font-size:12.5px;font-weight:600;background:color-mix(in srgb,var(--ok) 18%,transparent);color:var(--ok)}
+.pill.info{background:color-mix(in srgb,var(--accent) 16%,transparent);color:var(--accent)}
+.layout{max-width:1180px;margin:auto;padding:0 20px 80px;display:grid;grid-template-columns:230px 1fr;gap:48px}
+aside nav{position:sticky;top:96px;display:flex;flex-direction:column;gap:2px}
+aside a{padding:9px 14px;border-radius:10px;text-decoration:none;color:var(--muted);font-size:14.5px;border-left:3px solid transparent}
+aside a:hover{color:var(--text);background:var(--surface)}
+aside a.on{color:var(--text);background:var(--surface);border-left-color:var(--accent);font-weight:600}
+.sec{padding:34px 0;border-bottom:1px solid var(--line)}.sec:last-of-type{border:0}
+.sec h2{font-size:28px;margin-bottom:10px}.sec>p{color:var(--muted);max-width:68ch;margin:0 0 18px}
+.cols{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.box{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:20px}
+.box h3{font-size:16px;margin-bottom:10px}
+.box ul{margin:0;padding:0;list-style:none}.box li{padding:7px 0 7px 26px;position:relative;font-size:15px;color:var(--muted)}
+.box li::before{position:absolute;left:0;font-weight:700}
+.yes li::before{content:"\2713";color:var(--ok)}.no li::before{content:"\2715";color:var(--bad)}
+.toggle{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:16px 0;border-top:1px solid var(--line)}
+.toggle:first-child{border:0}.toggle strong{display:block;font-size:15.5px}.toggle span{color:var(--muted);font-size:14px}
+.sw{position:relative;width:48px;height:28px;flex:none}.sw input{position:absolute;inset:0;opacity:0;cursor:pointer;margin:0}
+.sw i{position:absolute;inset:0;border-radius:99px;background:var(--line);transition:background .2s;pointer-events:none}
+.sw i::after{content:"";position:absolute;top:3px;left:3px;width:22px;height:22px;border-radius:50%;background:#fff;transition:transform .2s}
+.sw input:checked+i{background:var(--accent)}.sw input:checked+i::after{transform:translateX(20px)}
+.sw input:focus-visible+i{outline:3px solid var(--accent);outline-offset:2px}
+.actions{display:flex;flex-wrap:wrap;gap:10px;margin-top:18px}
+.stored{margin-top:14px;font-size:13.5px;color:var(--muted);background:var(--raised);padding:12px 14px;border-radius:10px;font-family:ui-monospace,Consolas,monospace;word-break:break-all}
+details{background:var(--surface);border:1px solid var(--line);border-radius:12px;margin-bottom:10px}
+summary{padding:16px 18px;font-weight:600;cursor:pointer;list-style:none;display:flex;justify-content:space-between;gap:12px}
+summary::-webkit-details-marker{display:none}summary::after{content:"+";font-size:20px;color:var(--accent);transition:transform .2s}
+details[open] summary::after{transform:rotate(45deg)}details div{padding:0 18px 18px;color:var(--muted);font-size:15px}
+.prog{height:8px;border-radius:9px;background:var(--line);overflow:hidden;margin:6px 0 16px}
+.prog i{display:block;height:100%;width:0;background:var(--ok);transition:width .35s}
+.chk{display:flex;gap:12px;padding:12px 0;border-top:1px solid var(--line);cursor:pointer;font-size:15px}
+.chk input{width:20px;height:20px;accent-color:var(--ok);flex:none;margin-top:3px}
+.chk.done span{color:var(--muted);text-decoration:line-through}
+.notice{border-left:4px solid var(--warn);background:color-mix(in srgb,var(--warn) 10%,transparent);padding:14px 18px;border-radius:0 12px 12px 0;font-size:15px;margin-top:18px}
+.empty{display:none;text-align:center;padding:60px 0;color:var(--muted)}
+mark{background:color-mix(in srgb,var(--warn) 45%,transparent);color:inherit;border-radius:3px}
+footer{border-top:1px solid var(--line);padding:28px 20px;text-align:center;color:var(--muted);font-size:14px}
+#toast{position:fixed;left:50%;bottom:28px;transform:translate(-50%,30px);background:var(--text);color:var(--bg);padding:12px 20px;border-radius:99px;font-size:14.5px;font-weight:500;opacity:0;pointer-events:none;transition:.25s;z-index:50}
+#toast.show{opacity:1;transform:translate(-50%,0)}
+@media(max-width:860px){.hero,.layout,.cols{grid-template-columns:1fr}aside{display:none}.search{width:100%}.bar{flex-wrap:wrap}.hero{padding-top:36px}}
+@media(prefers-reduced-motion:reduce){*{transition:none!important;scroll-behavior:auto!important}}
+.wm{display:block}.wm-t{display:block;font:700 22px/1.1 Sora,sans-serif;letter-spacing:-.01em}
+</style>
+</head>
+<body>
+<header><div class="bar">
+  <a class="brand" href="EcoOrbit.html" title="Back to the main site">
+    <img src="/images/EcoOrbit_Logo.png" alt="EcoOrbit logo" width="56" height="56" style="width:56px;height:56px;object-fit:contain;filter:drop-shadow(0 0 8px #4fd1ff55)">
+    <span class="wm"><b class="wm-t"><span class="eo-eco">Eco</span><span class="eo-orbit">Orbit</span></b><small>The Third World Peace VLZO UFO &middot; Privacy &amp; Safety</small></span></a>
+  <div class="grow"></div>
+  <label class="search"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg><input id="q" type="search" placeholder="Search privacy &amp; safety" aria-label="Search this page"></label>
+  <button class="btn" id="theme" aria-label="Switch between dark and light theme">Theme</button>
+  <a class="btn primary" href="EcoOrbit.html">Back to app</a>
+</div></header>
+
+<section class="hero">
+  <div>
+    <h1>Your privacy and safety, explained plainly</h1>
+    <p>We built this project for learning about orbital sustainability, not for collecting data about you. Here is exactly what happens with your information, what you can control, and how to stay safe while using it.</p>
+    <div class="actions" style="margin:0"><a class="btn primary" href="#controls">Manage your data</a><a class="btn" href="#safety">Safety checklist</a></div>
+  </div>
+  <div class="status" aria-live="polite">
+    <h2>Your privacy right now</h2><div class="sub">Updates as you change settings below</div>
+    <div class="row"><span>Account or sign-in</span><span class="pill">None needed</span></div>
+    <div class="row"><span>Data sent to our servers</span><span class="pill">None</span></div>
+    <div class="row"><span>Stored on this device</span><span class="pill info" id="count">0 items</span></div>
+  </div>
+</section>
+
+<div class="layout">
+<aside><nav id="toc" aria-label="On this page">
+  <a href="#overview">Overview</a><a href="#collect">What we collect</a><a href="#controls">Your controls</a><a href="#third">Third-party services</a><a href="#safety">Staying safe</a><a href="#security">Security</a><a href="#rights">Your rights</a><a href="#contact">Contact us</a>
+</nav></aside>
+
+<main>
+<section class="sec" id="overview"><h2>Overview</h2>
+<p>This project is a static website. It has no user accounts, no sign-up form, no advertising and no analytics or tracking scripts. It shows satellite, debris and sustainability information for education and demonstration.</p>
+<p>The only information kept is what you choose to save in your own browser, like your theme or checklist progress. It never leaves your device, and you can delete it any time from the controls below.</p></section>
+
+<section class="sec" id="collect"><h2>What we collect</h2>
+<p>Short version: nothing about you is sent to us. Here is the detail.</p>
+<div class="cols">
+<div class="box yes"><h3>Kept on your device only</h3><ul><li>Theme choice (dark or light), if you allow it</li><li>Your safety checklist progress, if you allow it</li><li>A small record of your privacy choices</li><li>Your voice guide choices (on/off, voice and speed)</li><li>The name on your test certificate, and your video likes and comments</li></ul></div>
+<div class="box no"><h3>Never collected</h3><ul><li>Name, email, phone number or location</li><li>Passwords or payment details</li><li>Browsing history or advertising profiles</li><li>Anything from your camera, microphone or files</li></ul></div>
+</div></section>
+
+<section class="sec" id="controls"><h2>Your controls</h2>
+<p>These switches decide what this site may keep in your browser. Changes apply right away.</p>
+<div class="box">
+  <div class="toggle"><div><strong>Remember my theme</strong><span>Keeps dark or light mode next time you visit.</span></div><label class="sw"><input type="checkbox" id="t-theme" aria-label="Remember my theme"><i></i></label></div>
+  <div class="toggle"><div><strong>Remember my checklist progress</strong><span>Keeps your ticked safety tips on this device.</span></div><label class="sw"><input type="checkbox" id="t-check" aria-label="Remember my checklist progress"><i></i></label></div>
+  <div class="actions"><button class="btn" id="dl">Download my data</button><button class="btn danger" id="wipe">Delete all my data</button></div>
+  <div class="stored" id="stored"></div>
+</div></section>
+
+<section class="sec" id="third"><h2>Third-party services</h2>
+<p>To display fonts, icons and the 3D globe, pages load code from public content delivery networks. Like any website, those providers can see your IP address and browser type when your browser requests files from them.</p>
+<details><summary>Fonts (Google Fonts)</summary><div>Used to display the typefaces. Google serves the font files and receives a standard web request. See Google's privacy policy for how it handles those requests.</div></details>
+<details><summary>Code libraries (Tailwind CSS, Font Awesome, Three.js)</summary><div>Loaded from public CDNs so the design, icons and 3D globe work. No personal information is added to these requests by this project.</div></details>
+<details><summary>Orbital and space data (NASA, CelesTrak)</summary><div>Satellite and debris figures come from or are modelled on public space-agency datasets. Nothing about you is sent when viewing them.</div></details>
+<details><summary>Payments (Membership)</summary><div>If you buy a membership, you are sent to a secure payment page run by our payment provider. That provider collects your payment details, not this site, and its own privacy policy applies.</div></details><details><summary>Chat assistant</summary><div>The chat assistant runs in your browser and your messages are not saved. If it cannot answer a general-knowledge question itself, it looks the topic up on Wikipedia, which means the words of that question are sent to Wikipedia. Its own privacy policy applies there.</div></details><details><summary>Links to other websites</summary><div>If you follow a link off this site, that site's own privacy policy applies. Check the address in your browser before you type anything.</div></details></section>
+
+<section class="sec" id="safety"><h2>Staying safe</h2>
+<p>A few habits keep you safe with this project and the web in general. Tick them off as you go.</p>
+<div class="box"><b id="ptxt">0 of 6 done</b><div class="prog"><i id="pbar"></i></div><div id="list"></div></div>
+<div class="notice"><b>Not for real flight decisions.</b> Collision risk and sustainability scores here are educational estimates. Do not use them to plan or change a real satellite manoeuvre.</div></section>
+
+<section class="sec" id="security"><h2>Security</h2>
+<p>There is no database or login to breach, which removes most of the risk. We also keep the project safe by:</p>
+<div class="cols">
+<div class="box"><h3>Keeping it simple</h3><p style="margin:0;color:var(--muted);font-size:15px">No forms, passwords or file uploads are handled by the site, so there is nothing sensitive to leak.</p></div>
+<div class="box"><h3>Using secure sources</h3><p style="margin:0;color:var(--muted);font-size:15px">External libraries load over HTTPS from well-known providers. Report anything that looks wrong and we will fix it.</p></div>
+</div></section>
+
+<section class="sec" id="rights"><h2>Your rights</h2>
+<p>You are in charge of your information. Because everything is stored on your device, you can use these rights yourself, instantly.</p>
+<details><summary>See what is stored</summary><div>The "Your controls" section lists every item saved on this device.</div></details>
+<details><summary>Get a copy</summary><div>Choose "Download my data" to save a file with everything this site has stored for you.</div></details>
+<details><summary>Delete everything</summary><div>Choose "Delete all my data" to erase it all and reset your choices. You can also clear this site's data in your browser settings.</div></details>
+<details><summary>Ask a question</summary><div>If you have any concern about your privacy, contact us below and we will reply in plain language.</div></details></section>
+
+<section class="sec" id="contact"><h2>Contact us</h2>
+<p>Questions about privacy, or a safety problem to report? Send a message and include the page and what you saw.</p>
+<div class="actions" style="margin-top:0"><a class="btn primary" href="mailto:privacy@example.com?subject=Privacy question">Ask a privacy question</a><a class="btn" href="mailto:privacy@example.com?subject=Safety report">Report a safety concern</a></div></section>
+
+<div class="empty" id="empty"><h3>No matches</h3><p>Try a different word, like "data", "theme" or "safety".</p></div>
+</main>
+</div>
+<footer>Last updated September 24, 2026 &middot; Built for the NASA Space Apps Challenge &middot; This project is not affiliated with NASA</footer>
+<div id="toast" role="status"></div>
+
+<script>
+const $=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
+const K={prefs:'tsp_prefs',theme:'tsp_theme',check:'tsp_checklist',voice:'vlzo_voice',voicecfg:'vlzo_voice_cfg',cert:'vlzo_cert',likes:'vtv_likes',comments:'vtv_comments'};
+const ls={get(k){try{return localStorage.getItem(k)}catch(e){return null}},set(k,v){try{localStorage.setItem(k,v)}catch(e){}},del(k){try{localStorage.removeItem(k)}catch(e){}}};
+let prefs=Object.assign({rememberTheme:true,rememberChecklist:true},JSON.parse(ls.get(K.prefs)||'{}'));
+let theme=ls.get(K.theme)||(matchMedia('(prefers-color-scheme: light)').matches?'light':'dark');
+const tips=['Open project files only from sources you trust.','Check the web address before entering anything. This site never asks for a password.','Treat risk and sustainability scores as estimates, not flight guidance.','Keep personal details out of feedback and emails.','Keep your browser and operating system up to date.','Get real space data from official sources like NASA or CelesTrak.'];
+let done=JSON.parse(ls.get(K.check)||'[]');
+
+function toast(m){const t=$('#toast');t.textContent=m;t.classList.add('show');clearTimeout(t._t);t._t=setTimeout(()=>t.classList.remove('show'),2600)}
+function applyTheme(){document.documentElement.dataset.theme=theme;$('#theme').textContent=theme==='dark'?'Light mode':'Dark mode'}
+function save(){ls.set(K.prefs,JSON.stringify(prefs));
+  prefs.rememberTheme?ls.set(K.theme,theme):ls.del(K.theme);
+  prefs.rememberChecklist?ls.set(K.check,JSON.stringify(done)):ls.del(K.check);refresh()}
+function refresh(){const keys=Object.values(K).filter(k=>ls.get(k)!==null);
+  $('#count').textContent=keys.length+(keys.length===1?' item':' items');
+  $('#stored').textContent=keys.length?'Stored: '+keys.join(', '):'Nothing is stored on this device.'}
+function drawList(){$('#list').innerHTML=tips.map((t,i)=>`<label class="chk${done.includes(i)?' done':''}"><input type="checkbox" data-i="${i}"${done.includes(i)?' checked':''}><span>${t}</span></label>`).join('');
+  $('#ptxt').textContent=done.length+' of '+tips.length+' done';$('#pbar').style.width=done.length/tips.length*100+'%'}
+
+$('#theme').onclick=()=>{theme=theme==='dark'?'light':'dark';applyTheme();save()};
+$('#t-theme').checked=prefs.rememberTheme;$('#t-check').checked=prefs.rememberChecklist;
+$('#t-theme').onchange=e=>{prefs.rememberTheme=e.target.checked;save();toast(e.target.checked?'Theme will be remembered':'Theme choice removed from this device')};
+$('#t-check').onchange=e=>{prefs.rememberChecklist=e.target.checked;save();toast(e.target.checked?'Checklist progress will be remembered':'Checklist progress removed from this device')};
+$('#list').onchange=e=>{const i=+e.target.dataset.i;done=e.target.checked?[...done,i]:done.filter(x=>x!==i);drawList();save();if(done.length===tips.length)toast('All done. Nice work staying safe!')};
+$('#dl').onclick=()=>{const data={exportedAt:new Date().toISOString(),stored:{}};Object.values(K).forEach(k=>{const v=ls.get(k);if(v!==null)data.stored[k]=v});
+  const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([JSON.stringify(data,null,2)],{type:'application/json'}));a.download='my-privacy-data.json';a.click();toast('Your data was downloaded')};
+$('#wipe').onclick=()=>{if(!confirm('Delete everything this site has stored on your device?'))return;
+  Object.values(K).forEach(ls.del);prefs={rememberTheme:true,rememberChecklist:true};done=[];
+  $('#t-theme').checked=$('#t-check').checked=true;drawList();refresh();toast('All your data was deleted')};
+
+/* search */
+const secs=$$('.sec');
+$('#q').oninput=e=>{const q=e.target.value.trim().toLowerCase();let n=0;
+  secs.forEach(s=>{const hit=!q||s.textContent.toLowerCase().includes(q);s.style.display=hit?'':'none';if(hit)n++});
+  $('#empty').style.display=n?'none':'block'};
+
+/* scroll spy */
+const links=$$('#toc a');
+const io=new IntersectionObserver(es=>es.forEach(en=>{if(en.isIntersecting)links.forEach(a=>a.classList.toggle('on',a.getAttribute('href')==='#'+en.target.id))}),{rootMargin:'-20% 0px -70% 0px'});
+secs.forEach(s=>io.observe(s));
+
+applyTheme();drawList();refresh();
+</script>
+<script src="eco-orbit-bg.js" defer></script>
+<script src="eco-logo-viewer.js" defer></script>
+<script src="eco-wordmark.js" defer></script>
+<script src="voice_guide.js" defer></script>
+<script src="chatbot.js" data-name="Zara VLZO Chatbot" data-avatar="amira_ai_customer_service_talking.gif" data-zoom="1" defer></script>
+</body>
+</html>

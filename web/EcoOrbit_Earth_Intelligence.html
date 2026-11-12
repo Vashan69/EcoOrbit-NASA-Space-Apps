@@ -1,0 +1,272 @@
+<!doctype html>
+<html lang="en" class="dark">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>EcoOrbit Earth Intelligence | EcoOrbit</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              spaceBg: "#030712",
+              spaceCard: "#0b1329",
+              neonBlue: "#00f2fe",
+              neonPurple: "#4facfe",
+              neonEmerald: "#10b981",
+              neonPink: "#f43f5e",
+            },
+            fontFamily: { sans: ["Inter", "sans-serif"] },
+          },
+        },
+      };
+    </script>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Fira+Sans:wght@400;500;600&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+    <style>
+      body { font-family: "Inter", sans-serif; background-color: #030712; color: #f3f4f6; overflow-x: hidden; }
+      .glass-panel { background: rgba(11,19,41,.78); backdrop-filter: blur(9px); -webkit-backdrop-filter: blur(9px); border: 1px solid rgba(255,255,255,.08); }
+      #site-header nav a { white-space: nowrap; }
+      @media (max-width: 900px) { #site-header nav { display: none; } #mobile-menu-button { display: inline-flex !important; } }
+      @media (min-width: 901px) { #mobile-menu-button, #mobile-menu { display: none !important; } }
+      #mobile-menu { border-top: 1px solid rgba(255,255,255,.08); }
+      body::before {
+        content: ""; position: fixed; inset: 0; z-index: -1;
+        background:
+          radial-gradient(1px 1px at 20% 30%, #cfe8ff 50%, transparent 51%),
+          radial-gradient(1px 1px at 70% 20%, #fff 50%, transparent 51%),
+          radial-gradient(1.5px 1.5px at 85% 70%, #bfeaff 50%, transparent 51%),
+          radial-gradient(1px 1px at 35% 80%, #fff 50%, transparent 51%),
+          radial-gradient(1px 1px at 55% 55%, #cfe8ff 50%, transparent 51%),
+          radial-gradient(ellipse at 50% 0%, rgba(0,242,254,.10), transparent 60%),
+          #030712;
+        background-size: 420px 420px, 380px 380px, 520px 520px, 460px 460px, 300px 300px, 100% 100%, 100% 100%;
+      }
+
+      /* ===== Service card (layout as in reference image) ===== */
+      .svc-card {
+        display: flex; gap: 24px; align-items: flex-start;
+        padding: 28px; border-radius: 24px;
+        background: rgba(11,19,41,.82); border: 1px solid rgba(255,255,255,.1);
+        box-shadow: 0 0 40px rgba(0,242,254,.08);
+      }
+      .svc-thumb { flex: 0 0 auto; width: 124px; height: 124px; border-radius: 22px; overflow: hidden; background: #02060f; }
+      .svc-thumb svg { display: block; width: 100%; height: 100%; }
+      .svc-body { min-width: 0; }
+      .svc-title { font-size: 1.35rem; font-weight: 600; color: #fff; margin: 0; line-height: 1.3; }
+      .svc-badge {
+        display: inline-block; margin-top: 8px; padding: 2px 12px; border-radius: 999px;
+        font-size: .78rem; font-weight: 600; color: #6ee7a8; background: rgba(16,185,129,.16);
+        border: 1px solid rgba(16,185,129,.3);
+      }
+      .svc-desc { margin: 12px 0 0; color: #e5e7eb; font-size: 1.02rem; line-height: 1.55; max-width: 640px; }
+      .svc-list { margin: 12px 0 0; padding-left: 1.4rem; list-style: disc; color: #e5e7eb; font-size: 1.02rem; line-height: 1.9; }
+      .svc-list li::marker { color: #00f2fe; }
+      .svc-src { margin: 14px 0 0; font-size: .86rem; color: #94a3b8; }
+      @media (max-width: 640px) {
+        .svc-card { flex-direction: column; padding: 20px; }
+        .svc-thumb { width: 100%; height: 190px; }
+      }
+
+      /* footer (same as home page) */
+      #nasa-footer { background: #1a1a1a; color: #fff; font-family: "Fira Sans","Inter",sans-serif; padding: 64px 16px 52px; }
+      #nasa-footer .nf-row { display: flex; justify-content: space-between; align-items: flex-start; gap: 32px; flex-wrap: wrap; }
+      #nasa-footer .nf-text { font-size: 17px; line-height: 1.5; margin: 0; padding-top: 14px; max-width: 1000px; }
+      #nasa-footer .nf-copy { font-size: 17px; line-height: 1.5; margin: 38px 0 0; }
+      #nasa-footer a { color: #2e8bff; text-decoration: underline; }
+      #nasa-footer a:hover { color: #6fb0ff; }
+      #nasa-footer .nf-hash { font-size: 17px; margin: 0 0 14px; font-weight: 500; padding-top: 14px; }
+      #nasa-footer .nf-social { display: flex; gap: 20px; }
+      #nasa-footer .nf-social a { color: #fff; text-decoration: none; width: 36px; height: 36px; display: flex; align-items: center; justify-content: center; font-size: 32px; }
+      #nasa-footer .nf-social a:hover { color: #2e8bff; }
+      @media (max-width: 768px) { #nasa-footer .nf-row { flex-direction: column; } }
+    </style>
+  </head>
+  <body class="bg-spaceBg text-slate-100 min-h-screen flex flex-col selection:bg-neonBlue selection:text-black">
+    <header id="site-header" class="sticky top-0 z-50 glass-panel border-b border-white/10">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between gap-4">
+        <a href="EcoOrbit.html" aria-label="EcoOrbit Home" class="flex items-center space-x-3 min-w-0 group shrink-0">
+          <div class="w-12 h-12 sm:w-14 sm:h-14 flex-shrink-0 rounded-xl overflow-hidden bg-slate-950/70 border border-cyan-400/30 p-1.5 shadow-[0_0_25px_rgba(0,242,254,0.25)]">
+            <img src="/images/EcoOrbit_Logo.png" alt="EcoOrbit Logo" class="w-full h-full object-contain" />
+          </div>
+          <div class="min-w-0 ml-1">
+            <span class="text-lg sm:text-xl font-extrabold tracking-tight block"><span class="text-white">Eco</span><span class="text-neonBlue">Orbit</span></span>
+            <span class="block text-[9px] sm:text-[10px] text-slate-400 font-medium tracking-widest uppercase mt-0.5">NASA Space Apps 2026</span>
+          </div>
+        </a>
+        <nav class="hidden md:flex items-center space-x-5 text-sm font-medium text-slate-300 shrink-0">
+          <a href="EcoOrbit.html" class="hover:text-neonBlue transition">Home</a>
+          <a href="About_Us.html" class="hover:text-neonBlue transition">About Us</a>
+          <div class="relative group">
+            <a href="Our_Services.html" class="text-neonBlue inline-flex items-center gap-1">
+              Our Services <i class="fa-solid fa-chevron-down text-[10px] mt-0.5"></i>
+            </a>
+            <div class="absolute left-0 top-full pt-2 hidden group-hover:block z-50">
+              <div class="glass-panel rounded-xl border border-white/10 py-2 min-w-[260px] shadow-lg shadow-black/40">
+                <a href="The_Earth_Information_Jukebox.html" class="block px-4 py-2.5 text-sm text-slate-300 hover:text-neonBlue hover:bg-white/5 transition"><i class="fa-solid fa-music mr-2 text-neonBlue"></i>The Earth Information Jukebox</a>
+                <a href="Aircraft_Live_Tracking.html" class="block px-4 py-2.5 text-sm text-slate-300 hover:text-neonBlue hover:bg-white/5 transition"><i class="fa-solid fa-plane-up mr-2 text-neonBlue"></i>Aircraft Live Tracking</a>
+                <a href="Simulation_Game.html" class="block px-4 py-2.5 text-sm text-slate-300 hover:text-neonBlue hover:bg-white/5 transition"><i class="fa-solid fa-gamepad mr-2 text-neonBlue"></i>Simulation Game</a>
+                <a href="Freelancer_Place.html" class="block px-4 py-2.5 text-sm text-slate-300 hover:text-neonBlue hover:bg-white/5 transition"><i class="fa-solid fa-store mr-2 text-neonBlue"></i>Freelancer Place</a>
+                <a href="Satellite_Marketplace.html" class="block px-4 py-2.5 text-sm text-slate-300 hover:text-neonBlue hover:bg-white/5 transition"><i class="fa-solid fa-satellite mr-2 text-neonBlue"></i>Satellite Marketplace</a>
+                <a href="EcoOrbit_AI_Earth_Guardian.html" class="block px-4 py-2.5 text-sm text-slate-300 hover:text-neonBlue hover:bg-white/5 transition"><i class="fa-solid fa-earth-americas mr-2 text-neonBlue"></i>EcoOrbit AI — Earth Guardian</a>
+                <a href="EcoOrbit_SpaceGuard.html" class="block px-4 py-2.5 text-sm text-slate-300 hover:text-neonBlue hover:bg-white/5 transition"><i class="fa-solid fa-satellite-dish mr-2 text-neonBlue"></i>EcoOrbit SpaceGuard</a>
+                <a href="EcoOrbit_GreenOrbit.html" class="block px-4 py-2.5 text-sm text-slate-300 hover:text-neonBlue hover:bg-white/5 transition"><i class="fa-solid fa-tree mr-2 text-neonBlue"></i>GreenOrbit — Forest &amp; Biodiversity Watch</a>
+                <a href="EcoOrbit_DisasterLens.html" class="block px-4 py-2.5 text-sm text-slate-300 hover:text-neonBlue hover:bg-white/5 transition"><i class="fa-solid fa-triangle-exclamation mr-2 text-neonBlue"></i>EcoOrbit DisasterLens</a>
+                <a href="EcoOrbit_SolarShield.html" class="block px-4 py-2.5 text-sm text-slate-300 hover:text-neonBlue hover:bg-white/5 transition"><i class="fa-solid fa-sun mr-2 text-neonBlue"></i>SolarShield — Space Weather Watch</a>
+                <a href="EcoOrbit_Earth_Intelligence.html" class="block px-4 py-2.5 text-sm text-neonBlue bg-white/5 transition"><i class="fa-solid fa-globe mr-2 text-neonBlue"></i>EcoOrbit Earth Intelligence</a>
+              </div>
+            </div>
+          </div>
+          <a href="VLZO_TV.html" class="hover:text-neonBlue transition">VLZO TV</a>
+          <a href="Test_Yourself.html" class="hover:text-neonBlue transition">Test Yourself</a>
+          <a href="The_Third_World_Piece_VLZO_UFO_V_1.html" class="hover:text-neonBlue transition">Kids Story</a>
+        </nav>
+        <button id="mobile-menu-button" type="button" aria-expanded="false" aria-controls="mobile-menu"
+          class="hidden w-10 h-10 items-center justify-center rounded-xl border border-white/10 bg-white/5 text-slate-200 hover:text-neonBlue transition">
+          <i class="fa-solid fa-bars"></i>
+        </button>
+      </div>
+      <div id="mobile-menu" class="hidden bg-spaceBg/95 backdrop-blur-xl">
+        <nav class="max-w-7xl mx-auto px-4 py-3 grid grid-cols-2 gap-2 text-sm font-medium text-slate-300">
+          <a href="EcoOrbit.html" class="rounded-lg px-3 py-2 hover:bg-white/5 hover:text-neonBlue">Home</a>
+          <a href="About_Us.html" class="rounded-lg px-3 py-2 hover:bg-white/5 hover:text-neonBlue">About Us</a>
+          <a href="Our_Services.html" class="col-span-2 rounded-lg px-3 py-2 text-neonBlue hover:bg-white/5">Our Services</a>
+          <a href="EcoOrbit_Earth_Intelligence.html" class="col-span-2 rounded-lg px-3 py-2 pl-6 text-xs text-neonBlue border-l border-white/10 ml-3"><i class="fa-solid fa-globe mr-2"></i>EcoOrbit Earth Intelligence</a>
+          <a href="VLZO_TV.html" class="rounded-lg px-3 py-2 hover:bg-white/5 hover:text-neonBlue">VLZO TV</a>
+          <a href="Test_Yourself.html" class="rounded-lg px-3 py-2 hover:bg-white/5 hover:text-neonBlue">Test Yourself</a>
+        </nav>
+      </div>
+    </header>
+
+    <main class="flex-1 max-w-4xl w-full mx-auto px-4 sm:px-6 py-12 sm:py-16">
+      <nav aria-label="Breadcrumb" class="text-xs text-slate-400 mb-6">
+        <a href="EcoOrbit.html" class="hover:text-neonBlue">Home</a>
+        <span class="mx-2">/</span>
+        <a href="Our_Services.html" class="hover:text-neonBlue">Our Services</a>
+        <span class="mx-2">/</span>
+        <span class="text-slate-200">EcoOrbit Earth Intelligence</span>
+      </nav>
+
+      <article class="svc-card" aria-labelledby="svc-title">
+        <div class="svc-thumb" role="img" aria-label="Hurricane seen from orbit with a satellite in the foreground">
+          <svg viewBox="0 0 124 124" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+              <radialGradient id="ocean" cx="55%" cy="60%" r="75%">
+                <stop offset="0" stop-color="#2f6fb3" />
+                <stop offset="0.6" stop-color="#143a6b" />
+                <stop offset="1" stop-color="#06142b" />
+              </radialGradient>
+              <radialGradient id="eye" cx="50%" cy="50%" r="50%">
+                <stop offset="0" stop-color="#1c4a86" />
+                <stop offset="1" stop-color="#1c4a86" stop-opacity="0" />
+              </radialGradient>
+              <radialGradient id="cloud" cx="50%" cy="50%" r="50%">
+                <stop offset="0" stop-color="#fff" stop-opacity=".95" />
+                <stop offset="0.7" stop-color="#e6f0fb" stop-opacity=".75" />
+                <stop offset="1" stop-color="#cfe2f6" stop-opacity="0" />
+              </radialGradient>
+              <filter id="soft"><feGaussianBlur stdDeviation="1.6" /></filter>
+              <filter id="soft2"><feGaussianBlur stdDeviation="0.7" /></filter>
+            </defs>
+            <rect width="124" height="124" fill="#02060f" />
+            <rect width="124" height="124" fill="url(#ocean)" />
+            <!-- hurricane -->
+            <g transform="translate(74 74)" filter="url(#soft)">
+              <circle r="44" fill="url(#cloud)" opacity=".7" />
+              <g fill="none" stroke="#fff" stroke-linecap="round">
+                <path d="M0 -8 C 14 -10 22 0 20 12 C 18 28 0 34 -16 28 C -34 20 -36 -6 -22 -22 C -8 -36 20 -34 34 -22" stroke-width="9" opacity=".92" />
+                <path d="M0 8 C -14 10 -22 0 -20 -12 C -18 -28 0 -34 16 -28 C 34 -20 36 6 22 22 C 8 36 -20 34 -34 22" stroke-width="8" opacity=".85" />
+                <path d="M-6 -2 C 0 -12 14 -8 12 4 C 10 18 -8 20 -18 8" stroke-width="6" opacity=".9" />
+                <path d="M34 -22 C 44 -14 46 2 40 14" stroke-width="6" opacity=".6" />
+                <path d="M-34 22 C -42 12 -42 -2 -36 -12" stroke-width="6" opacity=".6" />
+              </g>
+              <circle r="7" fill="url(#eye)" />
+            </g>
+            <g transform="translate(74 74)" filter="url(#soft2)" opacity=".55" fill="none" stroke="#dbe9f8" stroke-linecap="round">
+              <path d="M-4 -14 C 8 -20 24 -12 24 2 C 24 18 4 28 -12 22" stroke-width="2" />
+              <path d="M6 -26 C 26 -26 38 -6 32 12" stroke-width="1.5" />
+            </g>
+            <!-- satellite, lower-left foreground -->
+            <g transform="translate(14 112) rotate(-28)">
+              <rect x="-4" y="-14" width="8" height="28" rx="1.5" fill="#1b1d22" stroke="#555a66" stroke-width=".8" />
+              <rect x="-30" y="-3" width="26" height="6" fill="#0d1a33" stroke="#7aa2d8" stroke-width=".6" />
+              <rect x="4" y="-3" width="26" height="6" fill="#0d1a33" stroke="#7aa2d8" stroke-width=".6" />
+              <path d="M-24 -3 v6 M-18 -3 v6 M-12 -3 v6 M10 -3 v6 M16 -3 v6 M22 -3 v6" stroke="#7aa2d8" stroke-width=".5" />
+              <circle cx="0" cy="-16" r="2.4" fill="#cfd5e0" />
+            </g>
+            <!-- second panel top-left -->
+            <g transform="translate(40 24) rotate(32)">
+              <rect x="-14" y="-4" width="28" height="8" fill="#101b30" stroke="#6f93c9" stroke-width=".6" />
+              <path d="M-7 -4 v8 M0 -4 v8 M7 -4 v8" stroke="#6f93c9" stroke-width=".5" />
+            </g>
+            <!-- earth limb darkening -->
+            <rect width="124" height="124" fill="url(#ocean)" opacity="0" />
+          </svg>
+        </div>
+        <div class="svc-body">
+          <h1 id="svc-title" class="svc-title">1. EcoOrbit Earth Intelligence</h1>
+          <span class="svc-badge">My top pick</span>
+          <p class="svc-desc">A unified Earth-monitoring platform that detects environmental changes using satellite data.</p>
+          <ul class="svc-list">
+            <li>Track deforestation, floods, fires, and pollution.</li>
+            <li>Display satellite imagery on an interactive globe.</li>
+            <li>Compare environmental conditions over time.</li>
+            <li>Generate AI-assisted risk summaries.</li>
+          </ul>
+          <p class="svc-src">NASA data: Earth observation and satellite imagery.</p>
+        </div>
+      </article>
+
+      <p class="mt-8 text-sm">
+        <a href="Our_Services.html" class="text-slate-400 hover:text-neonBlue transition"><i class="fa-solid fa-arrow-left mr-2"></i>Back to Our Services</a>
+      </p>
+    </main>
+
+    <footer class="mt-auto" id="nasa-footer">
+      <div class="nf-inner">
+        <div class="nf-row">
+          <p class="nf-text">
+            EcoOrbit Space Apps is funded by EcoOrbit's
+            <a href="https://science.nasa.gov/about-us/" target="_blank" rel="noopener">Science Mission Directorate</a>
+            through a contract with
+            <a href="https://www.boozallen.com/" target="_blank" rel="noopener">Booz Allen Hamilton</a>,
+            <a href="https://www.mindgrub.com/" target="_blank" rel="noopener">Mindgrub</a>, and
+            <a href="https://www.secondmuse.com/" target="_blank" rel="noopener">SecondMuse</a>.
+          </p>
+          <div class="nf-connect">
+            <p class="nf-hash">Connect with #EcoOrbit</p>
+            <div class="nf-social">
+              <a href="https://www.facebook.com/NASASpaceApps" target="_blank" rel="noopener" aria-label="Facebook"><i class="fa-brands fa-facebook"></i></a>
+              <a href="https://x.com/spaceapps" target="_blank" rel="noopener" aria-label="X"><i class="fa-brands fa-x-twitter"></i></a>
+              <a href="https://www.instagram.com/nasaspaceapps/" target="_blank" rel="noopener" aria-label="Instagram"><i class="fa-brands fa-instagram"></i></a>
+              <a href="https://www.youtube.com/@NASASpaceApps" target="_blank" rel="noopener" aria-label="YouTube"><i class="fa-brands fa-youtube"></i></a>
+            </div>
+          </div>
+        </div>
+        <p class="nf-copy">
+          Copyright &copy;2026 EcoOrbit |
+          <a href="Privacy_and_Safety.html">Privacy Policy</a> |
+          <a href="#">Legal</a> |
+          <a href="Contact_Us.html">Contact</a> |
+          <a href="#">Resources</a>
+        </p>
+      </div>
+    </footer>
+
+    <script>
+      var b = document.getElementById("mobile-menu-button"), m = document.getElementById("mobile-menu");
+      b.addEventListener("click", function () {
+        var open = m.classList.toggle("hidden") === false;
+        b.setAttribute("aria-expanded", open);
+      });
+    </script>
+  </body>
+</html>

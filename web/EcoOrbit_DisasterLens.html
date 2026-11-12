@@ -1,0 +1,340 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>EcoOrbit DisasterLens</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+tailwind.config = { theme: { extend: {
+  colors: { ink:"#0f172a", ops:"#e8590c", opsDark:"#c2410c", paper:"#f6f4ef", steel:"#1e3a5f" },
+  fontFamily: { sans:["IBM Plex Sans","sans-serif"], mono:["IBM Plex Mono","monospace"] } } } };
+</script>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
+<style>
+  body { font-family:"IBM Plex Sans",sans-serif; background:#f6f4ef; color:#0f172a; }
+  .card { background:#fff; border:1px solid #e5e1d8; border-radius:14px; box-shadow:0 1px 2px rgba(15,23,42,.04); }
+  .chip { border:1px solid #d9d4c7; background:#fff; border-radius:999px; padding:4px 12px; font-size:12px; cursor:pointer; transition:.15s; display:inline-flex; gap:6px; align-items:center; }
+  .chip:hover { border-color:#e8590c; }
+  .chip.off { opacity:.4; }
+  .ev { border:1px solid #ece8de; border-radius:10px; padding:10px 12px; cursor:pointer; transition:.12s; background:#fff; }
+  .ev:hover { border-color:#e8590c; background:#fff8f3; }
+  .ev.sel { border-color:#e8590c; background:#fff1e6; }
+  #map { height:560px; border-radius:14px; z-index:0; }
+  .cmp { position:relative; width:100%; aspect-ratio:1/1; overflow:hidden; background:#111; border-radius:10px; user-select:none; touch-action:pan-y; cursor:ew-resize; }
+  .cmp img { position:absolute; inset:0; width:100%; height:100%; object-fit:cover; }
+  #imgAfter { clip-path: inset(0 0 0 50%); }
+  #cmpLine { position:absolute; top:0; bottom:0; left:50%; width:2px; background:#fff; box-shadow:0 0 6px rgba(0,0,0,.6); z-index:3; }
+  #cmpLine::after { content:"\f337"; font-family:"Font Awesome 6 Free"; font-weight:900; position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); width:32px; height:32px; border-radius:50%; background:#fff; color:#111; display:grid; place-items:center; font-size:13px; box-shadow:0 1px 4px rgba(0,0,0,.4); }
+  .tag { font-size:10px; letter-spacing:.04em; font-weight:700; padding:2px 8px; border-radius:6px; }
+  .pulse { width:8px; height:8px; border-radius:50%; background:#16a34a; animation:pl 1.6s infinite; }
+  @keyframes pl { 0%{box-shadow:0 0 0 0 rgba(22,163,74,.6)} 70%{box-shadow:0 0 0 8px rgba(22,163,74,0)} 100%{box-shadow:0 0 0 0 rgba(22,163,74,0)} }
+  ::-webkit-scrollbar{width:8px} ::-webkit-scrollbar-thumb{background:#cfc9ba;border-radius:4px}
+  @media print {
+    body * { visibility:hidden !important; }
+    #reportWrap, #reportWrap * { visibility:visible !important; }
+    #reportWrap { position:absolute; left:0; top:0; width:100%; border:none !important; box-shadow:none !important; }
+    .no-print { display:none !important; }
+  }
+</style>
+</head>
+<body>
+
+<header class="sticky top-0 z-[1000] bg-white/95 backdrop-blur border-b border-[#e5e1d8] no-print">
+  <div class="h-1 bg-gradient-to-r from-ops via-amber-400 to-steel"></div>
+  <div class="max-w-7xl mx-auto px-4 h-14 flex items-center justify-between">
+    <a href="EcoOrbit.html" class="flex items-center gap-2 text-sm text-slate-600 hover:text-ops transition"><i class="fa-solid fa-arrow-left"></i> Back to EcoOrbit</a>
+    <div class="flex items-center gap-2 text-sm">
+      <a href="Our_Services.html" class="text-slate-500 hover:text-ops transition">Our Services</a>
+      <i class="fa-solid fa-chevron-right text-[10px] text-slate-400"></i>
+      <span class="text-ops font-semibold">EcoOrbit DisasterLens</span>
+    </div>
+  </div>
+</header>
+
+<main class="max-w-7xl mx-auto px-4 py-8 no-print-wrap">
+
+  <!-- Hero -->
+  <section class="card p-6 md:p-7 flex flex-col md:flex-row gap-6 items-start no-print">
+    <img src="ecoorbit-disasterlens.png" alt="Flooded town and a hurricane seen from space" class="w-32 h-40 md:w-40 md:h-48 object-cover rounded-3xl border border-[#e5e1d8] shadow-md flex-none" />
+    <div class="flex-1">
+      <div class="flex flex-wrap items-center gap-3">
+        <h1 class="text-2xl md:text-3xl font-bold tracking-tight">EcoOrbit DisasterLens</h1>
+        <span class="inline-flex items-center gap-2 text-xs font-medium px-3 py-1 rounded-full bg-green-50 border border-green-200 text-green-800"><span class="pulse"></span><span id="liveTxt">Connecting to NASA EONET…</span></span>
+      </div>
+      <p class="mt-2 text-slate-700">A disaster-monitoring dashboard for understanding floods, wildfires, storms, and other environmental hazards.</p>
+      <ul class="mt-3 space-y-1.5 text-sm text-slate-700">
+        <li><i class="fa-solid fa-location-dot text-ops w-5"></i>Map reported or satellite-detected events.</li>
+        <li><i class="fa-solid fa-code-compare text-steel w-5"></i>Display before-and-after imagery when available.</li>
+        <li><i class="fa-solid fa-people-group text-emerald-700 w-5"></i>Combine hazard information with population or infrastructure data.</li>
+        <li><i class="fa-solid fa-file-lines text-violet-700 w-5"></i>Produce a visual impact report for emergency planners.</li>
+      </ul>
+      <p class="mt-3 text-xs text-slate-500">Data: NASA EONET (live events), NASA GIBS / Worldview (imagery, fires, floods), NASA VIIRS Black Marble (night lights), NASA SEDAC GPW (population density).</p>
+      <div class="mt-3 text-xs rounded-lg border border-amber-300 bg-amber-50 text-amber-900 px-3 py-2"><i class="fa-solid fa-triangle-exclamation mr-1.5"></i><b>Not an emergency service.</b> This is an awareness tool. For official warnings and evacuation orders, follow your national disaster authority.</div>
+    </div>
+  </section>
+
+  <!-- Category chips + stats -->
+  <section class="mt-6 no-print">
+    <div class="flex flex-wrap gap-2 items-center" id="chips"></div>
+    <div class="mt-3 grid grid-cols-2 md:grid-cols-4 gap-3" id="kpis"></div>
+  </section>
+
+  <div id="banner" class="hidden mt-4 card border-rose-300 bg-rose-50 text-rose-900 text-sm px-4 py-3 no-print"></div>
+
+  <!-- Map + list -->
+  <section class="mt-4 grid lg:grid-cols-3 gap-5 no-print">
+    <div class="lg:col-span-2">
+      <div class="card p-3">
+        <div class="flex flex-wrap items-center gap-x-5 gap-y-2 px-1 pb-3 text-xs text-slate-700">
+          <b class="text-ink text-sm"><i class="fa-solid fa-layer-group text-steel mr-1"></i>NASA layers</b>
+          <label><input type="checkbox" class="lyr accent-orange-600" data-k="tc"> True colour</label>
+          <label><input type="checkbox" class="lyr accent-orange-600" data-k="fire"> Active fires</label>
+          <label><input type="checkbox" class="lyr accent-orange-600" data-k="flood"> Flood detection</label>
+          <label><input type="checkbox" class="lyr accent-orange-600" data-k="lights"> Night lights</label>
+          <label><input type="checkbox" class="lyr accent-orange-600" data-k="pop"> Population density</label>
+          <label class="ml-auto">Imagery date <input id="mapDate" type="date" class="border border-[#d9d4c7] rounded px-2 py-0.5 bg-white"></label>
+        </div>
+        <div id="map"></div>
+        <p class="text-[11px] text-slate-500 px-1 pt-2">Dots show the latest reported position of each open event. Imagery layers are satellite products and may lag the event or be blank where no data exists for the chosen date.</p>
+      </div>
+    </div>
+    <div class="card p-4 flex flex-col">
+      <div class="flex items-center justify-between mb-2">
+        <h3 class="font-semibold"><i class="fa-solid fa-list text-ops mr-2"></i>Open events</h3>
+        <button id="refreshBtn" class="text-xs border border-[#d9d4c7] rounded-lg px-3 py-1 hover:border-ops"><i class="fa-solid fa-rotate mr-1"></i>Refresh</button>
+      </div>
+      <input id="search" placeholder="Search events…" class="border border-[#d9d4c7] rounded-lg px-3 py-2 text-sm mb-3 focus:outline-none focus:border-ops" />
+      <div id="list" class="space-y-2 overflow-y-auto" style="max-height:470px"></div>
+    </div>
+  </section>
+
+  <!-- Selected event -->
+  <section id="detail" class="mt-6 card p-5 no-print hidden">
+    <div class="flex flex-wrap items-start justify-between gap-3">
+      <div>
+        <div id="dCat" class="tag inline-block text-white mb-2"></div>
+        <h2 id="dTitle" class="text-xl font-bold"></h2>
+        <p id="dMeta" class="text-sm text-slate-600 mt-1"></p>
+      </div>
+      <button id="reportBtn" class="bg-ops hover:bg-opsDark text-white rounded-lg px-4 py-2 text-sm font-semibold"><i class="fa-solid fa-file-lines mr-2"></i>Build impact report</button>
+    </div>
+
+    <div class="mt-5 grid lg:grid-cols-5 gap-6">
+      <div class="lg:col-span-3">
+        <div class="flex flex-wrap items-end gap-3 mb-3 text-xs">
+          <label class="text-slate-600">Before <input id="dBefore" type="date" class="block mt-0.5 border border-[#d9d4c7] rounded px-2 py-1 bg-white"></label>
+          <label class="text-slate-600">After <input id="dAfter" type="date" class="block mt-0.5 border border-[#d9d4c7] rounded px-2 py-1 bg-white"></label>
+          <label class="text-slate-600">Area radius
+            <select id="dRadius" class="block mt-0.5 border border-[#d9d4c7] rounded px-2 py-1 bg-white"><option value="25">25 km</option><option value="50" selected>50 km</option><option value="100">100 km</option><option value="200">200 km</option></select></label>
+          <label class="text-slate-600 flex items-center gap-1 pb-1"><input id="dOverlay" type="checkbox" class="accent-orange-600" checked> hazard detections on “after”</label>
+          <button id="dGo" class="border border-ops text-ops rounded-lg px-3 py-1.5 font-semibold hover:bg-orange-50">Update imagery</button>
+        </div>
+        <div class="cmp" id="cmp">
+          <img id="imgBefore" alt="Before" />
+          <img id="imgAfter" alt="After" />
+          <img id="imgHaz" alt="" style="clip-path: inset(0 0 0 50%);pointer-events:none" />
+          <div id="cmpLine"></div>
+          <span id="lBefore" class="absolute top-2 left-2 z-10 text-[11px] bg-black/70 text-white rounded px-2 py-1 font-mono"></span>
+          <span id="lAfter" class="absolute top-2 right-2 z-10 text-[11px] bg-black/70 text-white rounded px-2 py-1 font-mono"></span>
+          <div id="cmpMsg" class="absolute inset-0 z-20 hidden place-items-center bg-black/70 text-white text-sm p-6 text-center"></div>
+        </div>
+        <p class="text-[11px] text-slate-500 mt-2">NASA MODIS Terra true colour (~250 m). Clouds are common during storms and floods, so compare several dates. The red cross marks the reported position.</p>
+      </div>
+
+      <div class="lg:col-span-2 space-y-4">
+        <div class="rounded-xl border border-[#ece8de] p-4 bg-[#fcfbf8]">
+          <h4 class="font-semibold text-sm mb-2"><i class="fa-solid fa-circle-info text-steel mr-1.5"></i>Event details</h4>
+          <div id="dInfo" class="text-sm"></div>
+        </div>
+        <div class="rounded-xl border border-[#ece8de] p-4 bg-[#fcfbf8]">
+          <h4 class="font-semibold text-sm mb-2"><i class="fa-solid fa-people-group text-emerald-700 mr-1.5"></i>Population &amp; infrastructure context</h4>
+          <div class="grid grid-cols-2 gap-2 mb-2">
+            <div><div class="relative aspect-square rounded-lg overflow-hidden bg-slate-800"><img id="ctxBase" class="absolute inset-0 w-full h-full object-cover" alt=""><img id="ctxPop" class="absolute inset-0 w-full h-full object-cover opacity-80" alt=""></div><div class="text-[10px] text-slate-500 mt-1">Population density (SEDAC GPW 2020)</div></div>
+            <div><div class="relative aspect-square rounded-lg overflow-hidden bg-black"><img id="ctxLights" class="absolute inset-0 w-full h-full object-cover" alt=""></div><div class="text-[10px] text-slate-500 mt-1">Night lights (VIIRS Black Marble)</div></div>
+          </div>
+          <div id="litBox" class="text-sm text-slate-700">Computing…</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Report -->
+  <section id="reportWrap" class="mt-6 card p-6 hidden">
+    <div class="flex items-center justify-between mb-4 no-print">
+      <h2 class="text-lg font-bold"><i class="fa-solid fa-file-lines text-ops mr-2"></i>Visual impact report</h2>
+      <div class="flex gap-2">
+        <button id="copyBtn" class="border border-[#d9d4c7] rounded-lg px-3 py-1.5 text-sm hover:border-ops"><i class="fa-solid fa-copy mr-1"></i>Copy summary</button>
+        <button id="printBtn" class="bg-steel text-white rounded-lg px-4 py-1.5 text-sm font-semibold"><i class="fa-solid fa-print mr-1"></i>Print / Save as PDF</button>
+      </div>
+    </div>
+    <div id="reportBody"></div>
+  </section>
+
+  <p class="mt-8 text-xs text-slate-500 text-center no-print">EcoOrbit DisasterLens combines open NASA datasets. Event positions are as reported by source agencies through NASA EONET and can be delayed, approximate or revised.</p>
+</main>
+
+<script>
+/* ================= config ================= */
+const $=id=>document.getElementById(id);
+const EONET="https://eonet.gsfc.nasa.gov/api/v3/events?status=open&days=60&limit=1000";
+const WMS3857="https://gibs.earthdata.nasa.gov/wms/epsg3857/best/wms.cgi";
+const WMS4326="https://gibs.earthdata.nasa.gov/wms/epsg4326/best/wms.cgi";
+const CATS={
+  wildfires:{l:"Wildfires",c:"#e8590c",i:"fa-fire"}, severeStorms:{l:"Severe storms",c:"#7048e8",i:"fa-hurricane"},
+  floods:{l:"Floods",c:"#1971c2",i:"fa-water"}, volcanoes:{l:"Volcanoes",c:"#c92a2a",i:"fa-mountain"},
+  seaLakeIce:{l:"Sea & lake ice",c:"#0c8599",i:"fa-snowflake"}, drought:{l:"Drought",c:"#b8860b",i:"fa-sun"},
+  dustHaze:{l:"Dust & haze",c:"#868e96",i:"fa-smog"}, landslides:{l:"Landslides",c:"#8d5524",i:"fa-triangle-exclamation"},
+  tempExtremes:{l:"Temperature extremes",c:"#d6336c",i:"fa-temperature-high"}, snow:{l:"Snow",c:"#4dabf7",i:"fa-snowflake"},
+  manmade:{l:"Human-caused",c:"#495057",i:"fa-industry"}, waterColor:{l:"Water colour",c:"#12b886",i:"fa-droplet"},
+  earthquakes:{l:"Earthquakes",c:"#a61e4d",i:"fa-wave-square"}
+};
+const catOf=id=>CATS[id]||{l:id,c:"#64748b",i:"fa-circle-exclamation"};
+const LAYERS={
+  tc:{id:"MODIS_Terra_CorrectedReflectance_TrueColor",fmt:"image/jpeg",time:true,op:1,z:2},
+  fire:{id:["MODIS_Terra_Thermal_Anomalies_All","VIIRS_SNPP_Thermal_Anomalies_375m_All"],fmt:"image/png",time:true,op:1,z:6,tr:true},
+  flood:{id:"MODIS_Combined_Flood_2-Day",fmt:"image/png",time:true,op:.85,z:5,tr:true},
+  lights:{id:"VIIRS_Black_Marble",fmt:"image/png",time:false,op:.9,z:3,tr:true},
+  pop:{id:"GPW_Population_Density_2020",fmt:"image/png",time:false,op:.65,z:4,tr:true}
+};
+const utc=d=>new Date(d).toISOString().slice(0,10);
+const todayStr=utc(Date.now()), yestStr=utc(Date.now()-864e5);
+const addDays=(s,n)=>utc(new Date(s+"T00:00:00Z").getTime()+n*864e5);
+const fmtDT=s=>new Date(s).toISOString().replace("T"," ").slice(0,16)+" UTC";
+function ago(s){ const m=(Date.now()-new Date(s))/6e4; if(m<60)return Math.max(1,Math.round(m))+" min ago"; if(m<1440)return Math.round(m/60)+" h ago"; return Math.round(m/1440)+" d ago"; }
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+
+let S={events:[],off:new Set(),q:"",sel:null,markers:new Map(),lit:null,imgs:{}};
+
+/* ================= map ================= */
+const map=L.map("map",{worldCopyJump:true,minZoom:2,maxZoom:11,zoomControl:true,preferCanvas:true}).setView([20,10],2);
+L.tileLayer.wms(WMS3857,{layers:"BlueMarble_ShadedRelief_Bathymetry",format:"image/jpeg",version:"1.1.1",attribution:"Imagery: NASA GIBS / EOSDIS · Events: NASA EONET"}).addTo(map);
+const lyr={}; const mapDate=$("mapDate"); mapDate.value=yestStr; mapDate.max=todayStr;
+function makeLayer(k){ const d=LAYERS[k], ids=[].concat(d.id), grp=L.layerGroup();
+  ids.forEach(id=>{ const o={layers:id,format:d.fmt,transparent:!!d.tr,version:"1.1.1",opacity:d.op,zIndex:d.z}; if(d.time)o.time=mapDate.value; grp.addLayer(L.tileLayer.wms(WMS3857,o)); }); return grp; }
+document.querySelectorAll(".lyr").forEach(cb=>cb.onchange=()=>{ const k=cb.dataset.k; if(cb.checked){ lyr[k]=makeLayer(k); lyr[k].addTo(map); } else if(lyr[k]){ map.removeLayer(lyr[k]); delete lyr[k]; } });
+mapDate.onchange=()=>document.querySelectorAll(".lyr").forEach(cb=>{ const k=cb.dataset.k; if(cb.checked&&LAYERS[k].time){ map.removeLayer(lyr[k]); lyr[k]=makeLayer(k); lyr[k].addTo(map); } });
+const evLayer=L.layerGroup().addTo(map), selLayer=L.layerGroup().addTo(map), canvas=L.canvas({padding:.5});
+
+/* ================= data ================= */
+function center(g){ if(g.type==="Point")return {lon:g.coordinates[0],lat:g.coordinates[1]};
+  const ring=(g.type==="Polygon"?g.coordinates[0]:g.coordinates.flat(1)[0])||[]; let x=0,y=0; ring.forEach(p=>{x+=p[0];y+=p[1];}); return {lon:x/ring.length,lat:y/ring.length}; }
+function parse(raw){ return raw.events.filter(e=>e.geometry&&e.geometry.length).map(e=>{
+  const g=e.geometry.slice().sort((a,b)=>new Date(a.date)-new Date(b.date)), last=g[g.length-1], first=g[0], c=center(last), cat=(e.categories[0]||{}).id||"other";
+  return {id:e.id,title:e.title,cat,catTitle:(e.categories[0]||{}).title||cat,lat:c.lat,lon:c.lon,date:last.date,first:first.date,mag:last.magnitudeValue,unit:last.magnitudeUnit,
+    sources:e.sources||[],link:e.link,n:g.length,track:g.filter(x=>x.type==="Point").map(x=>[x.coordinates[1],x.coordinates[0]]),poly:last.type==="Polygon"?last.coordinates[0].map(p=>[p[1],p[0]]):null}; })
+  .filter(e=>isFinite(e.lat)&&isFinite(e.lon)).sort((a,b)=>new Date(b.date)-new Date(a.date)); }
+async function load(){
+  $("liveTxt").textContent="Updating from NASA EONET…"; $("banner").classList.add("hidden");
+  try{ const r=await fetch(EONET); if(!r.ok)throw new Error("HTTP "+r.status); const raw=await r.json(); S.events=parse(raw);
+    $("liveTxt").textContent=`LIVE · NASA EONET · updated ${new Date().toISOString().slice(11,19)} UTC`;
+    drawChips(); drawKPIs(); drawMarkers(); drawList();
+    if(S.sel){ const again=S.events.find(e=>e.id===S.sel.id); if(again)S.sel=again; }
+  }catch(e){ console.warn(e); $("liveTxt").textContent="Offline: could not reach NASA EONET";
+    const b=$("banner"); b.classList.remove("hidden"); b.innerHTML=`<i class="fa-solid fa-plug-circle-xmark mr-2"></i>Could not load live events from NASA EONET (${esc(e.message)}). Check your internet connection and press <b>Refresh</b>.`; }
+}
+
+/* ================= UI: chips, kpis, markers, list ================= */
+function visible(){ const q=S.q.toLowerCase(); return S.events.filter(e=>!S.off.has(e.cat)&&(!q||e.title.toLowerCase().includes(q)||catOf(e.cat).l.toLowerCase().includes(q))); }
+function drawChips(){ const counts={}; S.events.forEach(e=>counts[e.cat]=(counts[e.cat]||0)+1);
+  $("chips").innerHTML=Object.keys(counts).sort((a,b)=>counts[b]-counts[a]).map(k=>{const c=catOf(k);return `<span class="chip ${S.off.has(k)?"off":""}" data-k="${k}"><i class="fa-solid ${c.i}" style="color:${c.c}"></i>${esc(c.l)} <b>${counts[k]}</b></span>`;}).join("");
+  $("chips").querySelectorAll(".chip").forEach(ch=>ch.onclick=()=>{ const k=ch.dataset.k; S.off.has(k)?S.off.delete(k):S.off.add(k); drawChips(); drawMarkers(); drawList(); }); }
+function drawKPIs(){ const ev=S.events, h24=ev.filter(e=>Date.now()-new Date(e.date)<864e5).length, d7=ev.filter(e=>Date.now()-new Date(e.date)<7*864e5).length, cats=new Set(ev.map(e=>e.cat)).size;
+  const k=(i,col,v,t)=>`<div class="card p-4"><div class="text-xs text-slate-500"><i class="fa-solid ${i} mr-1.5" style="color:${col}"></i>${t}</div><div class="text-2xl font-bold mt-1">${v}</div></div>`;
+  $("kpis").innerHTML=k("fa-satellite-dish","#e8590c",ev.length,"Open events tracked")+k("fa-clock","#1e3a5f",h24,"Updated in last 24 h")+k("fa-calendar-week","#1e3a5f",d7,"Updated in last 7 days")+k("fa-shapes","#7048e8",cats,"Hazard categories"); }
+function drawMarkers(){ evLayer.clearLayers(); S.markers.clear();
+  visible().forEach(e=>{ const c=catOf(e.cat).c;
+    if(e.cat==="severeStorms"&&e.track.length>1)L.polyline(e.track,{color:c,weight:2,opacity:.55,dashArray:"4 4",renderer:canvas}).addTo(evLayer);
+    if(e.poly&&e.poly.length>2)L.polygon(e.poly,{color:c,weight:1.5,fillOpacity:.15,renderer:canvas,interactive:false}).addTo(evLayer);
+    const m=L.circleMarker([e.lat,e.lon],{radius:e.cat==="severeStorms"||e.cat==="volcanoes"?8:6,color:"#fff",weight:1.5,fillColor:c,fillOpacity:.95,renderer:canvas}).bindTooltip(esc(e.title),{direction:"top"}).on("click",()=>select(e.id)).addTo(evLayer);
+    S.markers.set(e.id,m); }); }
+function drawList(){ const v=visible().slice(0,250);
+  $("list").innerHTML=v.length?v.map(e=>{const c=catOf(e.cat);return `<div class="ev ${S.sel&&S.sel.id===e.id?"sel":""}" data-id="${e.id}"><div class="flex items-start gap-2"><i class="fa-solid ${c.i} mt-0.5" style="color:${c.c}"></i><div class="min-w-0"><div class="text-sm font-medium leading-snug">${esc(e.title)}</div><div class="text-[11px] text-slate-500 mt-0.5">${esc(c.l)} · ${ago(e.date)}</div></div></div></div>`;}).join(""):'<p class="text-sm text-slate-500">No events match.</p>';
+  $("list").querySelectorAll(".ev").forEach(x=>x.onclick=()=>select(x.dataset.id)); }
+$("search").oninput=e=>{S.q=e.target.value;drawMarkers();drawList();};
+$("refreshBtn").onclick=load;
+
+/* ================= selection & details ================= */
+function select(id){ const e=S.events.find(x=>x.id===id); if(!e)return; S.sel=e; drawList();
+  selLayer.clearLayers(); L.circleMarker([e.lat,e.lon],{radius:15,color:"#0f172a",weight:2.5,fill:false,renderer:canvas}).addTo(selLayer);
+  map.flyTo([e.lat,e.lon],Math.max(map.getZoom(),5),{duration:1.1});
+  const c=catOf(e.cat); $("detail").classList.remove("hidden");
+  $("dCat").textContent=c.l.toUpperCase(); $("dCat").style.background=c.c; $("dTitle").textContent=e.title;
+  $("dMeta").textContent=`${e.lat.toFixed(3)}°, ${e.lon.toFixed(3)}° · latest report ${fmtDT(e.date)} (${ago(e.date)})`;
+  const src=e.sources.map(s=>`<a class="text-steel underline" target="_blank" rel="noopener" href="${esc(s.url)}">${esc(s.id)}</a>`).join(", ")||"—";
+  const row=(k,v)=>`<div class="flex justify-between gap-3 py-1.5 border-b border-[#efebe1]"><span class="text-slate-500">${k}</span><span class="text-right">${v}</span></div>`;
+  $("dInfo").innerHTML=row("First reported",fmtDT(e.first))+row("Latest report",fmtDT(e.date))+row("Position updates",e.n)+(e.mag!=null?row("Magnitude",`${e.mag} ${esc(e.unit||"")}`):"")+row("Reported by",src)+
+    row("Record",`<a class="text-steel underline" target="_blank" rel="noopener" href="${esc(e.link)}">EONET JSON</a>`)+
+    `<p class="text-[11px] text-slate-500 mt-2">Positions are <b>agency-reported</b> via NASA EONET. Use the imagery and hazard layers to check what <b>satellites</b> can see.</p>`;
+  const after=utc(Math.min(new Date(e.date).getTime(),Date.now()-864e5)); $("dAfter").value=after; $("dBefore").value=addDays(after,-14); $("dAfter").max=todayStr; $("dBefore").max=todayStr;
+  loadCompare(); document.getElementById("detail").scrollIntoView({behavior:"smooth",block:"start"}); S.report=null; $("reportWrap").classList.add("hidden"); }
+
+function bboxFor(e,km){ const dlat=km/111, dlon=km/(111*Math.max(.2,Math.cos(e.lat*Math.PI/180))); return [e.lon-dlon,e.lat-dlat,e.lon+dlon,e.lat+dlat]; }
+function gibsUrl(layer,bbox,px,date,fmt,tr){ return `${WMS4326}?SERVICE=WMS&VERSION=1.1.1&REQUEST=GetMap&LAYERS=${layer}&STYLES=&SRS=EPSG:4326&BBOX=${bbox.map(x=>x.toFixed(4)).join(",")}&WIDTH=${px}&HEIGHT=${px}&FORMAT=${encodeURIComponent(fmt)}${tr?"&TRANSPARENT=TRUE":""}${date?"&TIME="+date:""}`; }
+function setImg(el,u){ return new Promise(res=>{ el.onload=()=>res(true); el.onerror=()=>res(false); el.src=u; }); }
+async function loadCompare(){ const e=S.sel; if(!e)return; const km=+$("dRadius").value, bb=bboxFor(e,km), b=$("dBefore").value, a=$("dAfter").value; S.bbox=bb;
+  $("lBefore").textContent="BEFORE · "+b; $("lAfter").textContent="AFTER · "+a;
+  const msg=$("cmpMsg"); msg.style.display="grid"; msg.innerHTML='<div><i class="fa-solid fa-spinner fa-spin mr-2"></i>Requesting NASA imagery…</div>';
+  const tc="MODIS_Terra_CorrectedReflectance_TrueColor";
+  const haz=e.cat==="wildfires"?["MODIS_Terra_Thermal_Anomalies_All","image/png"]:e.cat==="floods"?["MODIS_Combined_Flood_2-Day","image/png"]:null;
+  const [okB,okA]=await Promise.all([setImg($("imgBefore"),gibsUrl(tc,bb,640,b,"image/jpeg")),setImg($("imgAfter"),gibsUrl(tc,bb,640,a,"image/jpeg"))]);
+  if($("dOverlay").checked&&haz){ $("imgHaz").style.display="block"; setImg($("imgHaz"),gibsUrl(haz[0],bb,640,a,haz[1],true)); } else { $("imgHaz").style.display="none"; $("imgHaz").removeAttribute("src"); }
+  msg.style.display=(okA&&okB)?"none":"grid"; if(!(okA&&okB))msg.innerHTML='<div><i class="fa-solid fa-image mb-2 text-xl"></i><br/>NASA has no imagery for one of these dates. Try a different date.</div>';
+  // reported-position marker (centre of the image)
+  drawCross();
+  loadContext(bb,a);
+}
+function drawCross(){ let x=$("cross"); if(!x){ x=document.createElement("div"); x.id="cross"; x.style.cssText="position:absolute;left:50%;top:50%;width:26px;height:26px;margin:-13px 0 0 -13px;z-index:4;pointer-events:none"; x.innerHTML='<svg viewBox="0 0 26 26"><path d="M13 1v8M13 17v8M1 13h8M17 13h8" stroke="#ef4444" stroke-width="2.5" stroke-linecap="round"/><circle cx="13" cy="13" r="3" fill="none" stroke="#fff" stroke-width="1.5"/></svg>'; $("cmp").appendChild(x); } }
+["dGo"].forEach(i=>$(i).onclick=loadCompare); $("dRadius").onchange=loadCompare; $("dOverlay").onchange=loadCompare;
+
+/* ================= population & infrastructure context ================= */
+async function loadContext(bb,date){
+  $("litBox").innerHTML='<i class="fa-solid fa-spinner fa-spin mr-1"></i>Reading night-light data…';
+  setImg($("ctxBase"),gibsUrl("MODIS_Terra_CorrectedReflectance_TrueColor",bb,320,date,"image/jpeg"));
+  setImg($("ctxPop"),gibsUrl("GPW_Population_Density_2020",bb,320,null,"image/png",true));
+  const lu=gibsUrl("VIIRS_Black_Marble",bb,128,null,"image/png",false); setImg($("ctxLights"),lu);
+  S.lit=null;
+  try{ const img=await new Promise((res,rej)=>{const i=new Image();i.crossOrigin="anonymous";i.onload=()=>res(i);i.onerror=()=>rej(new Error("load"));i.src=lu;});
+    const c=document.createElement("canvas");c.width=c.height=128;const g=c.getContext("2d");g.drawImage(img,0,0,128,128);const d=g.getImageData(0,0,128,128).data;
+    let lit=0,sum=0,n=128*128; for(let i=0;i<n;i++){const l=.2126*d[i*4]+.7152*d[i*4+1]+.0722*d[i*4+2]; sum+=l; if(l>35)lit++;}
+    const pct=lit/n*100, cls=pct<2?["Very low","sparsely settled or uninhabited"]:pct<10?["Low","scattered settlements"]:pct<30?["Moderate","towns and connected settlements"]:["High","dense, built-up or urban area"];
+    S.lit={pct,mean:sum/n,cls:cls[0],desc:cls[1]};
+    $("litBox").innerHTML=`<div class="flex items-center justify-between"><span class="text-slate-500">Lit-area index (${$("dRadius").value} km radius)</span><b>${cls[0]}</b></div><div class="h-2 bg-slate-200 rounded mt-1.5"><div class="h-2 rounded bg-amber-500" style="width:${Math.min(100,pct*2.2+4)}%"></div></div><p class="text-[11px] text-slate-500 mt-1.5">${pct.toFixed(1)}% of the area shows artificial light, which points to ${cls[1]}. This is a proxy for built-up and electrified areas, <b>not a headcount</b>. See the population-density map for where people live.</p>`;
+  }catch(e){ S.lit=null; $("litBox").innerHTML='<p class="text-[11px] text-slate-500">Your browser blocked reading the night-light pixels, so no index is computed. The two context maps above still show NASA population and night-light data.</p>'; }
+}
+
+/* ================= slider ================= */
+let drag=false; const cmp=$("cmp");
+function split(x){ const r=cmp.getBoundingClientRect(); const p=Math.max(0,Math.min(100,(x-r.left)/r.width*100)); $("imgAfter").style.clipPath=$("imgHaz").style.clipPath=`inset(0 0 0 ${p}%)`; $("cmpLine").style.left=p+"%"; }
+cmp.addEventListener("pointerdown",e=>{drag=true;cmp.setPointerCapture(e.pointerId);split(e.clientX);}); cmp.addEventListener("pointermove",e=>{if(drag)split(e.clientX);}); cmp.addEventListener("pointerup",()=>drag=false);
+
+/* ================= report ================= */
+$("reportBtn").onclick=()=>{ const e=S.sel; if(!e)return; const c=catOf(e.cat), km=$("dRadius").value, bb=S.bbox||bboxFor(e,+km), b=$("dBefore").value, a=$("dAfter").value, tc="MODIS_Terra_CorrectedReflectance_TrueColor";
+  const haz=e.cat==="wildfires"?["MODIS_Terra_Thermal_Anomalies_All","Active-fire detections (MODIS)"]:e.cat==="floods"?["MODIS_Combined_Flood_2-Day","Flood detection (MODIS 2-day)"]:null;
+  const imgBox=(src,cap,overlay)=>`<figure><div style="position:relative;aspect-ratio:1/1;background:#111;border-radius:8px;overflow:hidden"><img src="${src}" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover">${overlay?`<img src="${overlay}" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover">`:""}</div><figcaption style="font-size:11px;color:#64748b;margin-top:4px">${cap}</figcaption></figure>`;
+  const srcs=e.sources.map(s=>`${esc(s.id)} (${esc(s.url)})`).join("; ")||"not listed";
+  const lit=S.lit?`${S.lit.cls} (${S.lit.pct.toFixed(1)}% of the ${km} km-radius area shows artificial light; ${S.lit.desc}).`:"Not computed in this browser. See the night-light map.";
+  const summary=`${e.title} — ${c.l}. Latest reported position ${e.lat.toFixed(3)}°, ${e.lon.toFixed(3)}° (${fmtDT(e.date)}). Lit-area index within ${km} km: ${S.lit?S.lit.cls:"n/a"}. Data: NASA EONET, GIBS, VIIRS Black Marble, SEDAC GPW.`;
+  S.report=summary;
+  $("reportBody").innerHTML=`<div style="border-bottom:3px solid ${c.c};padding-bottom:10px;margin-bottom:14px"><div style="font-size:11px;letter-spacing:.08em;color:#64748b">ECOORBIT DISASTERLENS · IMPACT REPORT</div><h2 style="font-size:22px;font-weight:700;margin-top:4px">${esc(e.title)}</h2><div style="font-size:13px;color:#475569;margin-top:2px">${esc(c.l)} · generated ${fmtDT(Date.now())}</div></div>
+   <table style="width:100%;font-size:13px;border-collapse:collapse;margin-bottom:14px">${[["Location (latest report)",`${e.lat.toFixed(3)}°, ${e.lon.toFixed(3)}°`],["First reported",fmtDT(e.first)],["Latest report",fmtDT(e.date)],["Magnitude",e.mag!=null?`${e.mag} ${esc(e.unit||"")}`:"not provided"],["Reporting sources",srcs],["Assessment radius",km+" km"]].map(r=>`<tr><td style="padding:5px 8px;border-bottom:1px solid #eee;color:#64748b;width:200px">${r[0]}</td><td style="padding:5px 8px;border-bottom:1px solid #eee">${r[1]}</td></tr>`).join("")}</table>
+   <h3 style="font-weight:600;margin:10px 0 6px">Before and after (NASA MODIS true colour)</h3>
+   <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">${imgBox(gibsUrl(tc,bb,640,b,"image/jpeg"),"Before · "+b)}${imgBox(gibsUrl(tc,bb,640,a,"image/jpeg"),"After · "+a+(haz?" · with "+haz[1]:""),haz?gibsUrl(haz[0],bb,640,a,"image/png",true):"")}</div>
+   <h3 style="font-weight:600;margin:16px 0 6px">Population and infrastructure context</h3>
+   <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">${imgBox(gibsUrl(tc,bb,480,a,"image/jpeg"),"Population density (NASA SEDAC GPW, 2020)",gibsUrl("GPW_Population_Density_2020",bb,480,null,"image/png",true))}${imgBox(gibsUrl("VIIRS_Black_Marble",bb,480,null,"image/png"),"Night lights (NASA VIIRS Black Marble)")}</div>
+   <p style="font-size:13px;margin-top:8px"><b>Lit-area index:</b> ${lit}</p>
+   <h3 style="font-weight:600;margin:16px 0 6px">Suggested checks for planners</h3>
+   <ul style="font-size:13px;padding-left:18px;list-style:disc;line-height:1.6"><li>Confirm the situation with the official agency listed above before acting.</li><li>Look at cloud-free imagery from several dates, because storms and floods are often cloudy.</li><li>Cross-check populated areas on the density map against access roads and shelters.</li><li>Request higher-resolution imagery or local reports for any area of concern.</li></ul>
+   <p style="font-size:11px;color:#64748b;margin-top:14px;border-top:1px solid #eee;padding-top:8px">Limits: event positions are as reported by source agencies and may be delayed or approximate. MODIS imagery is ~250 m per pixel. Night lights indicate built-up and electrified areas, not population counts. This report is for awareness only and is not an official warning or damage assessment.</p>`;
+  $("reportWrap").classList.remove("hidden"); $("reportWrap").scrollIntoView({behavior:"smooth"}); };
+$("printBtn").onclick=()=>window.print();
+$("copyBtn").onclick=async()=>{ try{await navigator.clipboard.writeText(S.report||"");$("copyBtn").innerHTML='<i class="fa-solid fa-check mr-1"></i>Copied';setTimeout(()=>$("copyBtn").innerHTML='<i class="fa-solid fa-copy mr-1"></i>Copy summary',1500);}catch(e){} };
+
+/* ================= start ================= */
+load(); setInterval(load,10*60*1000);
+</script>
+</body>
+</html>

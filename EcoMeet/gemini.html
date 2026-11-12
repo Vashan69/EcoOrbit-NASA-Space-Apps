@@ -1,0 +1,475 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>EcoMeet | Sustainable Video Conferencing & EcoOrbit Sync</title>
+  
+  <!-- Typography Imports -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;600;700&family=Space+Grotesk:wght@600;700;800&display=swap" rel="stylesheet">
+
+  <style>
+    /* ==========================================================================
+       EcoMeet Design Tokens & Core Styles
+       ========================================================================== */
+    :root {
+      --ecomeet-text-eco: #FFFFFF;
+      --ecomeet-text-meet: #0A2540;
+      --ecomeet-accent-green: #00E676;
+      --ecomeet-accent-green-hover: #00C853;
+      --ecomeet-accent-green-glow: rgba(0, 230, 118, 0.35);
+
+      --ecomeet-bg-dark: #070C14;
+      --ecomeet-surface-slate: #1E293B;
+      --ecomeet-surface-border: rgba(255, 255, 255, 0.1);
+      --ecomeet-danger-red: #EF4444;
+
+      --ecomeet-font-brand: 'Space Grotesk', system-ui, sans-serif;
+      --ecomeet-font-ui: 'Plus Jakarta Sans', system-ui, sans-serif;
+
+      --ecomeet-radius-sm: 8px;
+      --ecomeet-radius-lg: 16px;
+      --ecomeet-transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background-color: var(--ecomeet-bg-dark);
+      color: #F8FAFC;
+      font-family: var(--ecomeet-font-ui);
+      height: 100vh;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* ==========================================================================
+       Header & Navigation Bar
+       ========================================================================== */
+    .app-header {
+      height: 64px;
+      padding: 0 24px;
+      background: rgba(15, 23, 42, 0.8);
+      border-bottom: 1px solid var(--ecomeet-surface-border);
+      backdrop-filter: blur(12px);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      z-index: 10;
+    }
+
+    .brand-lockup {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-family: var(--ecomeet-font-brand);
+      font-weight: 800;
+      font-size: 22px;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      user-select: none;
+    }
+
+    .brand-lockup .text-eco { color: var(--ecomeet-text-eco); }
+    .brand-lockup .text-meet { color: var(--ecomeet-text-meet); text-shadow: 0 2px 4px rgba(0,0,0,0.4); }
+
+    .satellite-svg {
+      width: 26px;
+      height: 26px;
+      fill: none;
+      stroke: var(--ecomeet-accent-green);
+      stroke-width: 2;
+      filter: drop-shadow(0 0 6px var(--ecomeet-accent-green-glow));
+      animation: satellite-pulse 3s infinite ease-in-out;
+    }
+
+    .header-info {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .telemetry-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 14px;
+      background: rgba(0, 230, 118, 0.1);
+      border: 1px solid rgba(0, 230, 118, 0.3);
+      border-radius: 999px;
+      color: var(--ecomeet-accent-green);
+      font-size: 13px;
+      font-weight: 600;
+    }
+
+    .live-dot {
+      width: 8px;
+      height: 8px;
+      background-color: var(--ecomeet-accent-green);
+      border-radius: 50%;
+      animation: beacon-ping 1.5s infinite;
+    }
+
+    /* ==========================================================================
+       Main Grid Workspace
+       ========================================================================== */
+    .app-workspace {
+      flex: 1;
+      display: flex;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .video-grid {
+      flex: 1;
+      padding: 24px;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(420px, 1fr));
+      gap: 20px;
+      align-content: center;
+      transition: var(--ecomeet-transition);
+    }
+
+    .video-card {
+      background: var(--ecomeet-surface-slate);
+      border-radius: var(--ecomeet-radius-lg);
+      border: 2px solid transparent;
+      position: relative;
+      overflow: hidden;
+      aspect-ratio: 16 / 9;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      padding: 16px;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+      transition: var(--ecomeet-transition);
+    }
+
+    .video-card.active-speaker {
+      border-color: var(--ecomeet-accent-green);
+      box-shadow: 0 0 20px var(--ecomeet-accent-green-glow);
+    }
+
+    .video-placeholder {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      background: radial-gradient(circle at center, #1E293B 0%, #0F172A 100%);
+      z-index: 1;
+    }
+
+    .avatar-circle {
+      width: 80px;
+      height: 80px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid var(--ecomeet-surface-border);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 28px;
+      font-weight: 700;
+      color: var(--ecomeet-accent-green);
+      margin-bottom: 12px;
+    }
+
+    .video-meta {
+      position: relative;
+      z-index: 2;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      width: 100%;
+    }
+
+    .participant-tag {
+      background: rgba(15, 23, 42, 0.75);
+      padding: 6px 12px;
+      border-radius: 6px;
+      font-size: 13px;
+      font-weight: 600;
+      backdrop-filter: blur(4px);
+    }
+
+    .bitrate-badge {
+      background: rgba(0, 0, 0, 0.6);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      padding: 4px 8px;
+      border-radius: 4px;
+      font-size: 11px;
+      color: #94A3B8;
+    }
+
+    /* ==========================================================================
+       Floating Control Dock
+       ========================================================================== */
+    .control-dock {
+      position: absolute;
+      bottom: 24px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: rgba(15, 23, 42, 0.85);
+      border: 1px solid var(--ecomeet-surface-border);
+      backdrop-filter: blur(16px);
+      padding: 10px 20px;
+      border-radius: 999px;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      z-index: 20;
+      box-shadow: 0 20px 40px rgba(0,0,0,0.6);
+    }
+
+    .dock-btn {
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      border: none;
+      background: rgba(255, 255, 255, 0.08);
+      color: #FFFFFF;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: var(--ecomeet-transition);
+    }
+
+    .dock-btn:hover {
+      background: rgba(255, 255, 255, 0.18);
+      transform: translateY(-2px);
+    }
+
+    .dock-btn.active {
+      background: var(--ecomeet-accent-green);
+      color: #04130A;
+      box-shadow: 0 0 12px var(--ecomeet-accent-green-glow);
+    }
+
+    .dock-btn.danger {
+      background: var(--ecomeet-danger-red);
+      color: #FFFFFF;
+    }
+
+    /* ==========================================================================
+       EcoOrbit Slide-Over Telemetry Drawer
+       ========================================================================== */
+    .ecoorbit-drawer {
+      width: 380px;
+      background: rgba(7, 12, 20, 0.95);
+      border-left: 1px solid var(--ecomeet-surface-border);
+      backdrop-filter: blur(20px);
+      padding: 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+      position: relative;
+      transition: var(--ecomeet-transition);
+      z-index: 15;
+    }
+
+    .ecoorbit-drawer.collapsed {
+      margin-right: -380px;
+    }
+
+    .drawer-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .drawer-title {
+      font-family: var(--ecomeet-font-brand);
+      font-size: 16px;
+      letter-spacing: 0.05em;
+      color: var(--ecomeet-accent-green);
+      text-transform: uppercase;
+    }
+
+    .telemetry-card {
+      background: rgba(30, 41, 59, 0.5);
+      border: 1px solid var(--ecomeet-surface-border);
+      border-radius: var(--ecomeet-radius-sm);
+      padding: 16px;
+    }
+
+    .telemetry-card h4 {
+      font-size: 12px;
+      color: #94A3B8;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-bottom: 8px;
+    }
+
+    .metric-value {
+      font-size: 24px;
+      font-weight: 700;
+      color: #FFFFFF;
+      font-family: var(--ecomeet-font-brand);
+    }
+
+    /* Keyframes */
+    @keyframes satellite-pulse {
+      0%, 100% { transform: translateY(0) scale(1); }
+      50% { transform: translateY(-2px) scale(1.05); }
+    }
+
+    @keyframes beacon-ping {
+      0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(0, 230, 118, 0.7); }
+      70% { transform: scale(1); box-shadow: 0 0 0 6px rgba(0, 230, 118, 0); }
+      100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(0, 230, 118, 0); }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- App Header -->
+  <header class="app-header">
+    <div class="brand-lockup">
+      <svg class="satellite-svg" viewBox="0 0 24 24">
+        <circle cx="12" cy="12" r="9" stroke="currentColor" stroke-dasharray="4 2"/>
+        <path d="M12 3a9 9 0 0 1 9 9" stroke="currentColor" stroke-width="2"/>
+        <circle cx="12" cy="12" r="3" fill="currentColor"/>
+      </svg>
+      <span><span class="text-eco">Eco</span><span class="text-meet">Meet</span></span>
+    </div>
+
+    <div class="header-info">
+      <div class="telemetry-pill">
+        <span class="live-dot"></span>
+        <span id="co2-offset-counter">182.4 g CO₂e Saved</span>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Workspace -->
+  <main class="app-workspace">
+    <!-- Video Grid -->
+    <div class="video-grid">
+      
+      <!-- Participant 1 (Local User with WASM VAD) -->
+      <div class="video-card active-speaker" id="card-local">
+        <div class="video-placeholder">
+          <div class="avatar-circle">SN</div>
+          <div style="font-weight: 600; font-size: 15px;">Sabekun Naher</div>
+          <div style="font-size: 12px; color: var(--ecomeet-accent-green); margin-top: 4px;">Stage Speaker (L3)</div>
+        </div>
+        <div class="video-meta">
+          <span class="participant-tag">Sabekun Naher (You)</span>
+          <span class="bitrate-badge" id="bitrate-local">2.0 Mbps (1080p)</span>
+        </div>
+      </div>
+
+      <!-- Participant 2 (Remote Listener) -->
+      <div class="video-card" id="card-remote-1">
+        <div class="video-placeholder">
+          <div class="avatar-circle" style="color: #60A5FA;">OA</div>
+          <div style="font-weight: 600; font-size: 15px;">Omar Ibne Abdullah</div>
+          <div style="font-size: 12px; color: #94A3B8; margin-top: 4px;">Active Listener (L2)</div>
+        </div>
+        <div class="video-meta">
+          <span class="participant-tag">Omar Ibne Abdullah</span>
+          <span class="bitrate-badge" id="bitrate-remote-1">300 Kbps (360p)</span>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- EcoOrbit Slide-Over Drawer -->
+    <aside class="ecoorbit-drawer" id="ecoorbit-drawer">
+      <div class="drawer-header">
+        <h3 class="drawer-title">EcoOrbit Telemetry</h3>
+        <button class="dock-btn" style="width: 28px; height: 28px; font-size: 12px;" onclick="toggleDrawer()">✕</button>
+      </div>
+
+      <div class="telemetry-card">
+        <h4>Tracked LEO Objects</h4>
+        <div class="metric-value" id="tracked-objects">14,290</div>
+      </div>
+
+      <div class="telemetry-card">
+        <h4>Data Volume Saved</h4>
+        <div class="metric-value" id="data-saved">1.42 GB</div>
+      </div>
+
+      <div class="telemetry-card">
+        <h4>AI Conjunction Risk</h4>
+        <div class="metric-value" style="color: var(--ecomeet-accent-green);">NOMINAL</div>
+      </div>
+
+      <button class="dock-btn active" style="width: 100%; border-radius: var(--ecomeet-radius-sm); font-weight: 700; font-size: 13px; height: 42px;">
+        Broadcast Orbit Canvas
+      </button>
+    </aside>
+
+    <!-- Floating Control Dock -->
+    <div class="control-dock">
+      <button class="dock-btn active" title="Toggle Microphone" id="mic-btn" onclick="toggleMic()">🎤</button>
+      <button class="dock-btn active" title="Toggle Video">📹</button>
+      <button class="dock-btn" title="EcoOrbit Telemetry Drawer" onclick="toggleDrawer()">🌐</button>
+      <button class="dock-btn danger" title="Leave Session">🚫</button>
+    </div>
+  </main>
+
+  <!-- Client JavaScript Engine & Embedded WASM VAD Logic -->
+  <script>
+    // 1. Client State Management
+    let isSpeaking = true;
+    let co2OffsetGrams = 182.4;
+    let bytesSavedMB = 1420;
+
+    // 2. Simulated WebAssembly (WASM) Voice Activity Detection (VAD) Engine
+    function runSimulatedWasmVad() {
+      setInterval(() => {
+        // Toggle speech state probabilistically to simulate local WASM audio processing
+        isSpeaking = Math.random() > 0.4;
+        
+        const localCard = document.getElementById('card-local');
+        const localBitrate = document.getElementById('bitrate-local');
+
+        if (isSpeaking) {
+          localCard.classList.add('active-speaker');
+          localBitrate.textContent = '2.0 Mbps (1080p)';
+          localBitrate.style.color = '#00E676';
+        } else {
+          localCard.classList.remove('active-speaker');
+          localBitrate.textContent = '300 Kbps (360p)';
+          localBitrate.style.color = '#94A3B8';
+
+          // Increment carbon savings during low-bitrate periods
+          co2OffsetGrams += 0.12;
+          bytesSavedMB += 0.85;
+
+          document.getElementById('co2-offset-counter').textContent = `${co2OffsetGrams.toFixed(1)} g CO₂e Saved`;
+          document.getElementById('data-saved').textContent = `${(bytesSavedMB / 1024).toFixed(2)} GB`;
+        }
+      }, 3000);
+    }
+
+    // 3. UI Controls
+    function toggleDrawer() {
+      const drawer = document.getElementById('ecoorbit-drawer');
+      drawer.classList.toggle('collapsed');
+    }
+
+    function toggleMic() {
+      const micBtn = document.getElementById('mic-btn');
+      micBtn.classList.toggle('active');
+    }
+
+    // Initialize WASM VAD Simulation on Page Load
+    window.addEventListener('DOMContentLoaded', () => {
+      runSimulatedWasmVad();
+    });
+  </script>
+</body>
+</html>

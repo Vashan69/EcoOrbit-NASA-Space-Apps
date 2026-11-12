@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>The Third World Peace — Tracking</title>
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<div class="app">
+  <div class="topbar">
+    <div class="brand"><span class="dot"></span><b>THE THIRD</b><span>WORLD PEACE</span></div>
+    <div class="nav">
+      <a href="index.html">Overview</a>
+      <a class="active" href="tracking.html">Tracking</a>
+      <a href="assets.html">Assets</a>
+      <a href="alerts.html">Alerts</a>
+    </div>
+    <div class="top-icons">
+      <div class="icon-wrap">
+        <button class="icon-btn" id="alertsBtn" title="Alerts">&#9888;<span class="icon-badge" id="alertsBadge">3</span></button>
+        <div class="panel" id="alertsPanel">
+          <h4>Alerts</h4>
+          <div id="alertsList"></div>
+        </div>
+      </div>
+      <div class="icon-wrap">
+        <button class="icon-btn" id="settingsBtn" title="Settings">&#9881;</button>
+        <div class="panel" id="settingsPanel">
+          <h4>Settings</h4>
+          <div class="field-row">
+            <label>Units</label>
+            <div class="seg" id="unitsSeg">
+              <button data-unit="km" class="active">km</button>
+              <button data-unit="mi">mi</button>
+            </div>
+          </div>
+          <div class="field-row">
+            <label>Refresh rate</label>
+            <select id="refreshRate">
+              <option value="0">Off</option>
+              <option value="5000" selected>5s</option>
+              <option value="15000">15s</option>
+              <option value="30000">30s</option>
+            </select>
+          </div>
+        </div>
+      </div>
+      <button class="icon-btn" id="themeBtn" title="Toggle theme">&#9789;</button>
+      <span class="icon-btn">&#128269;</span>
+      <span class="avatar"></span>
+    </div>
+  </div>
+
+  <div class="layout">
+
+    <!-- Sidebar -->
+    <div class="sidebar">
+      <div class="card">
+        <div class="thumb"></div>
+        <div class="thumb-meta"><span>ORBIT-4</span><b>Active</b></div>
+      </div>
+
+      <div class="card side-nav">
+        <div class="item active" data-nav="dashboard"><span class="ic"></span> Dashboard</div>
+        <div class="item" id="satellitesNavItem" data-nav="satellites"><span class="ic"></span> Satellites</div>
+        <div class="sat-search" id="satSearch">
+          <input type="text" id="satSearchInput" placeholder="Search satellites...">
+          <div class="sat-list" id="satList"></div>
+        </div>
+        <div class="item"><span class="ic"></span> Ground Stations</div>
+        <div class="item"><span class="ic"></span> Flight Paths</div>
+        <div class="item"><span class="ic"></span> Reports</div>
+        <div class="item"><span class="ic"></span> Archive</div>
+      </div>
+
+      <div class="card">
+        <div class="region-map">
+          <svg viewBox="0 0 200 120"><path d="M20,90 L40,60 L60,70 L80,40 L100,55 L120,30 L140,45 L160,25 L180,35" fill="none" stroke="#3fd0ff" stroke-width="1" opacity="0.5"/></svg>
+        </div>
+        <div class="region-stats"><span>2 Corridors</span><b>27K km</b></div>
+      </div>
+    </div>
+
+    <!-- Center: full tracking table -->
+    <div class="center wide">
+      <div class="card">
+        <div class="page-title">Live Tracking</div>
+        <table style="width:100%; border-collapse:collapse; font-size:12.5px;">
+          <thead>
+            <tr style="text-align:left; color:var(--muted); font-size:11px;">
+              <th style="padding-bottom:10px; border-bottom:1px solid var(--line);">Satellite</th>
+              <th style="padding-bottom:10px; border-bottom:1px solid var(--line);">ID</th>
+              <th style="padding-bottom:10px; border-bottom:1px solid var(--line);">Lat / Lon</th>
+              <th style="padding-bottom:10px; border-bottom:1px solid var(--line);">Altitude</th>
+              <th style="padding-bottom:10px; border-bottom:1px solid var(--line);">Velocity</th>
+              <th style="padding-bottom:10px; border-bottom:1px solid var(--line);">Next pass</th>
+              <th style="padding-bottom:10px; border-bottom:1px solid var(--line);">Status</th>
+            </tr>
+          </thead>
+          <tbody id="trackingTableBody"></tbody>
+        </table>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script src="js/app.js"></script>
+</body>
+</html>

@@ -1,0 +1,420 @@
+<!doctype html>
+<html lang="en" class="dark">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>EcoOrbit SpaceGuard</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+tailwind.config = { darkMode: "class", theme: { extend: { colors: {
+  spaceBg: "#030712", spaceCard: "#0b1329", neonBlue: "#00f2fe",
+  neonPurple: "#4facfe", neonEmerald: "#10b981", neonPink: "#f43f5e" },
+  fontFamily: { sans: ["Inter", "sans-serif"] } } } };
+</script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/satellite.js/4.1.3/satellite.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<style>
+  body { font-family: "Inter", sans-serif; background:#030712; color:#f3f4f6; overflow-x:hidden; }
+  .glass-panel { background: rgba(11,19,41,.78); backdrop-filter: blur(9px); border:1px solid rgba(255,255,255,.08); }
+  .glow-text { text-shadow: 0 0 20px rgba(0,242,254,.6); }
+  .mode-btn.active { background:rgba(0,242,254,.15); border-color:#00f2fe; color:#00f2fe; }
+  .ev { cursor:pointer; transition:.15s; }
+  .ev:hover, .ev.sel { border-color:#00f2fe; background:rgba(0,242,254,.07); }
+  #globeWrap canvas { display:block; width:100%; height:100%; cursor:grab; }
+  ::-webkit-scrollbar{width:8px} ::-webkit-scrollbar-track{background:#030712} ::-webkit-scrollbar-thumb{background:#1e293b;border-radius:4px}
+</style>
+</head>
+<body>
+
+<header class="sticky top-0 z-50 glass-panel border-b border-white/10">
+  <div class="max-w-7xl mx-auto px-4 h-16 flex items-center justify-between">
+    <a href="EcoOrbit.html" class="flex items-center gap-2 text-sm text-slate-300 hover:text-neonBlue transition">
+      <i class="fa-solid fa-arrow-left"></i> Back to EcoOrbit
+    </a>
+    <div class="flex items-center gap-2 text-sm">
+      <a href="Our_Services.html" class="text-slate-400 hover:text-neonBlue transition">Our Services</a>
+      <i class="fa-solid fa-chevron-right text-[10px] text-slate-600"></i>
+      <span class="text-neonBlue font-semibold">EcoOrbit SpaceGuard</span>
+    </div>
+  </div>
+</header>
+
+<main class="max-w-7xl mx-auto px-4 py-10">
+
+  <!-- Hero -->
+  <section class="glass-panel rounded-2xl p-6 md:p-8 flex flex-col md:flex-row gap-6 items-start">
+    <img src="ecoorbit-spaceguard.png" alt="Orbital debris around Earth" class="w-32 h-40 md:w-40 md:h-48 object-cover rounded-3xl border border-white/10 shadow-lg shadow-cyan-500/10 flex-none" />
+    <div class="flex-1">
+      <h1 class="text-2xl md:text-3xl font-extrabold glow-text">EcoOrbit SpaceGuard</h1>
+      <p class="mt-3 font-semibold text-slate-100">Space debris and satellite collision-risk monitoring.</p>
+      <ul class="mt-3 space-y-1.5 text-slate-300 text-sm">
+        <li><i class="fa-solid fa-globe text-neonBlue mr-2"></i>Plot satellites and orbital debris on a 3D Earth globe.</li>
+        <li><i class="fa-solid fa-circle-info text-neonPurple mr-2"></i>Show orbital information and available conjunction-risk data.</li>
+        <li><i class="fa-solid fa-gauge-high text-neonPink mr-2"></i>Display risk levels and explain why an encounter needs attention.</li>
+        <li><i class="fa-solid fa-chart-line text-neonEmerald mr-2"></i>Add a historical space-debris dashboard.</li>
+      </ul>
+      <p class="mt-4 text-xs text-slate-500">Categories: Earth Orbit, Manmade Satellites, AI &amp; ML, Data Visualization, Statistics, Software.</p>
+      <div class="mt-3 text-xs rounded-lg border border-amber-400/30 bg-amber-500/10 text-amber-200 px-3 py-2">
+        <i class="fa-solid fa-triangle-exclamation mr-1.5"></i><b>Important:</b> this page separates <b>simulated scenarios</b> from <b>computed screening of public orbital elements</b>. Neither is an official conjunction warning, and a close approach is not a collision.
+      </div>
+    </div>
+  </section>
+
+  <!-- Mode + controls -->
+  <section class="mt-8 flex flex-col lg:flex-row gap-3 lg:items-center">
+    <div class="flex gap-2">
+      <button id="modeSim" class="mode-btn active border border-white/10 rounded-lg px-4 py-2 text-sm"><i class="fa-solid fa-flask mr-1.5"></i>Simulated scenarios</button>
+      <button id="modeLive" class="mode-btn border border-white/10 rounded-lg px-4 py-2 text-sm"><i class="fa-solid fa-satellite-dish mr-1.5"></i>Public catalog (CelesTrak)</button>
+    </div>
+    <div class="flex flex-wrap items-center gap-3 lg:ml-auto text-sm">
+      <button id="playBtn" class="border border-white/10 rounded-lg px-3 py-2 hover:border-neonBlue"><i class="fa-solid fa-pause"></i></button>
+      <label class="text-slate-400">Speed
+        <select id="speed" class="ml-1 bg-spaceCard border border-white/10 rounded px-2 py-1">
+          <option value="1">1×</option><option value="5">5×</option><option value="60" selected>60×</option><option value="300">300×</option><option value="1800">1800×</option>
+        </select>
+      </label>
+      <label class="text-slate-400"><input id="tgSat" type="checkbox" checked class="mr-1 accent-cyan-400">Satellites</label>
+      <label class="text-slate-400"><input id="tgDeb" type="checkbox" checked class="mr-1 accent-rose-400">Debris</label>
+      <button id="resetBtn" class="border border-white/10 rounded-lg px-3 py-2 hover:border-neonBlue text-slate-300">Reset time</button>
+    </div>
+  </section>
+
+  <!-- Globe + events -->
+  <section class="mt-4 grid lg:grid-cols-3 gap-6">
+    <div class="lg:col-span-2 glass-panel rounded-2xl overflow-hidden relative">
+      <div id="globeWrap" class="w-full h-[520px]"></div>
+      <div class="absolute top-3 left-3 text-xs space-y-1 pointer-events-none">
+        <div id="modeBadge" class="inline-block px-2 py-1 rounded bg-purple-500/20 border border-purple-400/40 text-purple-200 font-semibold">SIMULATED DATA</div>
+        <div class="text-slate-400">Sim time: <span id="clock" class="text-white font-mono">T+00:00:00</span></div>
+        <div class="text-slate-400"><span id="counts"></span></div>
+      </div>
+      <div id="distLabel" class="hidden absolute bottom-3 left-3 text-xs bg-black/70 border border-neonBlue/40 rounded px-3 py-1.5 font-mono"></div>
+      <div class="absolute bottom-3 right-3 text-[11px] text-slate-400 pointer-events-none text-right">
+        <span class="inline-block w-2 h-2 rounded-full" style="background:#00f2fe"></span> satellite
+        <span class="inline-block w-2 h-2 rounded-full ml-2" style="background:#fb7185"></span> debris
+        <span class="inline-block w-2 h-2 rounded-full ml-2" style="background:#facc15"></span> selected<br/>Drag to rotate · scroll to zoom · click an object
+      </div>
+      <div id="loadMsg" class="hidden absolute inset-0 grid place-items-center bg-black/60 text-sm"><div><i class="fa-solid fa-spinner fa-spin mr-2"></i><span id="loadTxt">Loading…</span></div></div>
+    </div>
+
+    <div class="glass-panel rounded-2xl p-5 flex flex-col">
+      <h3 class="font-bold"><i class="fa-solid fa-triangle-exclamation text-neonPink mr-2"></i>Close Approaches</h3>
+      <p id="evSub" class="text-xs text-slate-500 mt-1 mb-3"></p>
+      <div id="events" class="space-y-2 overflow-y-auto max-h-[420px] pr-1"></div>
+    </div>
+  </section>
+
+  <!-- Selected panel -->
+  <section class="mt-6 grid lg:grid-cols-2 gap-6">
+    <div class="glass-panel rounded-2xl p-5">
+      <h3 class="font-bold mb-3"><i class="fa-solid fa-circle-info text-neonPurple mr-2"></i>Orbital Information</h3>
+      <div id="objInfo" class="text-sm text-slate-300"><p class="text-slate-500">Click any satellite or debris object on the globe to see its orbit.</p></div>
+    </div>
+    <div class="glass-panel rounded-2xl p-5">
+      <h3 class="font-bold mb-3"><i class="fa-solid fa-lightbulb text-neonEmerald mr-2"></i>Why This Encounter Needs Attention</h3>
+      <div id="whyBox" class="text-sm text-slate-300"><p class="text-slate-500">Select a close approach from the list to see the risk level and the reasoning behind it.</p></div>
+    </div>
+  </section>
+
+  <!-- Historical dashboard -->
+  <section class="mt-10">
+    <h2 class="text-xl font-extrabold mb-1"><i class="fa-solid fa-chart-line text-neonEmerald mr-2"></i>Historical Space-Debris Dashboard</h2>
+    <p class="text-xs text-slate-500 mb-4">Figures are rounded, approximate values for illustration. For exact numbers use the ESA Space Environment Report or NASA's Orbital Debris Quarterly News.</p>
+    <div class="grid lg:grid-cols-3 gap-6">
+      <div class="lg:col-span-2 glass-panel rounded-2xl p-5">
+        <h3 class="font-semibold mb-3 text-sm">Regularly tracked objects in Earth orbit (approx.)</h3>
+        <div class="h-[300px]"><canvas id="histChart"></canvas></div>
+      </div>
+      <div class="glass-panel rounded-2xl p-5 space-y-3 text-sm">
+        <h3 class="font-semibold text-sm">Major fragmentation events</h3>
+        <div class="rounded-lg border border-white/10 bg-white/5 p-3"><b>2007 · Fengyun-1C</b><div class="text-xs text-slate-400 mt-1">Chinese anti-satellite test at about 860 km. It created thousands of trackable fragments, many still in orbit.</div></div>
+        <div class="rounded-lg border border-white/10 bg-white/5 p-3"><b>2009 · Iridium 33 × Cosmos 2251</b><div class="text-xs text-slate-400 mt-1">First accidental hypervelocity collision between two intact satellites, at about 790 km.</div></div>
+        <div class="rounded-lg border border-white/10 bg-white/5 p-3"><b>2021 · Cosmos 1408</b><div class="text-xs text-slate-400 mt-1">Russian anti-satellite test that created well over a thousand trackable fragments and forced ISS crew to shelter.</div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Data integrity -->
+  <section class="mt-10 glass-panel rounded-2xl p-5 text-sm">
+    <h3 class="font-bold mb-3"><i class="fa-solid fa-shield-halved text-neonBlue mr-2"></i>How to read the data on this page</h3>
+    <div class="grid md:grid-cols-3 gap-4">
+      <div class="rounded-lg border border-purple-400/30 bg-purple-500/10 p-3"><b class="text-purple-200">Simulated scenario</b><p class="text-xs text-slate-300 mt-1">Made-up satellites, debris and encounters generated in your browser to demonstrate the tool. Collision probabilities are illustrative.</p></div>
+      <div class="rounded-lg border border-amber-400/30 bg-amber-500/10 p-3"><b class="text-amber-200">Computed screening</b><p class="text-xs text-slate-300 mt-1">Real public orbital elements (TLEs) from CelesTrak, propagated here to find close passes. TLEs carry no uncertainty data, so no collision probability is given and errors of kilometres are possible.</p></div>
+      <div class="rounded-lg border border-emerald-400/30 bg-emerald-500/10 p-3"><b class="text-emerald-200">Official conjunction data</b><p class="text-xs text-slate-300 mt-1">Conjunction Data Messages with covariance come from operators and services such as the US Space Force (Space-Track) or EU SST. Not included here. Connect an authorised feed to show them.</p></div>
+    </div>
+  </section>
+</main>
+
+<script>
+/* ================= constants & helpers ================= */
+const RE=6371, MU=398600.4418, D2R=Math.PI/180;
+const rnd=(()=>{let s=20251025;return()=> (s=(s*1664525+1013904223)>>>0)/4294967296;})();
+const fmt=(n,d=1)=>Number(n).toLocaleString(undefined,{maximumFractionDigits:d,minimumFractionDigits:d});
+const hms=s=>{const sg=s<0?"-":"+",a=Math.abs(Math.round(s));return "T"+sg+String(Math.floor(a/3600)).padStart(2,"0")+":"+String(Math.floor(a%3600/60)).padStart(2,"0")+":"+String(a%60).padStart(2,"0");};
+function circ(o,t){ // circular orbit ECI position (km)
+  const u=o.u0+o.n*t, cu=Math.cos(u), su=Math.sin(u), cO=o.cO, sO=o.sO, ci=o.ci, si=o.si;
+  return [o.a*(cO*cu-sO*su*ci), o.a*(sO*cu+cO*su*ci), o.a*su*si];
+}
+function mkOrbit(name,type,altKm,incDeg,raanDeg,u0,extra){
+  const a=RE+altKm; return Object.assign({name,type,a,alt:altKm,inc:incDeg,n:Math.sqrt(MU/a**3),u0,cO:Math.cos(raanDeg*D2R),sO:Math.sin(raanDeg*D2R),ci:Math.cos(incDeg*D2R),si:Math.sin(incDeg*D2R)},extra||{});
+}
+let t0ms=Date.now();
+function posAt(o,t){
+  if(o.satrec){ const r=satellite.propagate(o.satrec,new Date(t0ms+t*1000)); return (r&&r.position&&isFinite(r.position.x))?[r.position.x,r.position.y,r.position.z]:null; }
+  return circ(o,t);
+}
+const dist3=(a,b)=>Math.hypot(a[0]-b[0],a[1]-b[1],a[2]-b[2]);
+function gmstAt(t){ const jd=(t0ms+t*1000)/86400000+2440587.5; return ((280.46061837+360.98564736629*(jd-2451545.0))%360)*D2R; }
+
+/* ================= simulated data ================= */
+function buildSim(){
+  const sats=[],debs=[];
+  const shells=[[550,53],[570,70],[780,86.4],[800,98.6],[1200,87.9],[500,97.4],[1100,53]];
+  for(let i=0;i<220;i++){ const s=shells[i%shells.length]; sats.push(mkOrbit("SIM-SAT-"+String(i+1).padStart(3,"0"),"sat",s[0]+(rnd()-.5)*30,s[1]+(rnd()-.5)*1.5,rnd()*360,rnd()*6.283,{kind:"Simulated active satellite"})); }
+  for(let i=0;i<1100;i++){ const alt=i%3?700+rnd()*350:400+rnd()*1100, inc=[82,98,74,65,99,53,71][i%7]+(rnd()-.5)*3; debs.push(mkOrbit("SIM-DEB-"+String(i+1).padStart(4,"0"),"deb",alt,inc,rnd()*360,rnd()*6.283,{kind:"Simulated debris fragment (uncontrolled)"})); }
+  // scripted encounters: both objects cross the same orbital node at TCA
+  const sc=[
+    ["SIM-EO-ALPHA",790,98.6,"SIM-FRAG-A1",82.0,3.1,0.16,0.08,0.35,"Fragment from a simulated breakup"],
+    ["SIM-COMMS-BRAVO",550,53.0,"SIM-ROCKETBODY-B2",70.0,5.4,0.9,0.4,0.6,"Simulated spent rocket stage"],
+    ["SIM-SAR-CHARLIE",510,97.5,"SIM-FRAG-C3",20.0,8.2,0.45,0.2,0.5,"Fragment on a near head-on path"],
+    ["SIM-WEATHER-DELTA",830,98.7,"SIM-FRAG-D4",91.0,11.6,2.6,1.1,0.8,"Fragment crossing at a shallow angle (slower relative speed)"],
+    ["SIM-SCI-ECHO",1200,87.9,"SIM-FRAG-E5",65.0,15.0,4.8,2.5,1.0,"Fragment from a simulated old collision"],
+    ["SIM-IOT-FOXTROT",570,70.0,"SIM-DEAD-SAT-F6",53.0,19.7,1.7,0.6,0.55,"Simulated defunct satellite (cannot manoeuvre)"]
+  ];
+  const events=[];
+  sc.forEach((s,i)=>{
+    const raan=30+i*55, tca=s[5]*3600;
+    const A=mkOrbit(s[0],"sat",s[1],s[2],raan,0,{kind:"Simulated active satellite (scenario)",scn:true});
+    const B=mkOrbit(s[3],"deb",s[1]+s[7],s[4],raan,0,{kind:s[9],scn:true});
+    A.u0=-A.n*tca; B.u0=-B.n*tca+s[6]/B.a;
+    sats.push(A); debs.push(B);
+    events.push({kind:"sim",a:A,b:B,sigma:s[8],hbr:0.012});
+  });
+  return {sats,debs,events};
+}
+function refineEvent(ev,tGuess,span,step){
+  let best=1e9,bt=tGuess;
+  for(let t=tGuess-span;t<=tGuess+span;t+=step){const pa=posAt(ev.a,t),pb=posAt(ev.b,t); if(!pa||!pb)continue; const d=dist3(pa,pb); if(d<best){best=d;bt=t;}}
+  ev.miss=best; ev.tca=bt;
+  const pa=posAt(ev.a,bt),pb=posAt(ev.b,bt),pa2=posAt(ev.a,bt+.5),pb2=posAt(ev.b,bt+.5);
+  ev.relv=Math.hypot(...[0,1,2].map(k=>(pa2[k]-pa[k])-(pb2[k]-pb[k])))/.5;
+  ev.altTca=Math.hypot(...pa)-RE;
+}
+function finishSim(ev){
+  refineEvent(ev,ev.a.u0? -ev.a.u0/ev.a.n : 0,60,0.05);
+  const s2=ev.sigma**2; ev.pc=(ev.hbr**2/(2*s2))*Math.exp(-(ev.miss**2)/(2*s2));
+  ev.level=ev.pc>=1e-4?"High":ev.pc>=1e-5?"Medium":"Low";
+}
+
+/* ================= three.js scene ================= */
+const wrap=document.getElementById("globeWrap");
+const renderer=new THREE.WebGLRenderer({antialias:true,alpha:true});
+renderer.setPixelRatio(Math.min(devicePixelRatio,2)); wrap.appendChild(renderer.domElement);
+const scene=new THREE.Scene(), camera=new THREE.PerspectiveCamera(45,1,.01,200);
+scene.add(new THREE.AmbientLight(0x6688aa,.9)); const sun=new THREE.DirectionalLight(0xffffff,1.1); sun.position.set(5,2,4); scene.add(sun);
+const earth=new THREE.Group(); scene.add(earth);
+earth.add(new THREE.Mesh(new THREE.SphereGeometry(1,64,48),new THREE.MeshPhongMaterial({color:0x0b2a5a,emissive:0x04122b,shininess:12})));
+(function graticule(){ const pts=[],P=(la,lo)=>{const a=la*D2R,b=lo*D2R;return [Math.cos(a)*Math.cos(b)*1.001,Math.sin(a)*1.001,-Math.cos(a)*Math.sin(b)*1.001];};
+  for(let la=-60;la<=60;la+=30)for(let lo=0;lo<360;lo+=5)pts.push(...P(la,lo),...P(la,lo+5));
+  for(let lo=0;lo<360;lo+=30)for(let la=-90;la<90;la+=5)pts.push(...P(la,lo),...P(la+5,lo));
+  const g=new THREE.BufferGeometry(); g.setAttribute("position",new THREE.Float32BufferAttribute(pts,3));
+  earth.add(new THREE.LineSegments(g,new THREE.LineBasicMaterial({color:0x3b82f6,transparent:true,opacity:.28})));
+})();
+scene.add(new THREE.Mesh(new THREE.SphereGeometry(1.04,48,32),new THREE.MeshBasicMaterial({color:0x00f2fe,transparent:true,opacity:.07,side:THREE.BackSide})));
+(function stars(){const p=[];for(let i=0;i<700;i++){const v=new THREE.Vector3(rnd()-.5,rnd()-.5,rnd()-.5).normalize().multiplyScalar(80);p.push(v.x,v.y,v.z);}
+  const g=new THREE.BufferGeometry();g.setAttribute("position",new THREE.Float32BufferAttribute(p,3));scene.add(new THREE.Points(g,new THREE.PointsMaterial({color:0xffffff,size:1.2,sizeAttenuation:false,opacity:.6,transparent:true})));})();
+
+let satPts=null, debPts=null;
+const selPts=new THREE.Points(new THREE.BufferGeometry().setAttribute("position",new THREE.Float32BufferAttribute(new Float32Array(6),3)),new THREE.PointsMaterial({color:0xfacc15,size:11,sizeAttenuation:false,depthTest:false}));
+selPts.renderOrder=5; selPts.visible=false; scene.add(selPts);
+const linkLine=new THREE.Line(new THREE.BufferGeometry().setAttribute("position",new THREE.Float32BufferAttribute(new Float32Array(6),3)),new THREE.LineBasicMaterial({color:0xfacc15,depthTest:false}));
+linkLine.renderOrder=5; linkLine.visible=false; scene.add(linkLine);
+let orbitLine=null;
+
+let cam={yaw:.6,pitch:.35,dist:3.6}, drag=null, idle=0;
+function placeCam(){ camera.position.set(cam.dist*Math.cos(cam.pitch)*Math.sin(cam.yaw),cam.dist*Math.sin(cam.pitch),cam.dist*Math.cos(cam.pitch)*Math.cos(cam.yaw)); camera.lookAt(0,0,0); }
+function resize(){ const w=wrap.clientWidth,h=wrap.clientHeight; renderer.setSize(w,h,false); camera.aspect=w/h; camera.updateProjectionMatrix(); }
+addEventListener("resize",resize);
+const cvs=renderer.domElement;
+cvs.addEventListener("pointerdown",e=>{drag={x:e.clientX,y:e.clientY,moved:false};cvs.setPointerCapture(e.pointerId);cvs.style.cursor="grabbing";});
+cvs.addEventListener("pointermove",e=>{ if(!drag)return; const dx=e.clientX-drag.x,dy=e.clientY-drag.y; if(Math.abs(dx)+Math.abs(dy)>3)drag.moved=true; drag.x=e.clientX;drag.y=e.clientY; cam.yaw-=dx*.005; cam.pitch=Math.max(-1.45,Math.min(1.45,cam.pitch+dy*.005)); idle=0; });
+cvs.addEventListener("pointerup",e=>{ cvs.style.cursor="grab"; if(drag&&!drag.moved)pick(e); drag=null; });
+cvs.addEventListener("wheel",e=>{e.preventDefault();cam.dist=Math.max(1.4,Math.min(12,cam.dist*(1+e.deltaY*.001)));},{passive:false});
+
+/* ================= app state ================= */
+let S={mode:"sim",sats:[],debs:[],events:[],simT:0,paused:false,speed:60,sel:null,selEv:null,liveAcc:0};
+const toV=p=>[p[0]/RE,p[2]/RE,-p[1]/RE];
+
+function buildPoints(){
+  [satPts,debPts].forEach(p=>{if(p){scene.remove(p);p.geometry.dispose();}});
+  const mk=(n,col,sz)=>{const g=new THREE.BufferGeometry();g.setAttribute("position",new THREE.BufferAttribute(new Float32Array(n*3),3));return new THREE.Points(g,new THREE.PointsMaterial({color:col,size:sz,sizeAttenuation:false}));};
+  satPts=mk(S.sats.length,0x00f2fe,4); debPts=mk(S.debs.length,0xfb7185,2.6);
+  satPts.frustumCulled=debPts.frustumCulled=false; scene.add(satPts,debPts);
+  document.getElementById("counts").textContent=S.sats.length.toLocaleString()+" satellites · "+S.debs.length.toLocaleString()+" debris objects";
+  syncVis();
+}
+function syncVis(){ if(satPts)satPts.visible=tgSat.checked; if(debPts)debPts.visible=tgDeb.checked; }
+tgSat.onchange=tgDeb.onchange=syncVis;
+
+function updatePositions(){
+  const fill=(arr,pts)=>{ const a=pts.geometry.attributes.position.array; for(let i=0;i<arr.length;i++){ const p=posAt(arr[i],S.simT); if(p){const v=toV(p);a[i*3]=v[0];a[i*3+1]=v[1];a[i*3+2]=v[2];} else {a[i*3]=a[i*3+1]=a[i*3+2]=0;} } pts.geometry.attributes.position.needsUpdate=true; };
+  fill(S.sats,satPts); fill(S.debs,debPts);
+  earth.rotation.y=gmstAt(S.simT);
+}
+
+/* ================= selection ================= */
+function setSelPoints(list){
+  const a=selPts.geometry.attributes.position.array; a.fill(0);
+  list.forEach((o,i)=>{const p=posAt(o,S.simT); if(p){const v=toV(p);a[i*3]=v[0];a[i*3+1]=v[1];a[i*3+2]=v[2];}});
+  selPts.geometry.setAttribute("position",new THREE.BufferAttribute(a,3)); selPts.geometry.setDrawRange(0,list.length); selPts.visible=list.length>0;
+}
+function drawOrbit(o){
+  if(orbitLine){scene.remove(orbitLine);orbitLine.geometry.dispose();orbitLine=null;}
+  if(!o)return; const P=o.satrec?2*Math.PI/o.satrec.no*60:2*Math.PI/o.n, pts=[];
+  for(let k=0;k<=180;k++){const p=posAt(o,S.simT+P*k/180); if(p)pts.push(...toV(p));}
+  const g=new THREE.BufferGeometry();g.setAttribute("position",new THREE.Float32BufferAttribute(pts,3));
+  orbitLine=new THREE.Line(g,new THREE.LineBasicMaterial({color:0xfacc15,transparent:true,opacity:.6})); orbitLine.userData.o=o; scene.add(orbitLine);
+  orbitLine.rotation.y=0;
+}
+function pick(e){
+  const r=cvs.getBoundingClientRect(), mx=e.clientX-r.left, my=e.clientY-r.top; let best=null,bd=12;
+  const test=(arr,pts)=>{ if(!pts.visible)return; const a=pts.geometry.attributes.position.array; for(let i=0;i<arr.length;i++){ const v=new THREE.Vector3(a[i*3],a[i*3+1],a[i*3+2]); if(v.lengthSq()<.5)continue;
+      // hide objects behind Earth
+      const toCam=camera.position.clone().sub(v); if(v.dot(toCam)<0 && Math.abs(v.length()*0+1)){ const d=v.clone().normalize(); const c=camera.position.clone(); const b=c.dot(d); const disc=b*b-(c.lengthSq()-1); if(disc>0 && (b-Math.sqrt(disc))>0 && (b-Math.sqrt(disc))<c.distanceTo(v)-0.001)continue; }
+      v.project(camera); const sx=(v.x+1)/2*r.width, sy=(1-v.y)/2*r.height, d=Math.hypot(sx-mx,sy-my); if(d<bd){bd=d;best=arr[i];} } };
+  test(S.sats,satPts); test(S.debs,debPts);
+  if(best) selectObject(best); else if(S.sel){ S.sel=null; refreshSel(); }
+}
+function selectObject(o){ S.sel=o; S.selEv=null; document.querySelectorAll(".ev").forEach(x=>x.classList.remove("sel")); refreshSel(); drawOrbit(o); showObjInfo(o);
+  whyBox.innerHTML='<p class="text-slate-500">Select a close approach from the list to see the risk level and the reasoning behind it.</p>'; distLabel.classList.add("hidden"); linkLine.visible=false; }
+function refreshSel(){ if(S.selEv)return; setSelPoints(S.sel?[S.sel]:[]); if(!S.sel){drawOrbit(null);objInfo.innerHTML='<p class="text-slate-500">Click any satellite or debris object on the globe to see its orbit.</p>';} }
+function showObjInfo(o){
+  const p=posAt(o,S.simT), p2=posAt(o,S.simT+1); if(!p||!p2)return;
+  const alt=Math.hypot(...p)-RE, spd=dist3(p,p2);
+  const inc=o.satrec?o.satrec.inclo/D2R:o.inc, per=(o.satrec?2*Math.PI/o.satrec.no:2*Math.PI/o.n*60/60*1)*(o.satrec?1:1/60*60);
+  const periodMin=o.satrec?2*Math.PI/o.satrec.no:2*Math.PI/o.n/60;
+  const src=o.satrec?'<span class="px-2 py-0.5 rounded bg-amber-500/20 text-amber-200 text-[11px]">Public TLE (CelesTrak)</span>':'<span class="px-2 py-0.5 rounded bg-purple-500/20 text-purple-200 text-[11px]">Simulated</span>';
+  const row=(k,v)=>`<div class="flex justify-between border-b border-white/5 py-1.5"><span class="text-slate-400">${k}</span><span class="font-mono">${v}</span></div>`;
+  objInfo.innerHTML=`<div class="flex items-center justify-between mb-2"><b class="text-white">${o.name}</b>${src}</div><div class="text-xs text-slate-400 mb-2">${o.kind||(o.type==="sat"?"Satellite":"Debris")}</div>`+
+    row("Altitude (now)",fmt(alt,0)+" km")+row("Speed",fmt(spd,2)+" km/s")+row("Inclination",fmt(inc,1)+"°")+row("Orbital period",fmt(periodMin,1)+" min")+(o.norad?row("NORAD ID",o.norad):"");
+}
+
+/* ================= events UI ================= */
+const LV={High:"bg-rose-500/20 text-rose-300 border-rose-400/40",Medium:"bg-orange-500/20 text-orange-300 border-orange-400/40",Low:"bg-emerald-500/20 text-emerald-300 border-emerald-400/40",Close:"bg-orange-500/20 text-orange-300 border-orange-400/40",Watch:"bg-yellow-500/20 text-yellow-200 border-yellow-400/40",Info:"bg-slate-500/20 text-slate-300 border-slate-400/40"};
+function renderEvents(){
+  evSub.textContent=S.mode==="sim"?"Simulated scenarios. Collision probabilities are illustrative.":"Computed from public TLEs for the next 6 h. These are screening flags, not official warnings.";
+  if(!S.events.length){events.innerHTML='<p class="text-xs text-slate-500">No close approaches found.</p>';return;}
+  events.innerHTML=S.events.map((e,i)=>`<div class="ev rounded-lg border border-white/10 bg-white/5 p-3" data-i="${i}">
+    <div class="flex items-center justify-between gap-2"><span class="text-[10px] font-bold px-2 py-0.5 rounded border ${LV[e.level]}">${e.level.toUpperCase()}</span><span class="text-[10px] ${e.kind==="sim"?"text-purple-300":"text-amber-300"}">${e.kind==="sim"?"SIMULATED":"COMPUTED"}</span></div>
+    <div class="text-sm font-semibold mt-1.5">${e.a.name} <span class="text-slate-500">×</span> ${e.b.name}</div>
+    <div class="text-xs text-slate-400 mt-1">TCA ${hms(e.tca)} · miss ${fmt(e.miss,2)} km · ${fmt(e.relv,1)} km/s</div></div>`).join("");
+  events.querySelectorAll(".ev").forEach(el=>el.onclick=()=>selectEvent(+el.dataset.i));
+}
+function selectEvent(i){
+  const e=S.events[i]; S.selEv=e; S.sel=null;
+  document.querySelectorAll(".ev").forEach(x=>x.classList.toggle("sel",+x.dataset.i===i));
+  S.simT=Math.max(0,e.tca-300); speed.value="5"; S.speed=5; S.paused=false; playBtn.innerHTML='<i class="fa-solid fa-pause"></i>';
+  const pa=posAt(e.a,e.tca); if(pa){ cam.yaw=Math.atan2(pa[0]/RE-0, -pa[1]/RE)+earth.rotation.y*0; const v=toV(pa); cam.yaw=Math.atan2(v[0],v[2]); cam.pitch=Math.asin(v[1]/Math.hypot(...v)); cam.dist=2.2; }
+  setSelPoints([e.a,e.b]); drawOrbit(e.a); showObjInfo(e.a); explain(e);
+}
+function explain(e){
+  const sigmaTxt=e.kind==="sim"?`Position uncertainty (1σ) is about ${fmt(e.sigma,2)} km, so the miss distance is ${fmt(e.miss/e.sigma,1)}σ.`:"Public TLEs carry no uncertainty data. Typical TLE position errors of several hundred metres to kilometres mean this flag may disappear once better data is used.";
+  const pts=[];
+  if(e.kind==="sim") pts.push(`Estimated collision probability is <b>${e.pc.toExponential(1)}</b>, which falls in the <b>${e.level}</b> band (illustrative thresholds: High ≥ 1e-4, Medium ≥ 1e-5). A probability this size is <b>not</b> a prediction that a collision will happen.`);
+  else pts.push(`Closest approach is <b>${fmt(e.miss,2)} km</b> in the screening window. This is a <b>${e.level.toLowerCase()}</b> flag only. It is not a collision probability, and the pass may be much farther apart with better data.`);
+  pts.push(`Miss distance is ${fmt(e.miss,2)} km at about ${fmt(e.altTca,0)} km altitude. ${sigmaTxt}`);
+  pts.push(`Relative speed is ${fmt(e.relv,1)} km/s (${fmt(e.relv*3600,0)} km/h). ${e.relv>7?"At this speed even a small fragment would be destructive.":e.relv<3?"Slower closing speed, but a hit would still be damaging.":"Any impact would be catastrophic for a satellite."}`);
+  if(e.b.type==="deb") pts.push(`${e.b.name} is ${/DEAD|ROCKET|FRAG|DEB/i.test(e.b.name)?"an uncontrolled object and cannot move out of the way":"a debris object"}, so only the active satellite can manoeuvre.`);
+  if(e.altTca>700&&e.altTca<1000) pts.push("This altitude band is one of the most crowded, with debris from past breakups, so such encounters are more frequent here.");
+  whyBox.innerHTML=`<div class="flex items-center gap-2 mb-2"><span class="text-[10px] font-bold px-2 py-0.5 rounded border ${LV[e.level]}">${e.level.toUpperCase()}</span><span class="text-xs ${e.kind==="sim"?"text-purple-300":"text-amber-300"}">${e.kind==="sim"?"Simulated scenario":"Computed from public TLEs, not an official warning"}</span></div><ul class="space-y-2 list-disc pl-5">${pts.map(p=>`<li>${p}</li>`).join("")}</ul>`;
+}
+
+/* ================= modes ================= */
+function loadSim(){
+  const d=buildSim(); S.sats=d.sats; S.debs=d.debs; d.events.forEach(finishSim);
+  S.events=d.events.sort((a,b)=>b.pc-a.pc); S.mode="sim"; t0ms=Date.now(); S.simT=0; S.sel=null; S.selEv=null;
+  buildPoints(); drawOrbit(null); setSelPoints([]); linkLine.visible=false; distLabel.classList.add("hidden"); renderEvents();
+  modeBadge.textContent="SIMULATED DATA"; modeBadge.className="inline-block px-2 py-1 rounded bg-purple-500/20 border border-purple-400/40 text-purple-200 font-semibold";
+  modeSim.classList.add("active"); modeLive.classList.remove("active");
+  objInfo.innerHTML='<p class="text-slate-500">Click any satellite or debris object on the globe to see its orbit.</p>';
+}
+const GROUPS={act:"active",stn:"stations",deb:["cosmos-2251-debris","iridium-33-debris","fengyun-1c-debris","cosmos-1408-debris"]};
+const celes=g=>`https://celestrak.org/NORAD/elements/gp.php?GROUP=${g}&FORMAT=tle`;
+function parseTLE(txt,type,kind,every){
+  const L=txt.split(/\r?\n/).map(s=>s.trimEnd()).filter(Boolean), out=[];
+  for(let i=0;i+2<L.length;i+=3){ if(every&&(i/3)%every)continue; try{ const sr=satellite.twoline2satrec(L[i+1],L[i+2]); if(sr.error)continue; out.push({name:L[i].trim(),type,kind,satrec:sr,norad:L[i+1].slice(2,7).trim()}); }catch(e){} }
+  return out;
+}
+async function loadLive(){
+  loadMsg.classList.remove("hidden"); loadTxt.textContent="Fetching public orbital elements from CelesTrak…";
+  try{
+    const get=async g=>{const r=await fetch(celes(g)); if(!r.ok)throw new Error(g+" "+r.status); return r.text();};
+    const [act,stn,...dbs]=await Promise.all([get(GROUPS.act),get(GROUPS.stn),...GROUPS.deb.map(get)]);
+    const stations=parseTLE(stn,"sat","Space station / large crewed object",0);
+    const sats=stations.concat(parseTLE(act,"sat","Active satellite",4));
+    let debs=[]; dbs.forEach(t=>debs=debs.concat(parseTLE(t,"deb","Catalogued debris fragment",0)));
+    if(!sats.length||!debs.length)throw new Error("empty data");
+    S.sats=sats; S.debs=debs; S.mode="live"; t0ms=Date.now(); S.simT=0; S.sel=null; S.selEv=null; S.liveStations=stations;
+    buildPoints(); drawOrbit(null); setSelPoints([]); linkLine.visible=false; distLabel.classList.add("hidden");
+    modeBadge.textContent="PUBLIC TLE DATA · COMPUTED, NOT OFFICIAL"; modeBadge.className="inline-block px-2 py-1 rounded bg-amber-500/20 border border-amber-400/40 text-amber-200 font-semibold";
+    modeLive.classList.add("active"); modeSim.classList.remove("active"); S.liveAcc=1;
+    loadTxt.textContent="Screening stations against debris for the next 6 hours…"; await new Promise(r=>setTimeout(r,30));
+    S.events=await screenLive(stations,debs); renderEvents();
+  }catch(err){
+    console.warn(err); alert("Could not load the CelesTrak catalogue (offline, blocked or rate-limited). Staying on simulated scenarios.\n\n"+err.message);
+    if(S.mode!=="live") loadSim();
+  } finally { loadMsg.classList.add("hidden"); }
+}
+async function screenLive(prims,debs){
+  const R0=satellite, toER=o=>{const a=o.satrec.a,e=o.satrec.ecco; return [a*(1-e),a*(1+e)];};
+  const res=[]; const STEP=30, N=720, tmax=N*STEP;
+  for(const p of prims){
+    const [pp,pa]=toER(p), cand=debs.filter(d=>{const [dp,da]=toER(d);return dp<=pa+100/RE && da>=pp-100/RE;});
+    const best=new Map();
+    for(let k=0;k<=N;k++){ const t=k*STEP, A=posAt(p,t); if(!A)continue;
+      for(const d of cand){ const B=posAt(d,t); if(!B)continue; const dd=dist3(A,B); const cur=best.get(d); if(!cur||dd<cur.d)best.set(d,{d:dd,t}); } }
+    const top=[...best.entries()].sort((a,b)=>a[1].d-b[1].d).slice(0,3);
+    for(const [d,b] of top){ if(b.d>300)continue; const ev={kind:"live",a:p,b:d}; refineEvent(ev,b.t,45,0.5); res.push(ev); }
+    await new Promise(r=>setTimeout(r,0));
+  }
+  res.sort((a,b)=>a.miss-b.miss);
+  const out=res.slice(0,8); out.forEach(e=>{ e.level=e.miss<5?"Close":e.miss<25?"Watch":"Info"; });
+  return out;
+}
+modeSim.onclick=()=>{ if(S.mode!=="sim")loadSim(); };
+modeLive.onclick=()=>{ if(S.mode!=="live")loadLive(); };
+playBtn.onclick=()=>{S.paused=!S.paused; playBtn.innerHTML=S.paused?'<i class="fa-solid fa-play"></i>':'<i class="fa-solid fa-pause"></i>';};
+speed.onchange=()=>S.speed=+speed.value;
+resetBtn.onclick=()=>{S.simT=0; speed.value="60"; S.speed=60;};
+
+/* ================= main loop ================= */
+let last=performance.now(), liveTick=0;
+function frame(now){
+  const dt=Math.min(.1,(now-last)/1000); last=now;
+  if(!S.paused)S.simT+=dt*S.speed;
+  if(S.mode==="sim"||(liveTick+=dt)>.25){ liveTick=0; if(satPts)updatePositions(); }
+  else if(S.mode==="live"){ earth.rotation.y=gmstAt(S.simT); }
+  clock.textContent=hms(S.simT);
+  // highlights
+  if(S.selEv){ setSelPoints([S.selEv.a,S.selEv.b]); const pa=posAt(S.selEv.a,S.simT),pb=posAt(S.selEv.b,S.simT);
+    if(pa&&pb){ const a=toV(pa),b=toV(pb); linkLine.geometry.setAttribute("position",new THREE.Float32BufferAttribute([...a,...b],3)); linkLine.visible=true;
+      distLabel.classList.remove("hidden"); distLabel.innerHTML=`Separation: <b class="text-neonBlue">${fmt(dist3(pa,pb),2)} km</b> &nbsp;·&nbsp; TCA in ${hms(S.selEv.tca-S.simT).replace("T+","").replace("T-","passed ")}`; } }
+  else if(S.sel){ setSelPoints([S.sel]); }
+  if(orbitLine){ orbitLine.rotation.y=0; }
+  if(!drag){ idle+=dt; if(idle>3&&!S.selEv)cam.yaw+=dt*.05; }
+  placeCam(); renderer.render(scene,camera); requestAnimationFrame(frame);
+}
+
+/* ================= history chart ================= */
+new Chart(histChart,{type:"line",data:{labels:["1960","1970","1980","1990","2000","2007","2009","2015","2020","2025"],datasets:[{label:"Tracked objects (≈)",data:[50,2500,5000,7000,9000,10500,13500,16000,21000,30000],borderColor:"#00f2fe",backgroundColor:"#00f2fe33",fill:true,tension:.3,pointRadius:4,pointBackgroundColor:"#00f2fe"}]},
+  options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{labels:{color:"#cbd5e1"}},tooltip:{callbacks:{label:c=>"≈ "+c.parsed.y.toLocaleString()+" objects"}}},
+  scales:{x:{ticks:{color:"#94a3b8"},grid:{color:"rgba(255,255,255,.05)"}},y:{ticks:{color:"#94a3b8"},grid:{color:"rgba(255,255,255,.05)"}}}}});
+
+/* ================= start ================= */
+resize(); loadSim(); requestAnimationFrame(frame);
+</script>
+</body>
+</html>

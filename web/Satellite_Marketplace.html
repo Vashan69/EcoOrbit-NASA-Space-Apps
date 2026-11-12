@@ -1,0 +1,227 @@
+<!doctype html>
+<html lang="en" class="dark">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Satellite Marketplace | EcoOrbit</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<script>tailwind.config={darkMode:"class",theme:{extend:{colors:{spaceBg:"#030712",spaceCard:"#0b1329",neonBlue:"#00f2fe",neonPurple:"#4facfe",neonEmerald:"#10b981",neonPink:"#f43f5e"}}}}</script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+<style>
+body{font-family:Inter,sans-serif;background:#030712;color:#f3f4f6;overflow-x:hidden}
+.panel{background:rgba(11,19,41,.8);border:1px solid rgba(255,255,255,.08);border-radius:14px}
+.up{color:#10b981}.dn{color:#f43f5e}
+.row{display:flex;justify-content:space-between;font-size:12px;padding:2px 8px;position:relative;font-variant-numeric:tabular-nums}
+.row i{position:absolute;right:0;top:0;bottom:0;opacity:.14}
+.chip{padding:3px 10px;border-radius:8px;font-size:11px;border:1px solid rgba(255,255,255,.12);color:#94a3b8;white-space:nowrap}
+.chip.on{background:rgba(0,242,254,.12);color:#00f2fe;border-color:rgba(0,242,254,.5)}
+.mk{display:grid;grid-template-columns:1.4fr 1fr .8fr;font-size:12px;padding:6px 10px;cursor:pointer;font-variant-numeric:tabular-nums}
+.mk:hover,.mk.sel{background:rgba(255,255,255,.06)}
+input.f{width:100%;background:#0f1a36;border:1px solid rgba(255,255,255,.1);border-radius:8px;padding:8px 10px;font-size:13px;outline:none;color:#fff}
+input.f:focus{border-color:#00f2fe}
+.tab{padding:8px 14px;font-size:13px;color:#94a3b8;border-bottom:2px solid transparent;cursor:pointer}
+.tab.on{color:#00f2fe;border-color:#00f2fe}
+.scroll{overflow-y:auto}::-webkit-scrollbar{width:6px}::-webkit-scrollbar-thumb{background:#1e293b;border-radius:4px}
+@keyframes mq{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+</style>
+</head>
+<body>
+<header class="sticky top-0 z-40 bg-spaceBg/90 backdrop-blur border-b border-white/10">
+ <div class="max-w-[1500px] mx-auto px-4 h-16 flex items-center justify-between gap-3">
+  <a href="EcoOrbit.html" class="flex items-center gap-2 font-extrabold text-lg"><i class="fa-solid fa-satellite text-neonBlue"></i><span>Eco<span class="text-neonBlue">Orbit</span></span><span class="hidden sm:inline text-slate-400 text-sm font-medium">/ Satellite Marketplace</span></a>
+  <div class="flex items-center gap-2 text-sm">
+   <div class="panel px-3 py-1.5"><span class="text-slate-400 text-xs">Credits</span> <b id="bal" class="text-neonEmerald">$0</b></div>
+   <button id="depBtn" class="px-3 py-1.5 rounded-xl bg-gradient-to-r from-neonEmerald to-neonBlue text-spaceBg font-bold"><i class="fa-solid fa-plus mr-1"></i>Deposit</button>
+   <button id="wdBtn" class="hidden sm:block px-3 py-1.5 rounded-xl border border-white/15 text-slate-200 hover:text-neonBlue hover:border-neonBlue/60 transition">Withdraw</button>
+   <a href="EcoOrbit.html" class="px-3 py-1.5 rounded-xl border border-white/15 text-slate-200 hover:text-neonBlue hover:border-neonBlue/60 transition"><i class="fa-solid fa-arrow-left mr-1"></i>Back</a>
+  </div>
+ </div>
+ <div class="overflow-hidden border-t border-white/5 bg-black/30"><div id="ticker" class="flex gap-8 whitespace-nowrap py-1.5 text-xs w-max" style="animation:mq 40s linear infinite"></div></div>
+</header>
+
+<main class="max-w-[1500px] mx-auto p-3 grid gap-3 lg:grid-cols-[280px_1fr_270px]">
+ <!-- Markets -->
+ <section class="panel flex flex-col lg:h-[560px] order-2 lg:order-1">
+  <div class="p-3 space-y-2">
+   <input id="q" class="f" placeholder="Search satellite or ticker..." />
+   <div id="cats" class="flex gap-1.5 overflow-x-auto pb-1"></div>
+  </div>
+  <div class="mk text-[11px] text-slate-500 border-b border-white/5"><span>Satellite</span><span>Price</span><span class="text-right">24h</span></div>
+  <div id="mkts" class="scroll flex-1 max-h-72 lg:max-h-none"></div>
+ </section>
+
+ <!-- Chart + trade -->
+ <section class="space-y-3 order-1 lg:order-2">
+  <div class="panel p-3">
+   <div class="flex flex-wrap items-center gap-x-6 gap-y-2">
+    <div><div id="hName" class="font-bold text-lg"></div><div id="hCat" class="text-xs text-slate-400"></div></div>
+    <div id="hPrice" class="text-2xl font-extrabold"></div>
+    <div class="grid grid-cols-3 gap-5 text-xs"><div><div class="text-slate-500">24h Change</div><b id="hCh"></b></div><div><div class="text-slate-500">24h High / Low</div><b id="hHL"></b></div><div><div class="text-slate-500">24h Volume</div><b id="hVol"></b></div></div>
+   </div>
+   <p id="hDesc" class="text-xs text-slate-400 mt-2"></p>
+   <div class="flex flex-wrap items-center gap-2 mt-3"><span class="flex items-center gap-1 text-[11px] font-bold text-neonEmerald"><span class="inline-block w-2 h-2 rounded-full bg-neonEmerald animate-pulse"></span>LIVE</span><div id="tfs" class="flex flex-wrap gap-1.5"></div><span class="text-[11px] text-slate-500 ml-auto"><span style="color:#a78bfa">━</span> MA20 · bars = volume</span></div>
+   <canvas id="ch" class="w-full mt-2" style="height:340px;touch-action:pan-y"></canvas>
+   <div class="mt-2"><div class="text-[11px] text-slate-500 mb-1">Candlestick Pattern Scanner (live, all satellites)</div><div id="feed" class="flex flex-wrap gap-1.5"></div></div>
+   <div class="text-[10px] text-slate-500 mt-2">H Hammer · SS Shooting Star · D Doji · BE/BR Bullish/Bearish Engulfing · MS/ES Morning/Evening Star · 3W/3B Three White Soldiers/Black Crows · M Marubozu</div>
+  </div>
+  <div class="grid md:grid-cols-2 gap-3">
+   <div class="panel p-4" id="trade"></div>
+   <div class="panel p-0 overflow-hidden">
+    <div class="flex border-b border-white/10"><div class="tab on" data-t="hold">Holdings</div><div class="tab" data-t="open">Open Orders</div><div class="tab" data-t="hist">History</div><div class="tab" data-t="wallet">Wallet</div></div>
+    <div id="pf" class="scroll p-3 text-xs h-[300px]"></div>
+   </div>
+  </div>
+ </section>
+
+ <!-- Order book -->
+ <section class="panel p-0 order-3 lg:h-[560px] flex flex-col">
+  <div class="px-3 py-2 text-sm font-semibold border-b border-white/5">Order Book</div>
+  <div class="row text-slate-500 text-[11px] pt-1"><span>Price</span><span>Shares</span></div>
+  <div id="asks" class="py-1"></div>
+  <div id="mid" class="text-center font-bold py-1.5 border-y border-white/5"></div>
+  <div id="bids" class="py-1"></div>
+  <div class="px-3 py-1 text-sm font-semibold border-t border-white/5 mt-auto">Recent Trades</div>
+  <div id="trades" class="pb-2 h-[150px] overflow-hidden"></div>
+ </section>
+</main>
+
+<p class="max-w-[1500px] mx-auto px-4 pb-8 text-[11px] text-slate-500"><i class="fa-solid fa-circle-info mr-1"></i>Demo environment: all satellites, prices and balances are simulated for the EcoOrbit / NASA Space Apps 2026 project. Not real securities or financial advice.</p>
+
+<div id="modal" class="fixed inset-0 z-50 hidden items-center justify-center bg-black/70 p-4">
+ <div class="panel w-full max-w-md p-5 max-h-[92vh] overflow-y-auto" style="background:#0b1329">
+  <div class="flex justify-between items-center mb-3"><h3 id="mTitle" class="font-bold text-lg"></h3><button id="mClose" class="text-slate-400 hover:text-white text-xl">✕</button></div>
+  <div id="mBody"></div>
+ </div>
+</div>
+<div id="toast" class="fixed bottom-5 right-5 z-50 hidden px-4 py-3 rounded-xl text-sm font-semibold shadow-lg"></div>
+
+<script>
+const $=id=>document.getElementById(id);
+const f=(n,d=2)=>Number(n).toLocaleString(undefined,{minimumFractionDigits:d,maximumFractionDigits:d});
+const A=[
+ ["ECO1","EcoOrbit-1","Earth Observation",128.4,"Carbon & air-quality imaging satellite powering EcoOrbit analytics."],
+ ["DBRX","DebrisSweep Alpha","Debris Cleanup",54.2,"Robotic tug that captures and de-orbits dead satellites."],
+ ["SKYN","SkyNet Relay","Communications",212.75,"Low-orbit broadband relay constellation for remote regions."],
+ ["GEOS","GeoScan Prime","Earth Observation",87.1,"High-resolution land and flood mapping platform."],
+ ["NAVX","NavStar-X","Navigation",143.6,"Next-gen positioning satellites with centimetre accuracy."],
+ ["CLMT","ClimateWatch-3","Climate",66.35,"Tracks ice, ocean temperature and greenhouse gases."],
+ ["LNCH","OrbitLift Launch","Launch",301.9,"Reusable small-sat launch service shares."],
+ ["SOLR","SolarArray Orbital","Energy",39.8,"Space-based solar power demonstrator."],
+ ["BDSA","Bangla-Sat Alpha","Communications",72.9,"Regional connectivity and disaster-alert satellite."],
+ ["AGRI","AgriEye-2","Earth Observation",48.15,"Crop health and drought monitoring from orbit."]
+].map(([s,n,c,p,d])=>({s,n,c,p,d,o:p,vol:Math.random()*9e5+2e5,hi:p,lo:p,cd:[]}));
+let TF=5,k=0;const TFS=[["1s",1],["2s",2],["5s",5],["15s",15],["30s",30],["1m",60],["5m",300],["30m",1800],["1h",3600],["5h",18000],["24h",86400],["2d",172800],["5d",432000],["30d",2592000],["1y",31536000]],feed=[];
+const fmtT=ms=>{const d=new Date(ms);return TF<18000?d.toLocaleTimeString([],{hour:"2-digit",minute:"2-digit",second:TF<60?"2-digit":undefined}):TF<86400?d.toLocaleDateString([],{month:"short",day:"numeric"})+" "+d.toLocaleTimeString([],{hour:"2-digit",minute:"2-digit"}):TF<2592000?d.toLocaleDateString([],{month:"short",day:"numeric"}):d.toLocaleDateString([],{month:"short",year:"2-digit"})};
+const ABB={"Hammer":"H","Shooting Star":"SS","Doji":"D","Bullish Engulfing":"BE","Bearish Engulfing":"BR","Morning Star":"MS","Evening Star":"ES","Three White Soldiers":"3W","Three Black Crows":"3B","Marubozu":"M"};
+function detect(cd,i){if(i<4)return null;const c=cd[i],p1=cd[i-1],p2=cd[i-2],bd=x=>Math.abs(x.c-x.o),rg=c.h-c.l;if(!(rg>0))return null;
+const body=bd(c),up=c.h-Math.max(c.o,c.c),lo=Math.min(c.o,c.c)-c.l,avg=cd.slice(i-8,i).reduce((t,x)=>t+bd(x),0)/8||1e-9,bull=x=>x.c>x.o,bear=x=>x.c<x.o;
+const down=cd[i-4].c>p1.c,upt=cd[i-4].c<p1.c;
+if(bear(p2)&&bd(p2)>avg*.8&&bd(p1)<avg*.5&&bull(c)&&c.c>(p2.o+p2.c)/2)return["Morning Star",1];
+if(bull(p2)&&bd(p2)>avg*.8&&bd(p1)<avg*.5&&bear(c)&&c.c<(p2.o+p2.c)/2)return["Evening Star",-1];
+if(bull(c)&&bull(p1)&&bull(p2)&&c.c>p1.c&&p1.c>p2.c&&c.o>p1.o&&p1.o>p2.o&&body>avg*.6)return["Three White Soldiers",1];
+if(bear(c)&&bear(p1)&&bear(p2)&&c.c<p1.c&&p1.c<p2.c&&c.o<p1.o&&p1.o<p2.o&&body>avg*.6)return["Three Black Crows",-1];
+if(bear(p1)&&bull(c)&&c.o<=p1.c&&c.c>=p1.o&&body>avg*.7)return["Bullish Engulfing",1];
+if(bull(p1)&&bear(c)&&c.o>=p1.c&&c.c<=p1.o&&body>avg*.7)return["Bearish Engulfing",-1];
+if(body<=rg*.1)return["Doji",0];
+if(down&&body>0&&lo>=2*body&&up<=body*.6)return["Hammer",1];
+if(upt&&body>0&&up>=2*body&&lo<=body*.6)return["Shooting Star",-1];
+if(body>=rg*.9&&body>avg*1.5)return["Marubozu",bull(c)?1:-1];return null}
+function tag(a,i){const r=detect(a.cd,i);if(r){a.cd[i].pat={n:r[0],b:r[1]};return r}}
+function gen(a,pr){const tpc=TF*2,n=90,m=12,W=Math.min(.00115*Math.sqrt(tpc),.045),now=Date.now();let p=pr*(.9+Math.random()*.1);const base=p;a.cd=[];
+for(let i=0;i<n;i++){const o=p;let h=p,l=p,v=0;for(let j=0;j<m;j++){p=Math.max(1,p*(1+(Math.random()-.495)*W-Math.log(p/base)*.01));h=Math.max(h,p);l=Math.min(l,p);v+=(Math.random()*900+100)*tpc/m}a.cd.push({o,c:p,h,l,v,t:now-(n-1-i)*TF*1000})}
+const f2=pr/p;a.cd.forEach(x=>{x.o*=f2;x.c*=f2;x.h*=f2;x.l*=f2});a.p=pr;
+if(!a.init){a.init=1;a.o=a.cd[0].o;a.hi=Math.max(...a.cd.map(x=>x.h));a.lo=Math.min(...a.cd.map(x=>x.l))}
+for(let i=5;i<n-1;i++)tag(a,i)}
+A.forEach(a=>gen(a,a.p));
+let sel=A[0],cat="All",tab="hold",side="buy",type="limit";
+const st={cash:10000,hold:{},open:[],hist:[]};
+const chg=a=>(a.p/a.o-1)*100;
+const cats=["All",...new Set(A.map(a=>a.c))];
+function toast(m,ok=true){const t=$("toast");t.textContent=m;t.className="fixed bottom-5 right-5 z-50 px-4 py-3 rounded-xl text-sm font-semibold shadow-lg "+(ok?"bg-neonEmerald text-spaceBg":"bg-neonPink text-white");setTimeout(()=>t.classList.add("hidden"),2600)}
+function drawCats(){$("cats").innerHTML=cats.map(c=>`<span class="chip cursor-pointer ${c==cat?"on":""}" data-c="${c}">${c}</span>`).join("")}
+$("cats").onclick=e=>{if(e.target.dataset.c){cat=e.target.dataset.c;drawCats();drawMk()}};
+$("q").oninput=drawMk;
+function drawMk(){const q=$("q").value.toLowerCase();$("mkts").innerHTML=A.filter(a=>(cat=="All"||a.c==cat)&&(a.s+a.n).toLowerCase().includes(q)).map(a=>{const c=chg(a);return`<div class="mk ${a===sel?"sel":""}" data-s="${a.s}"><span><b>${a.s}</b><div class="text-[10px] text-slate-500">${a.n}</div></span><span class="${c>=0?"up":"dn"}">${f(a.p)}</span><span class="text-right ${c>=0?"up":"dn"}">${c>=0?"+":""}${f(c)}%</span></div>`}).join("")}
+$("mkts").onclick=e=>{const r=e.target.closest(".mk");if(r){sel=A.find(a=>a.s==r.dataset.s);$("price")&&($("price").value=f(sel.p).replace(/,/g,""));drawAll()}};
+function drawTicker(){const h=A.map(a=>{const c=chg(a);return`<span><b>${a.s}</b> ${f(a.p)} <span class="${c>=0?"up":"dn"}">${c>=0?"▲":"▼"}${f(Math.abs(c))}%</span></span>`}).join("");$("ticker").innerHTML=h+h}
+function drawHead(){const c=chg(sel);$("hName").textContent=sel.n+" ("+sel.s+"/USD)";$("hCat").textContent=sel.c+" Satellite";$("hDesc").textContent=sel.d;$("hPrice").innerHTML=`<span class="${c>=0?"up":"dn"}">${f(sel.p)}</span>`;$("hCh").innerHTML=`<span class="${c>=0?"up":"dn"}">${c>=0?"+":""}${f(c)}%</span>`;$("hHL").textContent=f(sel.hi)+" / "+f(sel.lo);$("hVol").textContent="$"+f(sel.vol*sel.p/1000,1)+"K"}
+function drawChart(){const cv=$("ch"),d=devicePixelRatio||1,w=cv.clientWidth,h=cv.clientHeight;cv.width=w*d;cv.height=h*d;const x=cv.getContext("2d");x.scale(d,d);x.clearRect(0,0,w,h);const n=60,all=sel.cd,data=all.slice(-n),off=all.length-data.length,pad=54,vh=h*.15,hb=h-16,ph=hb-vh-6;
+const mx=Math.max(...data.map(k=>k.h)),mn=Math.min(...data.map(k=>k.l)),y=v=>14+(mx-v)/(mx-mn||1)*(ph-30),bw=(w-pad)/n,cxo=i=>i*bw+bw/2;
+x.font="10px Inter";x.textBaseline="alphabetic";x.strokeStyle="rgba(255,255,255,.05)";x.fillStyle="#64748b";for(let i=0;i<=4;i++){const v=mn+(mx-mn)*i/4,yy=y(v);x.beginPath();x.moveTo(0,yy);x.lineTo(w-pad,yy);x.stroke();x.fillText(f(v),w-pad+6,yy+3)}
+const vm=Math.max(...data.map(k=>k.v||1));data.forEach((k,i)=>{x.fillStyle=k.c>=k.o?"rgba(16,185,129,.35)":"rgba(244,63,94,.35)";const vv=(k.v||0)/vm*vh;x.fillRect(i*bw+bw*.17,hb-vv,bw*.66,vv)});
+data.forEach((k,i)=>{if(i%10==5&&k.t){x.fillStyle="#64748b";x.font="10px Inter";x.textAlign="center";x.fillText(fmtT(k.t),Math.min(Math.max(cxo(i),34),w-pad-34),h-3);x.textAlign="left"}});
+x.strokeStyle="#a78bfa";x.lineWidth=1.3;x.beginPath();let st0=false;data.forEach((k,i)=>{const gi=off+i;if(gi<19)return;let t=0;for(let j=gi-19;j<=gi;j++)t+=all[j].c;const yy=y(t/20);st0?x.lineTo(cxo(i),yy):x.moveTo(cxo(i),yy);st0=true});x.stroke();x.lineWidth=1;
+data.forEach((k,i)=>{const cx=cxo(i),up=k.c>=k.o,col=up?"#10b981":"#f43f5e";x.strokeStyle=x.fillStyle=col;x.beginPath();x.moveTo(cx,y(k.h));x.lineTo(cx,y(k.l));x.stroke();const t=y(Math.max(k.o,k.c)),b=y(Math.min(k.o,k.c));x.fillRect(cx-bw*.33,t,bw*.66,Math.max(1.5,b-t));
+if(k.pat){const b2=k.pat.b,ab=ABB[k.pat.n];x.font="bold 9px Inter";x.textAlign="center";x.fillStyle=b2>0?"#10b981":b2<0?"#f43f5e":"#fbbf24";if(b2>0){const yy=y(k.l)+6;x.beginPath();x.moveTo(cx,yy);x.lineTo(cx-4,yy+7);x.lineTo(cx+4,yy+7);x.fill();x.fillText(ab,cx,yy+17)}else if(b2<0){const yy=y(k.h)-6;x.beginPath();x.moveTo(cx,yy);x.lineTo(cx-4,yy-7);x.lineTo(cx+4,yy-7);x.fill();x.fillText(ab,cx,yy-10)}else{x.beginPath();x.arc(cx,y(k.h)-8,3,0,7);x.fill();x.fillText(ab,cx,y(k.h)-14)}x.textAlign="left"}});
+const py=y(sel.p);x.setLineDash([4,3]);x.strokeStyle="#00f2fe";x.beginPath();x.moveTo(0,py);x.lineTo(w-pad,py);x.stroke();x.setLineDash([]);x.fillStyle="#00f2fe";x.fillRect(w-pad,py-8,pad,16);x.fillStyle="#030712";x.font="bold 10px Inter";x.fillText(f(sel.p),w-pad+4,py+3);
+if(cvX!=null&&cvX<w-pad){const i=Math.min(n-1,Math.max(0,Math.floor(cvX/bw))),k=data[i];if(k){const cx=cxo(i);x.strokeStyle="rgba(255,255,255,.3)";x.setLineDash([3,3]);x.beginPath();x.moveTo(cx,0);x.lineTo(cx,h);x.stroke();x.setLineDash([]);const tx=`O ${f(k.o)}  H ${f(k.h)}  L ${f(k.l)}  C ${f(k.c)}`+(k.pat?"  •  "+k.pat.n:"")+(k.t?"  •  "+fmtT(k.t):"");x.font="11px Inter";const tw=x.measureText(tx).width+16;x.fillStyle="rgba(3,7,18,.92)";x.fillRect(4,2,tw,18);x.fillStyle=k.c>=k.o?"#10b981":"#f43f5e";x.fillText(tx,12,15)}}}
+let cvX=null;
+(()=>{const c=$("ch"),mv=e=>{const r=c.getBoundingClientRect();cvX=e.clientX-r.left;drawChart()};c.addEventListener("pointermove",mv);c.addEventListener("pointerleave",()=>{cvX=null;drawChart()})})();
+function drawTFs(){$("tfs").innerHTML=TFS.map(([l,v])=>`<span class="chip cursor-pointer ${v==TF?"on":""}" data-tf="${v}">${l}</span>`).join("")}
+$("tfs").onclick=e=>{const v=+e.target.dataset.tf;if(v){TF=v;k=0;A.forEach(a=>gen(a,a.p));feed.length=0;drawTFs();drawAll();drawFeed()}};
+function drawFeed(){$("feed").innerHTML=feed.length?feed.slice(0,8).map(x=>`<span data-s="${x.s}" class="chip cursor-pointer ${x.b>0?"up":x.b<0?"dn":""}" style="border-color:currentColor">${x.b>0?"▲":x.b<0?"▼":"●"} ${x.s} · ${x.n} <span class="text-slate-500">${x.t}</span></span>`).join(""):'<span class="text-slate-500 text-xs">Scanning candles for patterns...</span>'}
+$("feed").onclick=e=>{const c=e.target.closest("[data-s]");if(c){sel=A.find(a=>a.s==c.dataset.s);drawAll()}};
+function drawBook(){const p=sel.p,r=(i,s)=>p*(1+s*(i*.0011+Math.random()*.0004));const ask=[...Array(8)].map((_,i)=>[r(i+1,1),Math.random()*90+5]).reverse(),bid=[...Array(8)].map((_,i)=>[r(i+1,-1),Math.random()*90+5]);const mk=(a,c)=>a.map(([pr,q])=>`<div class="row"><i style="width:${q}%;background:${c}"></i><span style="color:${c}">${f(pr)}</span><span>${f(q,1)}</span></div>`).join("");$("asks").innerHTML=mk(ask,"#f43f5e");$("bids").innerHTML=mk(bid,"#10b981");$("mid").innerHTML=`<span class="${chg(sel)>=0?"up":"dn"}">${f(p)}</span>`}
+const tr=[];function pushTrade(){const b=Math.random()>.5;tr.unshift(`<div class="row"><span class="${b?"up":"dn"}">${f(sel.p*(1+(Math.random()-.5)*.001))}</span><span>${f(Math.random()*12+.1,2)}</span><span class="text-slate-500">${new Date().toLocaleTimeString()}</span></div>`);tr.length=Math.min(tr.length,10);$("trades").innerHTML=tr.join("")}
+function drawTrade(){const own=st.hold[sel.s]||0;$("trade").innerHTML=`
+<div class="flex gap-2 mb-3"><button id="sb" class="flex-1 py-2 rounded-lg font-bold text-sm ${side=="buy"?"bg-neonEmerald text-spaceBg":"bg-white/5 text-slate-400"}">Buy</button><button id="ss" class="flex-1 py-2 rounded-lg font-bold text-sm ${side=="sell"?"bg-neonPink text-white":"bg-white/5 text-slate-400"}">Sell</button></div>
+<div class="flex gap-2 mb-3"><span class="chip cursor-pointer ${type=="limit"?"on":""}" id="tl">Limit</span><span class="chip cursor-pointer ${type=="market"?"on":""}" id="tm">Market</span></div>
+<label class="text-[11px] text-slate-500">Price (USD)</label><input id="price" class="f mb-2" value="${f(sel.p).replace(/,/g,"")}" ${type=="market"?"disabled":""}/>
+<label class="text-[11px] text-slate-500">Shares of ${sel.s}</label><input id="amt" class="f mb-2" placeholder="0.00" />
+<div class="flex gap-1.5 mb-2">${[25,50,75,100].map(v=>`<span class="chip cursor-pointer flex-1 text-center" data-pc="${v}">${v}%</span>`).join("")}</div>
+<div class="text-xs text-slate-400 mb-1">Total: <b id="tot" class="text-white">$0.00</b></div>
+<div class="text-xs text-slate-400 mb-3">Available: <b class="text-white">${side=="buy"?"$"+f(st.cash):f(own,2)+" "+sel.s}</b></div>
+<button id="go" class="w-full py-2.5 rounded-xl font-bold ${side=="buy"?"bg-neonEmerald text-spaceBg":"bg-neonPink text-white"}">${side=="buy"?"Buy":"Sell"} ${sel.s}</button>`;
+$("sb").onclick=()=>{side="buy";drawTrade()};$("ss").onclick=()=>{side="sell";drawTrade()};$("tl").onclick=()=>{type="limit";drawTrade()};$("tm").onclick=()=>{type="market";drawTrade()};
+const tot=()=>{const p=type=="market"?sel.p:+$("price").value||0;$("tot").textContent="$"+f(p*(+$("amt").value||0))};$("price").oninput=$("amt").oninput=tot;
+$("trade").querySelectorAll("[data-pc]").forEach(b=>b.onclick=()=>{const p=type=="market"?sel.p:+$("price").value||sel.p,v=b.dataset.pc/100;$("amt").value=(side=="buy"?st.cash*v/p:own*v).toFixed(2);tot()});
+$("go").onclick=place}
+function place(){const q=+$("amt").value,p=type=="market"?sel.p:+$("price").value;if(!(q>0)||!(p>0))return toast("Enter a valid price and amount",false);
+if(side=="buy"&&q*p>st.cash+1e-6)return toast("Insufficient balance",false);if(side=="sell"&&q>(st.hold[sel.s]||0)+1e-6)return toast("Not enough shares",false);
+const o={s:sel.s,side,q,p,t:Date.now()};const marketable=type=="market"||(side=="buy"?p>=sel.p:p<=sel.p);
+if(marketable){fill(o,sel.p)}else{if(side=="buy")st.cash-=q*p;else st.hold[o.s]-=q;st.open.push(o);toast("Limit order placed")}drawAll()}
+function fill(o,px,reserved){if(o.side=="buy"){if(!reserved)st.cash-=o.q*px;else st.cash+=o.q*(o.p-px);st.hold[o.s]=(st.hold[o.s]||0)+o.q}else{if(!reserved)st.hold[o.s]-=o.q;st.cash+=o.q*px}st.hist.unshift({...o,p:px,t:Date.now()});toast(`${o.side=="buy"?"Bought":"Sold"} ${f(o.q)} ${o.s} @ $${f(px)}`)}
+function drawPf(){let h="";const th=(a)=>`<div class="grid grid-cols-4 gap-1 text-slate-500 pb-1">${a.map(x=>`<span>${x}</span>`).join("")}</div>`;
+if(tab=="hold"){const e=Object.entries(st.hold).filter(([,q])=>q>1e-6);let v=st.cash;h=`<div class="mb-2 text-slate-400">Cash: <b class="text-white">$${f(st.cash)}</b></div>`+th(["Asset","Shares","Value","24h"]);e.forEach(([s,q])=>{const a=A.find(x=>x.s==s);v+=q*a.p;h+=`<div class="grid grid-cols-4 gap-1 py-1 border-t border-white/5"><b>${s}</b><span>${f(q)}</span><span>$${f(q*a.p)}</span><span class="${chg(a)>=0?"up":"dn"}">${f(chg(a))}%</span></div>`});if(!e.length)h+='<div class="text-slate-500 py-6 text-center">No holdings yet. Buy your first satellite shares!</div>';h+=`<div class="mt-3 pt-2 border-t border-white/10 text-slate-400">Portfolio value: <b class="text-neonBlue">$${f(v)}</b></div>`;$("bal").textContent="$"+f(st.cash)}
+else if(tab=="open"){h=th(["Asset","Side","Price","Cancel"]);st.open.forEach((o,i)=>h+=`<div class="grid grid-cols-4 gap-1 py-1 border-t border-white/5"><b>${o.s}</b><span class="${o.side=="buy"?"up":"dn"}">${o.side} ${f(o.q)}</span><span>${f(o.p)}</span><button data-x="${i}" class="text-neonPink text-left">✕</button></div>`);if(!st.open.length)h+='<div class="text-slate-500 py-6 text-center">No open orders</div>'}
+else if(tab=="wallet"){h=`<div class="flex gap-2 mb-3"><button onclick="openModal('dep')" class="flex-1 py-2 rounded-lg bg-neonEmerald text-spaceBg font-bold">Deposit</button><button onclick="openModal('wd')" class="flex-1 py-2 rounded-lg border border-white/15 font-semibold">Withdraw</button></div>`+th(["Type","Credits","Method","Ref"]);st.tx.slice(0,30).forEach(o=>h+=`<div class="grid grid-cols-4 gap-1 py-1 border-t border-white/5"><b>${o.type}</b><span class="${o.type=="Deposit"?"up":"dn"}">${o.type=="Deposit"?"+":"-"}${f(o.v)}</span><span>${o.m}</span><span class="text-slate-500 truncate">${o.id}</span></div>`);if(!st.tx.length)h+='<div class="text-slate-500 py-6 text-center">No wallet activity yet</div>'}
+else{h=th(["Asset","Side","Price","Time"]);st.hist.slice(0,30).forEach(o=>h+=`<div class="grid grid-cols-4 gap-1 py-1 border-t border-white/5"><b>${o.s}</b><span class="${o.side=="buy"?"up":"dn"}">${o.side} ${f(o.q)}</span><span>${f(o.p)}</span><span class="text-slate-500">${new Date(o.t).toLocaleTimeString()}</span></div>`);if(!st.hist.length)h+='<div class="text-slate-500 py-6 text-center">No trades yet</div>'}
+$("pf").innerHTML=h;$("bal").textContent="$"+f(st.cash)}
+$("pf").onclick=e=>{const i=e.target.dataset.x;if(i!=null){const o=st.open.splice(+i,1)[0];if(o.side=="buy")st.cash+=o.q*o.p;else st.hold[o.s]+=o.q;drawAll();toast("Order cancelled")}};
+document.querySelectorAll(".tab").forEach(t=>t.onclick=()=>{document.querySelectorAll(".tab").forEach(x=>x.classList.remove("on"));t.classList.add("on");tab=t.dataset.t;drawPf()});
+function drawAll(){drawMk();drawHead();drawChart();drawBook();drawTrade();drawPf()}
+setInterval(()=>{k++;A.forEach(a=>{a.p=Math.max(1,a.p*(1+(Math.random()-.495)*.004));const c=a.cd[a.cd.length-1];c.c=a.p;c.h=Math.max(c.h,a.p);c.l=Math.min(c.l,a.p);c.v+=Math.random()*900+100;a.hi=Math.max(a.hi,a.p);a.lo=Math.min(a.lo,a.p);a.vol+=Math.random()*900;
+if(k%(TF*2)==0){const i=a.cd.length-1,r=tag(a,i);if(r){feed.unshift({s:a.s,n:r[0],b:r[1],t:new Date().toLocaleTimeString([],{hour:"2-digit",minute:"2-digit",second:"2-digit"})});feed.length=Math.min(feed.length,20);if(a===sel&&r[1]!=0)toast((r[1]>0?"Bullish ":"Bearish ")+r[0]+" on "+a.s,r[1]>0)}a.cd.push({o:a.p,c:a.p,h:a.p,l:a.p,v:0,t:Date.now()});if(a.cd.length>240)a.cd.shift();drawFeed()}});
+st.open=st.open.filter(o=>{const a=A.find(x=>x.s==o.s);if(o.side=="buy"?a.p<=o.p:a.p>=o.p){fill(o,o.p,true);return false}return true});
+drawTicker();drawMk();drawHead();drawChart();drawBook();pushTrade();if(tab!="hold"||k%3==0)drawPf()},500);
+addEventListener("resize",drawChart);
+
+/* ===== Wallet: deposit / withdraw (DEMO payments) ===== */
+st.tx=[];let payM="Card";
+const PK=[10,50,100,500,1000,5000];
+function openModal(mode){const m=$("modal");m.classList.remove("hidden");m.classList.add("flex");$("mTitle").textContent=mode=="dep"?"Buy Credits (Demo)":"Withdraw Credits (Demo)";
+const dep=mode=="dep";
+$("mBody").innerHTML=`<div class="text-xs text-neonBlue bg-neonBlue/10 border border-neonBlue/30 rounded-lg p-2 mb-3"><i class="fa-solid fa-flask mr-1"></i>Demo only. No real money moves and no real card details are needed or stored.</div>
+<div class="text-[11px] text-slate-500 mb-1">1 Credit = $1.00</div>
+${dep?`<div class="grid grid-cols-3 gap-2 mb-2">${PK.map(v=>`<button data-pk="${v}" class="chip py-2 text-center text-sm">${f(v,0)}<div class="text-[10px] text-slate-500">$${f(v,0)}</div></button>`).join("")}</div>`:""}
+<label class="text-[11px] text-slate-500">${dep?"Amount of credits to buy":"Credits to withdraw"}</label><input id="wAmt" type="number" min="1" class="f mb-3" placeholder="e.g. 250"/>
+<label class="text-[11px] text-slate-500">${dep?"Pay with":"Withdraw to"}</label>
+<div class="grid grid-cols-4 gap-2 mb-3">${[["Card","fa-credit-card"],["bKash","fa-mobile-screen"],["Nagad","fa-mobile-screen-button"],["Bank","fa-building-columns"]].map(([n,i])=>`<button data-pm="${n}" class="chip py-2 text-center ${n==payM?"on":""}"><i class="fa-solid ${i} block mb-1"></i>${n}</button>`).join("")}</div>
+<div id="wFields" class="mb-3"></div>
+<div class="flex justify-between text-sm mb-3"><span class="text-slate-400">${dep?"You pay":"You receive"}</span><b id="wTot">$0.00</b></div>
+<button id="wGo" class="w-full py-2.5 rounded-xl font-bold bg-neonEmerald text-spaceBg">${dep?"Pay & Add Credits":"Withdraw"}</button>`;
+const fields=()=>{$("wFields").innerHTML=payM=="Card"?'<input class="f mb-2" placeholder="Card number (demo: 4242 4242 4242 4242)"/><div class="grid grid-cols-2 gap-2"><input class="f" placeholder="MM/YY"/><input class="f" placeholder="CVC"/></div>':payM=="Bank"?'<input class="f" placeholder="Account number (demo)"/>':`<input class="f" placeholder="${payM} number (demo: 01XXXXXXXXX)"/>`;
+$("mBody").querySelectorAll("[data-pm]").forEach(b=>b.classList.toggle("on",b.dataset.pm==payM))};fields();
+const upd=()=>$("wTot").textContent="$"+f(+$("wAmt").value||0);$("wAmt").oninput=upd;
+$("mBody").querySelectorAll("[data-pk]").forEach(b=>b.onclick=()=>{$("wAmt").value=b.dataset.pk;upd()});
+$("mBody").querySelectorAll("[data-pm]").forEach(b=>b.onclick=()=>{payM=b.dataset.pm;fields()});
+$("wGo").onclick=()=>{const v=+$("wAmt").value;if(!(v>=1))return toast("Enter at least 1 credit",false);if(!dep&&v>st.cash+1e-6)return toast("Not enough credits to withdraw",false);
+$("wGo").disabled=true;$("wGo").innerHTML='<i class="fa-solid fa-spinner fa-spin mr-2"></i>Processing demo payment...';
+setTimeout(()=>{st.cash+=dep?v:-v;st.tx.unshift({type:dep?"Deposit":"Withdraw",v,m:payM,t:Date.now(),id:"DEMO-"+Math.random().toString(36).slice(2,8).toUpperCase()});closeModal();drawTrade();drawPf();toast(dep?`+${f(v)} credits added via ${payM} (demo)`:`${f(v)} credits withdrawn to ${payM} (demo)`)},1400)}}
+function closeModal(){$("modal").classList.add("hidden");$("modal").classList.remove("flex")}
+$("depBtn").onclick=()=>openModal("dep");$("wdBtn").onclick=()=>openModal("wd");$("mClose").onclick=closeModal;$("modal").onclick=e=>{if(e.target.id=="modal")closeModal()};
+drawCats();drawTicker();drawTFs();drawAll();drawFeed();
+</script>
+</body>
+</html>

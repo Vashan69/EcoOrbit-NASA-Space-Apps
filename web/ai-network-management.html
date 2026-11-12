@@ -1,0 +1,137 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>AI Network Management</title><style>
+:root{--bg:#f6f7fb;--card:#fff;--tx:#1b1f2a;--mu:#6b7280;--ac:#4f46e5;--bd:#e5e7eb}
+@media(prefers-color-scheme:dark){:root{--bg:#0f1218;--card:#181c25;--tx:#e8eaf0;--mu:#98a0b0;--bd:#2a303c}}
+*{box-sizing:border-box}body{margin:0;font-family:system-ui,Segoe UI,sans-serif;background:var(--bg);color:var(--tx)}
+header{padding:18px 24px;display:flex;gap:12px;align-items:center;border-bottom:1px solid var(--bd);background:var(--card)}
+header h1{font-size:20px;margin:0;flex:1}a{color:var(--ac);text-decoration:none}
+main{max-width:1150px;margin:0 auto;padding:20px}
+.card{background:var(--card);border:1px solid var(--bd);border-radius:12px;padding:16px;margin-bottom:16px}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:12px;margin-bottom:16px}
+.stat b{display:block;font-size:24px}.stat span{color:var(--mu);font-size:13px}
+form{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:10px}
+label{font-size:12px;color:var(--mu);display:flex;flex-direction:column;gap:4px}
+input,select,textarea{padding:8px;border:1px solid var(--bd);border-radius:8px;background:var(--bg);color:var(--tx);font:inherit}
+button{padding:8px 14px;border:0;border-radius:8px;background:var(--ac);color:#fff;cursor:pointer;font:inherit}
+button.g{background:transparent;color:var(--tx);border:1px solid var(--bd)}button.d{background:#dc2626}
+.bar{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px}.bar input,.bar select{flex:1;min-width:140px}
+.tw{overflow-x:auto}table{width:100%;border-collapse:collapse;font-size:14px}
+th,td{text-align:left;padding:9px;border-bottom:1px solid var(--bd);white-space:nowrap}th{color:var(--mu);cursor:pointer}
+.tag{padding:2px 8px;border-radius:99px;background:var(--bd);font-size:12px}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:12px}
+.tile{display:block;color:inherit}.tile:hover{border-color:var(--ac)}.tile .i{font-size:28px}
+.meter{height:8px;border-radius:9px;background:var(--bd);overflow:hidden;margin-top:6px}.meter i{display:block;height:100%;width:0;background:var(--ac)}
+.dash{display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:12px;margin-bottom:16px}.dash .card{margin:0}h4{margin:0 0 10px}.mu{color:var(--mu)}.row{display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid var(--bd);font-size:14px}@media print{.noprint,button,header a{display:none!important}body{background:#fff;color:#000}}</style></head><body><div id="app"></div><script>window.MODULE={"title": "AI Network Management", "icon": "\ud83c\udf10", "slug": "ai-network-management", "fields": [{"l": "Node", "t": "text"}, {"l": "IP Address", "t": "text"}, {"l": "Location", "t": "text"}, {"l": "Latency ms", "t": "number"}, {"l": "Last Check", "t": "date"}, {"l": "Status", "t": "select", "o": ["Online", "Degraded", "Offline"]}], "sum": "Latency ms", "extra": "ping"};</script><script>(function(){
+const M=window.MODULE,KEY='mgmt_'+M.slug,$=s=>document.querySelector(s);
+const F=M.fields,SELS=F.filter(f=>f.t==='select'),SF=SELS[0],NUM=F.filter(f=>f.t==='number'),DATE=F.find(f=>f.t==='date');
+const SI=F.indexOf(SF),DI=F.indexOf(DATE),VI=M.sum?F.findIndex(f=>f.l===M.sum):(NUM[0]?F.indexOf(NUM[0]):-1);
+let data=[],editId=null,sortK=null,sortD=1,mode='local';
+const useServer=location.protocol.startsWith('http');
+const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const fmt=n=>Number(n||0).toLocaleString(undefined,{maximumFractionDigits:2});
+const COL=['#4f46e5','#06b6d4','#10b981','#f59e0b','#ef4444','#8b5cf6','#ec4899','#64748b'];
+async function load(){
+ if(useServer){try{const r=await fetch('/api/'+M.slug,{cache:'no-store'});if(r.ok){data=await r.json();mode='server';return}}catch(e){}}
+ try{data=JSON.parse(localStorage.getItem(KEY)||'[]')}catch(e){data=[]}
+}
+async function save(){
+ if(mode==='server'){try{await fetch('/api/'+M.slug,{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify(data)})}catch(e){alert('Server save failed')}}
+ else{try{localStorage.setItem(KEY,JSON.stringify(data))}catch(e){}}
+}
+/* ---------- charts (inline SVG, no libraries) ---------- */
+function group(keyFn,valFn){const m=new Map();data.forEach(r=>{const k=keyFn(r)||'—';m.set(k,(m.get(k)||0)+valFn(r))});return [...m].map(([l,v])=>({l,v}))}
+function bars(items){if(!items.length)return '<p class="mu">No data yet</p>';const mx=Math.max(...items.map(i=>i.v),1);
+ return '<svg viewBox="0 0 360 '+(items.length*28+6)+'" width="100%">'+items.map((it,i)=>{const w=Math.max(2,it.v/mx*170);
+ return `<text x="0" y="${i*28+17}" font-size="11" fill="currentColor">${esc(String(it.l).slice(0,16))}</text><rect x="110" y="${i*28+5}" width="${w}" height="18" rx="4" fill="${COL[i%8]}"/><text x="${116+w}" y="${i*28+18}" font-size="11" fill="currentColor">${fmt(it.v)}</text>`}).join('')+'</svg>'}
+function donut(items){const t=items.reduce((a,i)=>a+i.v,0);if(!t)return '<p class="mu">No data yet</p>';let off=0;const R=48,C=2*Math.PI*R;
+ return `<div style="display:flex;gap:14px;align-items:center;flex-wrap:wrap"><svg viewBox="0 0 120 120" width="150"><g transform="rotate(-90 60 60)">${items.map((it,i)=>{const d=it.v/t*C,s=`<circle cx="60" cy="60" r="${R}" fill="none" stroke="${COL[i%8]}" stroke-width="22" stroke-dasharray="${d} ${C-d}" stroke-dashoffset="${-off}"/>`;off+=d;return s}).join('')}</g><text x="60" y="65" text-anchor="middle" font-size="16" fill="currentColor">${fmt(t)}</text></svg><div style="font-size:12px">${items.map((it,i)=>`<div><span style="color:${COL[i%8]}">●</span> ${esc(it.l)} — ${Math.round(it.v/t*100)}%</div>`).join('')}</div></div>`}
+function cols(items){if(!items.length)return '<p class="mu">No dated records yet</p>';const mx=Math.max(...items.map(i=>i.v),1),w=360/items.length;
+ return `<svg viewBox="0 0 360 170" width="100%">${items.map((it,i)=>{const h=it.v/mx*110;return `<rect x="${i*w+6}" y="${130-h}" width="${w-12}" height="${h}" rx="4" fill="${COL[0]}"/><text x="${i*w+w/2}" y="${124-h}" text-anchor="middle" font-size="10" fill="currentColor">${fmt(it.v)}</text><text x="${i*w+w/2}" y="148" text-anchor="middle" font-size="10" fill="currentColor">${esc(it.l)}</text>`}).join('')}</svg>`}
+function dashboard(){
+ let h='';const n=data.length,vals=VI>=0?data.map(r=>+r.v[VI]||0):[],tot=vals.reduce((a,b)=>a+b,0);
+ h+=`<div class="card stat"><b>${n}</b><span>Total records</span></div>`;
+ if(VI>=0)h+=`<div class="card stat"><b>${fmt(tot)}</b><span>Total ${esc(F[VI].l)}</span></div><div class="card stat"><b>${fmt(n?tot/n:0)}</b><span>Average ${esc(F[VI].l)}</span></div><div class="card stat"><b>${fmt(Math.max(0,...vals))}</b><span>Highest ${esc(F[VI].l)}</span></div>`;
+ const today=new Date().toISOString().slice(0,10);
+ if(DATE){const od=data.filter(r=>r.v[DI]&&r.v[DI]<today&&(!SF||!/done|closed|resolved|paid|completed|published|filed|retired|void|sold|settled|cleaned|active|posted|implemented|compliant|healthy|online|winner|submitted/i.test(r.v[SI]))).length;
+  h+=`<div class="card stat"><b style="color:${od?'#ef4444':'inherit'}">${od}</b><span>Past ${esc(DATE.l)} & not finished</span></div>`}
+ let c='';
+ if(SF)c+=`<div class="card"><h4>By ${esc(SF.l)}</h4>${donut(group(r=>r.v[SI],()=>1))}</div>`;
+ if(SELS[1]){const i=F.indexOf(SELS[1]);c+=`<div class="card"><h4>By ${esc(SELS[1].l)}</h4>${bars(group(r=>r.v[i],()=>1))}</div>`}
+ if(SF&&VI>=0)c+=`<div class="card"><h4>${esc(F[VI].l)} by ${esc(SF.l)}</h4>${bars(group(r=>r.v[SI],r=>+r.v[VI]||0))}</div>`;
+ if(DATE){const g=group(r=>(r.v[DI]||'').slice(0,7),r=>VI>=0?(+r.v[VI]||0):1).filter(x=>x.l!=='—').sort((a,b)=>a.l<b.l?-1:1).slice(-6);
+  c+=`<div class="card"><h4>Monthly ${VI>=0?esc(F[VI].l):'records'}</h4>${cols(g)}</div>`;
+  const up=data.filter(r=>r.v[DI]>=today).sort((a,b)=>a.v[DI]<b.v[DI]?-1:1).slice(0,5);
+  c+=`<div class="card"><h4>Upcoming ${esc(DATE.l)}</h4>${up.length?up.map(r=>`<div class="row"><span>${esc(r.v[0])}</span><span class="mu">${esc(r.v[DI])}</span></div>`).join(''):'<p class="mu">Nothing upcoming</p>'}</div>`}
+ const top=VI>=0?[...data].sort((a,b)=>(+b.v[VI]||0)-(+a.v[VI]||0)).slice(0,5):[];
+ if(top.length)c+=`<div class="card"><h4>Top ${esc(F[VI].l)}</h4>${top.map(r=>`<div class="row"><span>${esc(r.v[0])}</span><b>${fmt(r.v[VI])}</b></div>`).join('')}</div>`;
+ $('#stats').innerHTML=h;$('#charts').innerHTML=c;
+}
+function wallet(){
+ const ti=F.findIndex(f=>f.l==='Type'),ai=F.findIndex(f=>f.l==='Amount'),si=F.findIndex(f=>f.l==='Status');
+ const done=data.filter(r=>r.v[si]==='Completed'),cr=done.filter(r=>r.v[ti]==='Credit').reduce((a,r)=>a+(+r.v[ai]||0),0),db=done.filter(r=>r.v[ti]==='Debit').reduce((a,r)=>a+(+r.v[ai]||0),0);
+ $('#bal').innerHTML=`<div class="stats"><div class="card stat"><b>${fmt(cr-db)}</b><span>Live balance</span></div><div class="card stat"><b style="color:#10b981">${fmt(cr)}</b><span>Total credits</span></div><div class="card stat"><b style="color:#ef4444">${fmt(db)}</b><span>Total debits</span></div></div>`}
+/* ---------- UI ---------- */
+$('#app').innerHTML=`
+<header><a href="index.html">← All modules</a><h1>${M.icon} ${esc(M.title)}</h1><span class="tag" id="mode"></span><button class="g" onclick="print()">Print report</button></header>
+<main><div id="bal"></div><div class="stats" id="stats"></div><div id="extra"></div><div class="dash" id="charts"></div>
+<div class="card"><h4>Add / edit record</h4><form id="f">${F.map((f,i)=>`<label>${esc(f.l)}${
+ f.t==='select'?`<select name="${i}">${f.o.map(o=>`<option>${esc(o)}</option>`).join('')}</select>`:
+ f.t==='textarea'?`<textarea name="${i}" rows="2"></textarea>`:
+ `<input name="${i}" type="${f.t}" ${i===0?'required':''} ${f.t==='number'?'step="any"':''}>`}</label>`).join('')}
+<label>&nbsp;<span style="display:flex;gap:6px"><button id="sv">Add record</button><button type="button" class="g" id="cl">Clear</button></span></label></form></div>
+<div class="card noprint"><div class="bar"><input id="q" placeholder="Search…">
+${SF?`<select id="flt"><option value="">All ${esc(SF.l)}</option>${SF.o.map(o=>`<option>${esc(o)}</option>`).join('')}</select>`:''}
+<button class="g" id="csv">Export CSV</button><button class="g" id="ci">Import CSV</button><button class="g" id="jx">Backup JSON</button>
+<button class="g" id="ji">Restore JSON</button><button class="d" id="wipe">Delete all</button>
+<input type="file" id="file" accept=".json" hidden><input type="file" id="cfile" accept=".csv" hidden></div></div>
+<div class="card"><div class="tw"><table><thead id="th"></thead><tbody id="tb"></tbody></table></div><p id="empty" class="mu"></p></div></main>`;
+const form=$('#f');
+const vals=()=>F.map((f,i)=>{const v=form.elements[i].value;return f.t==='number'?(v===''?0:parseFloat(v)):v});
+function render(){
+ $('#mode').textContent=mode==='server'?'● Server database (shared, live)':'● This browser only';
+ const q=$('#q').value.toLowerCase(),fl=$('#flt')?$('#flt').value:'';
+ let rows=data.filter(r=>(!q||r.v.join(' ').toLowerCase().includes(q))&&(!fl||r.v[SI]===fl));
+ if(sortK!==null)rows.sort((a,b)=>{const x=a.v[sortK],y=b.v[sortK];return (x>y?1:x<y?-1:0)*sortD});
+ $('#th').innerHTML='<tr>'+F.map((f,i)=>`<th data-k="${i}">${esc(f.l)}${sortK===i?(sortD>0?' ▲':' ▼'):''}</th>`).join('')+'<th class="noprint">Actions</th></tr>';
+ $('#tb').innerHTML=rows.map(r=>'<tr>'+r.v.map((v,i)=>`<td>${F[i].t==='select'?`<span class="tag">${esc(v)}</span>`:F[i].t==='number'?fmt(v):esc(v)}</td>`).join('')+
+  `<td class="noprint"><button class="g" data-e="${r.id}">Edit</button> <button class="d" data-d="${r.id}">✕</button></td></tr>`).join('');
+ $('#empty').textContent=rows.length?'':'No records yet — add your first record above, or import a CSV.';
+ dashboard();if(M.extra==='wallet')wallet();
+}
+function tools(){
+ const x=$('#extra');
+ if(M.extra==='vat'){x.innerHTML=`<div class="card"><b>VAT calculator</b><div class="bar" style="margin-top:8px"><input id="vn" type="number" placeholder="Net amount"><input id="vr" type="number" value="15" placeholder="Rate %"><span id="vo" style="align-self:center"></span></div><div id="vt" class="mu"></div></div>`;
+  const c=()=>{const n=+$('#vn').value||0,r=+$('#vr').value||0;$('#vo').textContent=`VAT ${fmt(n*r/100)} · Gross ${fmt(n*(1+r/100))}`};$('#vn').oninput=$('#vr').oninput=c;c();
+  window.vatSummary=()=>{const ni=F.findIndex(f=>f.l==='Net Amount'),ri=F.findIndex(f=>f.l.startsWith('VAT Rate'));const v=data.reduce((a,r)=>a+(+r.v[ni]||0)*(+r.v[ri]||0)/100,0);$('#vt').textContent='Total VAT across all invoices: '+fmt(v)};}
+ if(M.extra==='password'){x.innerHTML=`<div class="card"><b>Password strength checker</b> <small class="mu">(runs locally, nothing is sent)</small><br><input id="pw" type="password" placeholder="Type a password" style="width:100%;margin-top:8px"><div class="meter"><i id="pm"></i></div><small id="pt" class="mu"></small></div>`;
+  $('#pw').oninput=e=>{const p=e.target.value;let s=0;if(p.length>=8)s++;if(p.length>=12)s++;if(/[a-z]/.test(p)&&/[A-Z]/.test(p))s++;if(/\d/.test(p))s++;if(/[^A-Za-z0-9]/.test(p))s++;
+   $('#pm').style.width=s*20+'%';$('#pm').style.background=['#dc2626','#dc2626','#f59e0b','#f59e0b','#16a34a','#16a34a'][s];$('#pt').textContent=['Very weak','Very weak','Weak','Fair','Strong','Very strong'][s]}}
+ if(M.extra==='ping'){x.innerHTML=`<div class="card"><b>Check a URL (browser reachability)</b><div class="bar" style="margin-top:8px"><input id="pu" placeholder="https://example.com"><button id="pg">Ping</button><span id="po"></span></div></div>`;
+  $('#pg').onclick=async()=>{const t=performance.now();try{await fetch($('#pu').value,{mode:'no-cors'});$('#po').textContent=Math.round(performance.now()-t)+' ms ✓'}catch(e){$('#po').textContent='Unreachable ✗'}}}
+ if(M.extra==='autoreply'){x.innerHTML=`<div class="card"><b>Smart reply suggester</b> <small class="mu">(rule-based; connect an AI API for production)</small><textarea id="ar" rows="2" style="width:100%;margin-top:8px" placeholder="Paste the customer message"></textarea><p id="ao" class="mu"></p></div>`;
+  $('#ar').oninput=e=>{const t=e.target.value.toLowerCase();$('#ao').textContent=!t?'':/refund|money back/.test(t)?'Suggested: "We\'re sorry — I\'ve started your refund; it takes 3–5 business days."':/login|password|access/.test(t)?'Suggested: "Please use Reset Password; I can also send a secure link."':/slow|bug|error|crash/.test(t)?'Suggested: "Thanks for reporting this. Could you share a screenshot and your device?"':'Suggested: "Thanks for reaching out! Can you tell me a bit more so I can help?"'}}
+}
+form.onsubmit=async e=>{e.preventDefault();const v=vals();
+ if(editId){const r=data.find(r=>r.id===editId);r.v=v;r.u=Date.now();editId=null;$('#sv').textContent='Add record'}else data.push({id:Date.now()+''+Math.random().toString(16).slice(2,6),t:Date.now(),v});
+ await save();form.reset();render();if(window.vatSummary)vatSummary()};
+$('#cl').onclick=()=>{form.reset();editId=null;$('#sv').textContent='Add record'};
+$('#q').oninput=render;if($('#flt'))$('#flt').onchange=render;
+$('#th').onclick=e=>{const k=e.target.dataset.k;if(k===undefined)return;sortD=sortK==+k?-sortD:1;sortK=+k;render()};
+$('#tb').onclick=async e=>{const d=e.target.dataset;
+ if(d.d&&confirm('Delete this record?')){data=data.filter(r=>r.id!==d.d);await save();render();if(window.vatSummary)vatSummary()}
+ if(d.e){const r=data.find(r=>r.id===d.e);editId=r.id;r.v.forEach((v,i)=>form.elements[i].value=v);$('#sv').textContent='Save changes';scrollTo(0,0)}};
+const dl=(n,t,m)=>{const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([t],{type:m}));a.download=n;a.click()};
+$('#csv').onclick=()=>dl(M.slug+'.csv',[F.map(f=>f.l),...data.map(r=>r.v)].map(r=>r.map(c=>'"'+String(c).replace(/"/g,'""')+'"').join(',')).join('\n'),'text/csv');
+$('#jx').onclick=()=>dl(M.slug+'-backup.json',JSON.stringify(data,null,2),'application/json');
+$('#ji').onclick=()=>$('#file').click();$('#ci').onclick=()=>$('#cfile').click();
+$('#file').onchange=e=>{const fr=new FileReader();fr.onload=async()=>{try{const j=JSON.parse(fr.result);if(Array.isArray(j)){data=j.filter(r=>Array.isArray(r.v));await save();render()}}catch(x){alert('Invalid JSON')}};fr.readAsText(e.target.files[0])};
+function parseCSV(t){const rows=[];let r=[],c='',q=false;for(let i=0;i<t.length;i++){const ch=t[i];if(q){if(ch=='"'&&t[i+1]=='"'){c+='"';i++}else if(ch=='"')q=false;else c+=ch}else if(ch=='"')q=true;else if(ch==','){r.push(c);c=''}else if(ch=='\n'||ch=='\r'){if(ch=='\r'&&t[i+1]=='\n')i++;r.push(c);c='';if(r.some(x=>x!==''))rows.push(r);r=[]}else c+=ch}r.push(c);if(r.some(x=>x!==''))rows.push(r);return rows}
+$('#cfile').onchange=e=>{const fr=new FileReader();fr.onload=async()=>{const rows=parseCSV(fr.result);if(rows.length<2)return alert('CSV needs a header row and data');
+ const hd=rows[0].map(h=>h.trim().toLowerCase()),map=F.map((f,i)=>{const k=hd.indexOf(f.l.toLowerCase());return k>=0?k:(hd.length===F.length?i:-1)});
+ rows.slice(1).forEach(r=>data.push({id:Date.now()+''+Math.random().toString(16).slice(2,6),t:Date.now(),v:F.map((f,i)=>{let v=map[i]>=0?(r[map[i]]||'').trim():'';if(f.t==='number')return parseFloat(v.replace(/,/g,''))||0;if(f.t==='select')return f.o.find(o=>o.toLowerCase()===v.toLowerCase())||f.o[0];return v})}));
+ await save();render();alert('Imported '+(rows.length-1)+' rows')};fr.readAsText(e.target.files[0]);e.target.value=''};
+$('#wipe').onclick=async()=>{if(confirm('Delete ALL records? This cannot be undone.')){data=[];await save();render()}};
+setInterval(async()=>{if(document.hidden||editId)return;const old=JSON.stringify(data);await load();if(JSON.stringify(data)!==old){render();if(window.vatSummary)vatSummary()}},8000);
+addEventListener('storage',async e=>{if(e.key===KEY){await load();render()}});
+(async()=>{await load();tools();render();if(window.vatSummary)vatSummary()})();
+})();
+</script></body></html>

@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>VASHAN Antivirus — Virus Information</title>
+<style>
+*{box-sizing:border-box}body{margin:0;background:#040b12;color:#eafcff;font-family:Arial,Helvetica,sans-serif}
+header{padding:18px 24px;border-bottom:1px solid #12303d;background:#07131d;position:sticky;top:0}
+.logo{font-weight:900;letter-spacing:1.5px;color:#19dcff}.wrap{max-width:900px;margin:35px auto;padding:0 18px}
+.card{background:linear-gradient(145deg,#08151e,#0d1118);border:1px solid #173b49;border-radius:18px;padding:28px;box-shadow:0 15px 50px #0008}
+.badge{display:inline-block;padding:7px 11px;border-radius:99px;background:#36121a;color:#ff5868;font-size:12px;font-weight:800}
+h1{font-size:36px;margin:15px 0 8px}h2{color:#19dcff;margin-top:28px}
+p,li{line-height:1.7;color:#c7d7de}.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px;margin:20px 0}
+.item{padding:14px;border:1px solid #173b49;border-radius:10px;background:#061019}.label{font-size:10px;color:#7795a2;text-transform:uppercase;letter-spacing:1px}.value{margin-top:5px;font-weight:700}
+.back{display:inline-block;margin-top:24px;padding:11px 16px;background:#0bcbea;color:white;text-decoration:none;border-radius:9px;font-weight:800}
+.note{border-left:3px solid #19dcff;padding-left:13px;color:#9fb8c2;font-size:13px}
+</style>
+</head>
+<body>
+<header><div class="logo">🛡️ VASHAN ANTIVIRUS V1 — VIRUS INFORMATION</div></header>
+<main class="wrap"><section class="card" id="content"></section></main>
+<script>
+const DATA={
+mydoom:{name:"Mydoom",type:"Email / Internet worm",risk:"High",desc:"Mydoom is a historically known computer worm. A VASHAN signature match means the configured indicator matched; it does not by itself prove an active infection.",details:["Known alias: Novarg","Historical email and internet-spreading malware family","Definitive detection requires verified signatures and additional analysis"]},
+novarg:{name:"Mydoom (Novarg)",type:"Email / Internet worm",risk:"High",desc:"Novarg is an alias associated with Mydoom.",details:["Alias: Novarg","Historical malware family","A name/content match is only an indicator"]},
+sobig:{name:"Sobig",type:"Email worm",risk:"High",desc:"Sobig is a historical family of email worms.",details:["Known family name: Sobig","Historical variants existed","Modern antivirus should use updated threat intelligence"]},
+klez:{name:"Klez",type:"Email worm",risk:"High",desc:"Klez is a historical computer worm family.",details:["Historical email-borne malware family","Variants had different characteristics","Verify detections with a full malware engine"]},
+iloveyou:{name:"ILOVEYOU (LoveLetter)",type:"Email / script worm",risk:"High",desc:"ILOVEYOU, also called LoveLetter, is a historical worm family.",details:["Known alias: LoveLetter","Historical email-distributed worm","Do not open suspicious files to test them"]},
+wannacry:{name:"WannaCry",type:"Ransomware / worm",risk:"High",desc:"WannaCry is a historically documented ransomware family.",details:["Also written as Wanna Cry","Associated with ransomware behavior","Real protection uses verified signatures and behavioral checks"]},
+zeus:{name:"Zeus (Zbot)",type:"Banking trojan",risk:"High",desc:"Zeus, also known as Zbot, is a historical malware family.",details:["Known alias: Zbot","Historical malware family","Use trusted security engines for definitive detection"]},
+"code-red":{name:"Code Red",type:"Computer worm",risk:"High",desc:"Code Red is a historical internet worm.",details:["Known alias: Codered","Historical network worm","Updated threat intelligence is required for modern detection"]},
+slammer:{name:"SQL Slammer",type:"Network worm",risk:"High",desc:"SQL Slammer is a historical network worm.",details:["Also called Slammer","Historical network-spreading malware","Name matching alone cannot prove active infection"]},
+cryptolocker:{name:"CryptoLocker",type:"Ransomware",risk:"High",desc:"CryptoLocker is a historical ransomware family.",details:["Also written as Crypto Locker","Historical ransomware family","Use a trusted security engine for definitive detection"]},
+sasser:{name:"Sasser",type:"Computer worm",risk:"High",desc:"Sasser is a historical Windows worm.",details:["Historical Windows worm family","Configured as a VASHAN threat signature","Verify with a full security engine"]},
+"eicar-standard-antivirus-test-file":{name:"EICAR Antivirus Test File",type:"Safe antivirus test string",risk:"Test only",desc:"EICAR is a standard harmless test string used to verify antivirus alerting. It is not a real virus.",details:["Harmless security testing standard","Used to test antivirus alerts","Should not be treated as a real malware infection"]}
+};
+let savedScan = null;
+try {
+  savedScan = JSON.parse(localStorage.getItem("vashanLastScanVirus") || sessionStorage.getItem("vashanLastScanVirus") || "null");
+} catch(e) {}
+const key=new URLSearchParams(location.search).get("virus")||"";
+if(savedScan){
+  document.title="VASHAN — "+(savedScan.name||"Virus Information");
+  document.getElementById("content").innerHTML=`
+    <span class="badge">🚨 DETECTION INFORMATION</span>
+    <h1>${savedScan.name||"Detected Threat"}</h1>
+    <p>${savedScan.description||"VASHAN detected a suspicious indicator in the file you just scanned."}</p>
+    <div class="grid">
+      <div class="item"><div class="label">Scanned file</div><div class="value">${savedScan.fileName||"Unknown file"}</div></div>
+      <div class="item"><div class="label">Threat type</div><div class="value">${savedScan.type||"VASHAN detection"}</div></div>
+      <div class="item"><div class="label">VASHAN level</div><div class="value">${savedScan.risk||"Unknown"}</div></div>
+    </div>
+    <h2>Detection details</h2>
+    <ul>${(savedScan.details||[]).map(x=>`<li>${x}</li>`).join("")}</ul>
+    <h2>What VASHAN detected</h2>
+    <p class="note">${savedScan.reason||"VASHAN scanner detection"}</p>
+    <h2>Important</h2>
+    <p class="note">This VASHAN browser scanner uses configured indicators. A match is not by itself proof of an active malware infection. A production antivirus should combine verified signatures, cryptographic hashes, threat intelligence and behavioral analysis.</p>
+    <a class="back" href="javascript:window.close();">← CLOSE INFORMATION</a>
+  `;
+} else {
+  const data=DATA[key]||{name:key||"Detected Threat",type:"VASHAN detection",risk:"Unknown",desc:"VASHAN detected a configured suspicious indicator, but detailed information for this exact item is not available in this offline information page.",details:["Detection source: VASHAN Antivirus","Use a trusted, updated antivirus engine for confirmation"]};
+  document.title="VASHAN — "+data.name;
+  document.getElementById("content").innerHTML=`
+  <span class="badge">🚨 DETECTION INFORMATION</span>
+  <h1>${data.name}</h1>
+  <p>${data.desc}</p>
+  <div class="grid">
+  <div class="item"><div class="label">Threat type</div><div class="value">${data.type}</div></div>
+  <div class="item"><div class="label">VASHAN level</div><div class="value">${data.risk}</div></div>
+  </div>
+  <h2>About this detection</h2>
+  <ul>${data.details.map(x=>`<li>${x}</li>`).join("")}</ul>
+  <h2>Important</h2>
+  <p class="note">A browser-based VASHAN scanner using name/content indicators cannot guarantee that a file is actually malware. A production antivirus should combine cryptographic hashes, trusted threat intelligence, signatures/YARA-style rules, behavioral analysis and a dedicated scanning engine.</p>
+  <a class="back" href="javascript:history.back()">← BACK TO VASHAN ANTIVIRUS</a>`;
+}
+</script>
+</body>
+</html>

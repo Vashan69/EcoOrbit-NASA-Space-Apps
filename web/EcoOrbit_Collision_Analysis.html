@@ -1,0 +1,878 @@
+<!doctype html>
+<html lang="en" class="dark">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>EcoOrbit Collision Analysis | Our Services</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              spaceBg: "#030712",
+              spaceCard: "#0b1329",
+              neonBlue: "#00f2fe",
+              neonPurple: "#4facfe",
+              neonEmerald: "#10b981",
+              neonPink: "#f43f5e",
+            },
+            fontFamily: {
+              sans: ["Inter", "sans-serif"],
+            },
+          },
+        },
+      };
+    </script>
+    <!-- Google Fonts Inter -->
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Fira+Sans:wght@400;500;600&display=swap"
+      rel="stylesheet"
+    />
+    <!-- FontAwesome Icons -->
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+    <!-- Three.js CDN -->
+<link rel="icon" type="image/png" href="favicon.png">
+    <style>
+      body {
+        font-family: "Inter", sans-serif;
+        background-color: #030712;
+        color: #f3f4f6;
+        overflow-x: hidden;
+      }
+
+      /* Header layout: keep navigation inside the header and prevent overlap. */
+      #site-header {
+        min-height: 80px;
+      }
+      #site-header .header-inner {
+        min-height: 80px;
+        flex-wrap: nowrap;
+      }
+      #site-header nav {
+        min-width: 0;
+      }
+      #site-header nav a {
+        white-space: nowrap;
+      }
+      @media (max-width: 1100px) {
+        #site-header nav {
+          gap: 1rem;
+          font-size: 0.8rem;
+        }
+        #site-header .brand-title {
+          max-width: 260px;
+        }
+      }
+      @media (max-width: 900px) {
+        #site-header nav {
+          display: none;
+        }
+        #mobile-menu-button {
+          display: inline-flex !important;
+        }
+      }
+      @media (min-width: 901px) {
+        #mobile-menu-button,
+        #mobile-menu {
+          display: none !important;
+        }
+      }
+      #mobile-menu {
+        border-top: 1px solid rgba(255, 255, 255, 0.08);
+      }
+      .glass-panel {
+        background: rgba(11, 19, 41, 0.78);
+        backdrop-filter: blur(9px);
+        -webkit-backdrop-filter: blur(9px);
+        border: 1px solid rgba(255, 255, 255, 0.08);
+      }
+</style>
+<style>
+:root{--ink:#030712;--deep:#0b1329;--teal:#0b2f55;--line:rgba(255,255,255,.12);--ring:#f1f5f9;--mute:#94a3b8;--sun:#ffd23f;--ok:#10d9a0;--sim:#c39bff;--warn:#ff8a5c;
+--head:'Inter',system-ui,sans-serif;--body:'Inter',system-ui,sans-serif}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+:focus-visible{outline:2px solid var(--sun);outline-offset:3px}
+.wrap{max-width:1240px;margin:0 auto;padding:0 28px}
+.hero{position:relative;scroll-margin-top:80px;height:min(78vh,700px);min-height:520px;background:radial-gradient(circle at 50% 55%,var(--teal) 0,var(--deep) 45%,var(--ink) 80%);overflow:hidden}
+#orbit{position:absolute;inset:0;width:100%;height:100%;cursor:grab;touch-action:none}
+#orbit:active{cursor:grabbing}
+.hero-text{position:absolute;left:0;right:0;top:40px;pointer-events:none}
+.hero-text h1{font:800 clamp(40px,6.4vw,88px)/.98 var(--head);letter-spacing:-.025em;max-width:11ch}
+.hero-text p{max-width:34ch;margin-top:18px;color:var(--mute);font-size:19px}
+.chip{display:inline-flex;gap:8px;align-items:center;margin-top:20px;padding:6px 14px;border:1px solid var(--line);border-radius:99px;font-size:14px;background:#030712cc;pointer-events:auto}
+.dot{width:9px;height:9px;border-radius:50%;background:var(--mute)}
+.live .dot{background:var(--ok);box-shadow:0 0 0 4px #5fe0c433}
+.offline .dot{background:var(--sim)}
+.sel{position:absolute;right:28px;bottom:26px;width:min(340px,calc(100% - 56px));background:#0b1329e6;border:1px solid var(--line);padding:18px 20px;border-radius:6px}
+.sel h3{font:700 22px var(--head)}
+.sel dl{display:grid;grid-template-columns:auto 1fr;gap:4px 16px;margin-top:10px;font-size:15px}
+.sel dt{color:var(--mute)}
+.hint{position:absolute;left:28px;bottom:26px;color:var(--mute);font-size:14px}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);border-block:1px solid var(--line)}
+.stats div{padding:34px 28px;border-right:1px solid var(--line)}
+.stats div:last-child{border:0}
+.stats strong{display:block;font:800 clamp(34px,4.4vw,60px)/1 var(--head);font-variant-numeric:tabular-nums}
+.stats small{color:var(--mute);font-size:15px}
+section{padding:96px 0 0}
+main h2{font:800 clamp(30px,4vw,52px)/1.05 var(--head);letter-spacing:-.02em;max-width:18ch}
+.lede{color:var(--mute);max-width:56ch;margin:14px 0 36px;font-size:18px}
+.tag{font-size:13px;padding:2px 9px;border-radius:99px;border:1px solid;white-space:nowrap}
+.tag.v{color:var(--ok);border-color:#5fe0c488}
+.tag.s{color:var(--sim);border-color:#c39bff88}
+.scroll{overflow-x:auto}
+table{width:100%;border-collapse:collapse;min-width:760px;font-variant-numeric:tabular-nums}
+th{text-align:left;font-weight:500;color:var(--mute);font-size:14px;padding:10px 14px;border-bottom:1px solid var(--line)}
+td{padding:16px 14px;border-bottom:1px solid rgba(255,255,255,.07);font-size:17px}
+tbody tr{cursor:pointer}
+tbody tr:hover,tbody tr.on{background:#0e4b6355}
+tbody tr.on td:first-child{box-shadow:inset 3px 0 var(--sun)}
+.bar{display:block;height:6px;background:var(--ok);border-radius:3px;min-width:4px}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:56px}
+.list li{list-style:none;display:grid;grid-template-columns:1fr auto;gap:2px 20px;padding:16px 0;border-bottom:1px solid rgba(255,255,255,.07)}
+.list li b{font:700 19px var(--head)}
+.list li span{color:var(--mute);font-size:15px}
+.list li em{font:800 22px var(--head);font-style:normal;grid-row:1/3;grid-column:2;align-self:center;text-align:right}
+.list{padding:0}
+.sim{background:linear-gradient(#1a0f2e,#0b0716);border:1px solid #c39bff55;padding:40px;border-radius:6px;display:grid;grid-template-columns:1.1fr 1fr;gap:48px}
+.sim label{display:block;margin-bottom:22px;font-size:15px;color:var(--mute)}
+.sim label b{float:right;color:var(--ring);font-variant-numeric:tabular-nums}
+input[type=range]{width:100%;accent-color:var(--sim);margin-top:8px}
+.out strong{display:block;font:800 clamp(44px,6vw,84px)/1 var(--head);color:var(--sim);font-variant-numeric:tabular-nums}
+.out p{color:var(--mute);margin-top:10px}
+.svc{border-top:1px solid var(--line)}
+.svc div{display:grid;grid-template-columns:1fr 2fr auto;gap:28px;padding:30px 0;border-bottom:1px solid var(--line);align-items:baseline}
+.svc h3{font:700 26px var(--head)}
+.svc p{color:var(--mute)}
+footer{margin-top:110px;border-top:1px solid var(--line);padding:40px 0 60px;color:var(--mute);font-size:15px}
+footer a{color:var(--ring)}
+@media(max-width:860px){.stats{grid-template-columns:1fr 1fr}.stats div:nth-child(2){border-right:0}.stats div:nth-child(-n+2){border-bottom:1px solid var(--line)}
+.two,.sim{grid-template-columns:1fr;gap:36px}.svc div{grid-template-columns:1fr;gap:8px}.sel{position:static;width:auto;margin:0}
+.hero{height:auto;min-height:0;display:flex;flex-direction:column}.hero-text{position:static;padding:40px 28px 0}#orbit{position:relative;height:440px}.hint{display:none}.sim{padding:24px}}
+@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+
+body{font-family:'Inter',sans-serif}.hero h1{font-weight:800}.back{display:inline-block;margin-bottom:14px}</style>
+</head>
+<body class="bg-spaceBg text-slate-100 min-h-screen flex flex-col selection:bg-neonBlue selection:text-black">
+    <header
+      id="site-header"
+      class="sticky top-0 z-50 glass-panel border-b border-white/10"
+    >
+      <div
+        class="header-inner max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between gap-4"
+      >
+        <a
+          href="EcoOrbit.html"
+          aria-label="EcoOrbit Logo"
+          title="EcoOrbit Logo"
+          class="flex items-center space-x-3 min-w-0 group shrink-0"
+        >
+          <div
+            class="w-12 h-12 sm:w-14 sm:h-14 flex-shrink-0 rounded-xl overflow-hidden bg-slate-950/70 border border-cyan-400/30 p-1.5 shadow-[0_0_25px_rgba(0,242,254,0.25)] group-hover:shadow-[0_0_35px_rgba(0,242,254,0.55)] group-hover:border-cyan-300/60 group-hover:scale-105 transition-all duration-300"
+          >
+            <img
+              src="/images/EcoOrbit_Logo.png"
+              alt="EcoOrbit Logo"
+              class="w-full h-full object-contain drop-shadow-[0_0_8px_rgba(0,242,254,0.45)]"
+              loading="eager"
+            />
+          </div>
+          <div class="min-w-0 ml-1">
+            <span
+              class="brand-title text-lg sm:text-xl font-extrabold tracking-tight truncate block"
+              ><span class="text-white">Eco</span><span class="text-neonBlue">Orbit</span></span
+            >
+            <span
+              class="block text-[9px] sm:text-[10px] text-slate-400 font-medium tracking-widest uppercase mt-0.5"
+              >NASA Space Apps 2026</span
+            >
+          </div>
+        </a>
+        <nav
+          class="hidden md:flex items-center space-x-5 text-sm font-medium text-slate-300 shrink-0"
+        >
+          <a href="EcoOrbit.html" class="hover:text-neonBlue transition">Home</a>
+          <div class="relative group">
+            <a
+              href="About_Us.html"
+              target="_blank"
+              rel="noopener"
+              class="hover:text-neonBlue transition inline-flex items-center gap-1"
+            >
+              About Us
+              <i class="fa-solid fa-chevron-down text-[10px] mt-0.5"></i>
+            </a>
+            <div
+              class="absolute left-0 top-full pt-2 hidden group-hover:block z-50"
+            >
+              <div
+                class="glass-panel rounded-xl border border-white/10 py-2 min-w-[240px] shadow-lg shadow-black/40"
+              >
+                <a
+                  href="About_EcoOrbit.html"
+                  target="_blank"
+                  rel="noopener"
+                  class="block px-4 py-2.5 text-sm text-slate-300 hover:text-neonBlue hover:bg-white/5 transition"
+                >
+                  <i class="fa-solid fa-satellite mr-2 text-neonBlue"></i>About
+                  EcoOrbit
+                </a>
+                <a
+                  href="EcoOrbit_Growths.html"
+                  target="_blank"
+                  rel="noopener"
+                  class="block px-4 py-2.5 text-sm text-slate-300 hover:text-neonBlue hover:bg-white/5 transition"
+                >
+                  <i class="fa-solid fa-chart-line mr-2 text-neonBlue"></i>EcoOrbit
+                  Growths
+                </a>
+                <a
+                  href="EcoOrbit_Guidelines.html"
+                  target="_blank"
+                  rel="noopener"
+                  class="block px-4 py-2.5 text-sm text-slate-300 hover:text-neonBlue hover:bg-white/5 transition"
+                >
+                  <i class="fa-solid fa-palette mr-2 text-neonBlue"></i>EcoOrbit
+                  Guidelines
+                </a>
+                <a
+                  href="Contact_Us.html"
+                  target="_blank"
+                  rel="noopener"
+                  class="block px-4 py-2.5 text-sm text-slate-300 hover:text-neonBlue hover:bg-white/5 transition"
+                >
+                  <i class="fa-solid fa-envelope mr-2 text-neonBlue"></i>Contact Us
+                </a>
+                <a
+                  href="EcoOrbit_FAQ.html"
+                  target="_blank"
+                  rel="noopener"
+                  class="block px-4 py-2.5 text-sm text-slate-300 hover:text-neonBlue hover:bg-white/5 transition"
+                >
+                  <i class="fa-solid fa-circle-question mr-2 text-neonBlue"></i>FAQ
+                </a>
+              </div>
+            </div>
+          </div>
+          <div class="relative group">
+            <a
+              href="Privacy_and_Safety.html"
+              target="_blank"
+              rel="noopener"
+              class="hover:text-neonBlue transition inline-flex items-center gap-1"
+            >
+              Privacy & Safety
+              <i class="fa-solid fa-chevron-down text-[10px] mt-0.5"></i>
+            </a>
+            <div
+              class="absolute left-0 top-full pt-2 hidden group-hover:block z-50"
+            >
+              <div
+                class="glass-panel rounded-xl border border-white/10 py-2 min-w-[240px] shadow-lg shadow-black/40"
+              >
+                <a
+                  href="FAQ_Help.html"
+                  target="_blank"
+                  rel="noopener"
+                  class="block px-4 py-2.5 text-sm text-slate-300 hover:text-neonBlue hover:bg-white/5 transition"
+                >
+                  <i class="fa-solid fa-circle-question mr-2 text-neonBlue"></i
+                  >FAQ & Help
+                </a>
+              </div>
+            </div>
+          </div>
+          <div class="relative group">
+            <a
+              href="Our_Services.html"
+              target="_blank"
+              rel="noopener"
+              class="hover:text-neonBlue transition inline-flex items-center gap-1"
+            >
+              Our Services
+              <i class="fa-solid fa-chevron-down text-[10px] mt-0.5"></i>
+            </a>
+            <div
+              class="absolute left-0 top-full pt-2 hidden group-hover:block z-50"
+            >
+              <div
+                class="glass-panel rounded-xl border border-white/10 py-2 min-w-[240px] shadow-lg shadow-black/40"
+              >
+                <a
+                  href="The_Earth_Information_Jukebox.html"
+                  target="_blank"
+                  rel="noopener"
+                  class="block px-4 py-2.5 text-sm text-slate-300 hover:text-neonBlue hover:bg-white/5 transition"
+                >
+                  <i class="fa-solid fa-music mr-2 text-neonBlue"></i>The Earth
+                  Information Jukebox
+                </a>
+                <a
+                  href="Aircraft_Live_Tracking.html"
+                  target="_blank"
+                  rel="noopener"
+                  class="block px-4 py-2.5 text-sm text-slate-300 hover:text-neonBlue hover:bg-white/5 transition"
+                >
+                  <i class="fa-solid fa-plane-up mr-2 text-neonBlue"></i>Aircraft
+                  Live Tracking
+                </a>
+                <a
+                  href="Simulation_Game.html"
+                  target="_blank"
+                  rel="noopener"
+                  class="block px-4 py-2.5 text-sm text-slate-300 hover:text-neonBlue hover:bg-white/5 transition"
+                >
+                  <i class="fa-solid fa-gamepad mr-2 text-neonBlue"></i>Simulation
+                  Game
+                </a>
+                <a
+                  href="Freelancer_Place.html"
+                  target="_blank"
+                  rel="noopener"
+                  class="block px-4 py-2.5 text-sm text-slate-300 hover:text-neonBlue hover:bg-white/5 transition"
+                >
+                  <i class="fa-solid fa-store mr-2 text-neonBlue"></i>Freelancer Place
+                </a>
+                <a
+                  href="Satellite_Marketplace.html"
+                  target="_blank"
+                  rel="noopener"
+                  class="block px-4 py-2.5 text-sm text-slate-300 hover:text-neonBlue hover:bg-white/5 transition"
+                >
+                  <i class="fa-solid fa-satellite mr-2 text-neonBlue"></i>Satellite Marketplace
+                </a>
+                <a
+                  href="EcoOrbit_AI_Earth_Guardian.html"
+                  class="block px-4 py-2.5 text-sm text-slate-300 hover:text-neonBlue hover:bg-white/5 transition"
+                >
+                  <i class="fa-solid fa-earth-americas mr-2 text-neonBlue"></i>EcoOrbit AI — Earth Guardian
+                </a>
+                <a
+                  href="EcoOrbit_SpaceGuard.html"
+                  class="block px-4 py-2.5 text-sm text-slate-300 hover:text-neonBlue hover:bg-white/5 transition"
+                >
+                  <i class="fa-solid fa-satellite-dish mr-2 text-neonBlue"></i>EcoOrbit SpaceGuard
+                </a>
+                <a
+                  href="EcoOrbit_GreenOrbit.html"
+                  class="block px-4 py-2.5 text-sm text-slate-300 hover:text-neonBlue hover:bg-white/5 transition"
+                >
+                  <i class="fa-solid fa-tree mr-2 text-neonBlue"></i>GreenOrbit — Forest &amp; Biodiversity Watch
+                </a>
+                <a
+                  href="EcoOrbit_DisasterLens.html"
+                  class="block px-4 py-2.5 text-sm text-slate-300 hover:text-neonBlue hover:bg-white/5 transition"
+                >
+                  <i class="fa-solid fa-triangle-exclamation mr-2 text-neonBlue"></i>EcoOrbit DisasterLens
+                </a>
+                <a
+                  href="EcoOrbit_SolarShield.html"
+                  class="block px-4 py-2.5 text-sm text-slate-300 hover:text-neonBlue hover:bg-white/5 transition"
+                >
+                  <i class="fa-solid fa-sun mr-2 text-neonBlue"></i>SolarShield — Space Weather Watch
+                </a>
+                <a
+                  href="EcoOrbit_Earth_Intelligence.html"
+                  class="block px-4 py-2.5 text-sm text-slate-300 hover:text-neonBlue hover:bg-white/5 transition"
+                >
+                  <i class="fa-solid fa-globe mr-2 text-neonBlue"></i>EcoOrbit Earth Intelligence
+                </a>
+                <a
+                  href="EcoOrbit_Collision_Analysis.html"
+                  class="block px-4 py-2.5 text-sm text-slate-300 hover:text-neonBlue hover:bg-white/5 transition"
+                >
+                  <i class="fa-solid fa-meteor mr-2 text-neonBlue"></i>EcoOrbit Collision Analysis
+                </a>
+                <a
+                  href="EcoOrbit_FloodGuard_Bangladesh.html"
+                  class="block px-4 py-2.5 text-sm text-slate-300 hover:text-neonBlue hover:bg-white/5 transition"
+                >
+                  <i class="fa-solid fa-water mr-2 text-neonBlue"></i>FloodGuard Bangladesh
+                </a>
+                <a
+                  href="EcoOrbit_GreenWatch_Orbit.html"
+                  class="block px-4 py-2.5 text-sm text-slate-300 hover:text-neonBlue hover:bg-white/5 transition"
+                >
+                  <i class="fa-solid fa-leaf mr-2 text-neonBlue"></i>GreenWatch Orbit
+                </a>
+              </div>
+            </div>
+          </div>
+          <a
+            href="VLZO_TV.html"
+            target="_blank"
+            rel="noopener"
+            class="hover:text-neonBlue transition"
+            >VLZO TV</a
+          >
+          <div class="relative group">
+            <a
+              href="Test_Yourself.html"
+              target="_blank"
+              rel="noopener"
+              class="hover:text-neonBlue transition inline-flex items-center gap-1"
+            >
+              Test Yourself
+              <i class="fa-solid fa-chevron-down text-[10px] mt-0.5"></i>
+            </a>
+            <div
+              class="absolute left-0 top-full pt-2 hidden group-hover:block z-50"
+            >
+              <div
+                class="glass-panel rounded-xl border border-white/10 py-2 min-w-[260px] shadow-lg shadow-black/40"
+              >
+                <a
+                  href="Kids_Learning_Hub.html"
+                  target="_blank"
+                  rel="noopener"
+                  class="block px-4 py-2.5 text-sm text-slate-300 hover:text-neonBlue hover:bg-white/5 transition"
+                >
+                  <i class="fa-solid fa-rocket mr-2 text-neonBlue"></i>Junior
+                  Space Explorers Hub (Kids)
+                </a>
+              </div>
+            </div>
+          </div>
+          <a
+            href="The_Third_World_Piece_VLZO_UFO_V_1.html"
+            target="_blank"
+            rel="noopener"
+            class="hover:text-neonBlue transition"
+            >Kids Story</a
+          >
+        </nav>
+        <div class="flex items-center space-x-3 shrink-0">
+          <button
+            id="mobile-menu-button"
+            type="button"
+            aria-expanded="false"
+            aria-controls="mobile-menu"
+            class="hidden w-10 h-10 items-center justify-center rounded-xl border border-white/10 bg-white/5 text-slate-200 hover:text-neonBlue transition"
+          >
+            <i class="fa-solid fa-bars"></i>
+          </button>
+          <!-- LIVE GLOBE BUTTON: put your link in href below (e.g. https://yourwebsite.com) -->
+          <a
+            href="VASHAN_Antivirus.html"
+            target="_blank"
+            rel="noopener"
+            class="hidden lg:inline-flex px-4 py-2 rounded-xl bg-gradient-to-r from-neonBlue to-neonPurple text-spaceBg font-bold text-sm hover:opacity-90 transition shadow-lg shadow-neonBlue/20"
+          >
+            <i class="fa-solid fa-globe mr-2"></i>Antivirus
+          </a>
+          
+        </div>
+      </div>
+
+      <div id="mobile-menu" class="hidden bg-spaceBg/95 backdrop-blur-xl">
+        <nav
+          class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3 grid grid-cols-2 gap-2 text-sm font-medium text-slate-300"
+        >
+          <a
+            href="EcoOrbit.html"
+            class="rounded-lg px-3 py-2 hover:bg-white/5 hover:text-neonBlue"
+            >Home</a
+          >
+          <a
+            href="About_Us.html"
+            target="_blank"
+            rel="noopener"
+            class="rounded-lg px-3 py-2 hover:bg-white/5 hover:text-neonBlue"
+            >About Us</a
+          >
+          <a
+            href="About_EcoOrbit.html"
+            target="_blank"
+            rel="noopener"
+            class="col-span-2 rounded-lg px-3 py-2 pl-6 text-xs text-slate-400 hover:bg-white/5 hover:text-neonBlue border-l border-white/10 ml-3"
+          >
+            <i class="fa-solid fa-satellite mr-2 text-neonBlue"></i>About
+            EcoOrbit
+          </a>
+          <a
+            href="EcoOrbit_Growths.html"
+            target="_blank"
+            rel="noopener"
+            class="col-span-2 rounded-lg px-3 py-2 pl-6 text-xs text-slate-400 hover:bg-white/5 hover:text-neonBlue border-l border-white/10 ml-3"
+          >
+            <i class="fa-solid fa-chart-line mr-2 text-neonBlue"></i>EcoOrbit
+            Growths
+          </a>
+          <a
+            href="EcoOrbit_Guidelines.html"
+            target="_blank"
+            rel="noopener"
+            class="col-span-2 rounded-lg px-3 py-2 pl-6 text-xs text-slate-400 hover:bg-white/5 hover:text-neonBlue border-l border-white/10 ml-3"
+          >
+            <i class="fa-solid fa-palette mr-2 text-neonBlue"></i>EcoOrbit
+            Guidelines
+          </a>
+          <a
+            href="Contact_Us.html"
+            target="_blank"
+            rel="noopener"
+            class="col-span-2 rounded-lg px-3 py-2 pl-6 text-xs text-slate-400 hover:bg-white/5 hover:text-neonBlue border-l border-white/10 ml-3"
+          >
+            <i class="fa-solid fa-envelope mr-2 text-neonBlue"></i>Contact Us
+          </a>
+          <a
+            href="EcoOrbit_FAQ.html"
+            target="_blank"
+            rel="noopener"
+            class="col-span-2 rounded-lg px-3 py-2 pl-6 text-xs text-slate-400 hover:bg-white/5 hover:text-neonBlue border-l border-white/10 ml-3"
+          >
+            <i class="fa-solid fa-circle-question mr-2 text-neonBlue"></i>FAQ
+          </a>
+          <a
+            href="Privacy_and_Safety.html"
+            target="_blank"
+            rel="noopener"
+            class="rounded-lg px-3 py-2 hover:bg-white/5 hover:text-neonBlue"
+            >Privacy & Safety</a
+          >
+          <a
+            href="FAQ_Help.html"
+            target="_blank"
+            rel="noopener"
+            class="col-span-2 rounded-lg px-3 py-2 pl-6 text-xs text-slate-400 hover:bg-white/5 hover:text-neonBlue border-l border-white/10 ml-3"
+          >
+            <i class="fa-solid fa-circle-question mr-2 text-neonBlue"></i>FAQ &
+            Help
+          </a>
+          <a
+            href="Our_Services.html"
+            target="_blank"
+            rel="noopener"
+            class="rounded-lg px-3 py-2 hover:bg-white/5 hover:text-neonBlue"
+            >Our Services</a
+          >
+          <a
+            href="The_Earth_Information_Jukebox.html"
+            target="_blank"
+            rel="noopener"
+            class="col-span-2 rounded-lg px-3 py-2 pl-6 text-xs text-slate-400 hover:bg-white/5 hover:text-neonBlue border-l border-white/10 ml-3"
+          >
+            <i class="fa-solid fa-music mr-2 text-neonBlue"></i>The Earth
+            Information Jukebox
+          </a>
+          <a
+            href="Aircraft_Live_Tracking.html"
+            target="_blank"
+            rel="noopener"
+            class="col-span-2 rounded-lg px-3 py-2 pl-6 text-xs text-slate-400 hover:bg-white/5 hover:text-neonBlue border-l border-white/10 ml-3"
+          >
+            <i class="fa-solid fa-plane-up mr-2 text-neonBlue"></i>Aircraft
+            Live Tracking
+          </a>
+          <a
+            href="Simulation_Game.html"
+            target="_blank"
+            rel="noopener"
+            class="col-span-2 rounded-lg px-3 py-2 pl-6 text-xs text-slate-400 hover:bg-white/5 hover:text-neonBlue border-l border-white/10 ml-3"
+          >
+            <i class="fa-solid fa-gamepad mr-2 text-neonBlue"></i>Simulation
+            Game
+          </a>
+          <a
+            href="Freelancer_Place.html"
+            target="_blank"
+            rel="noopener"
+            class="col-span-2 rounded-lg px-3 py-2 pl-6 text-xs text-slate-400 hover:bg-white/5 hover:text-neonBlue border-l border-white/10 ml-3"
+          >
+            <i class="fa-solid fa-store mr-2 text-neonBlue"></i>Freelancer Place
+          </a>
+          <a
+            href="Satellite_Marketplace.html"
+            target="_blank"
+            rel="noopener"
+            class="col-span-2 rounded-lg px-3 py-2 pl-6 text-xs text-slate-400 hover:bg-white/5 hover:text-neonBlue border-l border-white/10 ml-3"
+          >
+            <i class="fa-solid fa-satellite mr-2 text-neonBlue"></i>Satellite Marketplace
+          </a>
+          <a
+            href="EcoOrbit_AI_Earth_Guardian.html"
+            class="col-span-2 rounded-lg px-3 py-2 pl-6 text-xs text-slate-400 hover:bg-white/5 hover:text-neonBlue border-l border-white/10 ml-3"
+          >
+            <i class="fa-solid fa-earth-americas mr-2 text-neonBlue"></i>EcoOrbit AI — Earth Guardian
+          </a>
+          <a
+            href="EcoOrbit_SpaceGuard.html"
+            class="col-span-2 rounded-lg px-3 py-2 pl-6 text-xs text-slate-400 hover:bg-white/5 hover:text-neonBlue border-l border-white/10 ml-3"
+          >
+            <i class="fa-solid fa-satellite-dish mr-2 text-neonBlue"></i>EcoOrbit SpaceGuard
+          </a>
+          <a
+            href="EcoOrbit_GreenOrbit.html"
+            class="col-span-2 rounded-lg px-3 py-2 pl-6 text-xs text-slate-400 hover:bg-white/5 hover:text-neonBlue border-l border-white/10 ml-3"
+          >
+            <i class="fa-solid fa-tree mr-2 text-neonBlue"></i>GreenOrbit — Forest &amp; Biodiversity Watch
+          </a>
+          <a
+            href="EcoOrbit_DisasterLens.html"
+            class="col-span-2 rounded-lg px-3 py-2 pl-6 text-xs text-slate-400 hover:bg-white/5 hover:text-neonBlue border-l border-white/10 ml-3"
+          >
+            <i class="fa-solid fa-triangle-exclamation mr-2 text-neonBlue"></i>EcoOrbit DisasterLens
+          </a>
+          <a
+            href="EcoOrbit_SolarShield.html"
+            class="col-span-2 rounded-lg px-3 py-2 pl-6 text-xs text-slate-400 hover:bg-white/5 hover:text-neonBlue border-l border-white/10 ml-3"
+          >
+            <i class="fa-solid fa-sun mr-2 text-neonBlue"></i>SolarShield — Space Weather Watch
+          </a>
+          <a
+            href="EcoOrbit_Earth_Intelligence.html"
+            class="col-span-2 rounded-lg px-3 py-2 pl-6 text-xs text-slate-400 hover:bg-white/5 hover:text-neonBlue border-l border-white/10 ml-3"
+          >
+           <i class="fa-solid fa-globe mr-2 text-neonBlue"></i>EcoOrbit Earth Intelligence</a>
+          <a
+            href="EcoOrbit_Collision_Analysis.html"
+            class="col-span-2 rounded-lg px-3 py-2 pl-6 text-xs text-slate-400 hover:bg-white/5 hover:text-neonBlue border-l border-white/10 ml-3"
+          >
+            <i class="fa-solid fa-meteor mr-2 text-neonBlue"></i>EcoOrbit Collision Analysis
+          </a>
+          <a
+            href="EcoOrbit_FloodGuard_Bangladesh.html"
+            class="col-span-2 rounded-lg px-3 py-2 pl-6 text-xs text-slate-400 hover:bg-white/5 hover:text-neonBlue border-l border-white/10 ml-3"
+          >
+            <i class="fa-solid fa-water mr-2 text-neonBlue"></i>FloodGuard Bangladesh
+          </a>
+          <a
+            href="EcoOrbit_GreenWatch_Orbit.html"
+            class="col-span-2 rounded-lg px-3 py-2 pl-6 text-xs text-slate-400 hover:bg-white/5 hover:text-neonBlue border-l border-white/10 ml-3"
+          >
+            <i class="fa-solid fa-leaf mr-2 text-neonBlue"></i>GreenWatch Orbit
+          </a>
+          <a
+            href="VLZO_TV.html"
+            target="_blank"
+            rel="noopener"
+            class="rounded-lg px-3 py-2 hover:bg-white/5 hover:text-neonBlue"
+            >VLZO TV</a
+          >
+          <a
+            href="Test_Yourself.html"
+            target="_blank"
+            rel="noopener"
+            class="rounded-lg px-3 py-2 hover:bg-white/5 hover:text-neonBlue"
+            >Test Yourself</a
+          >
+          <a
+            href="Kids_Learning_Hub.html"
+            target="_blank"
+            rel="noopener"
+            class="col-span-2 rounded-lg px-3 py-2 pl-6 text-xs text-slate-400 hover:bg-white/5 hover:text-neonBlue border-l border-white/10 ml-3"
+          >
+            <i class="fa-solid fa-rocket mr-2 text-neonBlue"></i>Junior Space
+            Explorers Hub (Kids)
+          </a>
+          <a
+            href="https://ijisrt.com/assets/upload/hardcopy_form/1786574380.pdf"
+            target="_blank"
+            rel="noopener"
+            class="rounded-lg px-3 py-2 hover:bg-white/5 hover:text-neonBlue"
+            >Story</a
+          >
+          
+        </nav>
+      </div>
+    </header>
+<div class="hero">
+  <canvas id="orbit" aria-label="3D view of near-Earth asteroid orbits. Drag to rotate." role="img"></canvas>
+  <div class="hero-text"><div class="wrap">
+    <h1>Collision Analysis</h1>
+    <p>Track near-Earth asteroids, see where they pass, and read the orbit in 3D.</p>
+    <div class="chip" id="status"><i class="dot"></i><span>Connecting to NASA…</span></div>
+  </div></div>
+  <div class="hint">Drag to rotate · click a row below to follow an object</div>
+  <aside class="sel" id="sel" aria-live="polite"><h3>Loading orbits…</h3></aside>
+</div>
+<div class="stats">
+  <div><strong id="s1">–</strong><small>close approaches inside 20 lunar distances, next 90 days</small></div>
+  <div><strong id="s2">–</strong><small>closest pass, in lunar distances (1 LD = 384,400 km)</small></div>
+  <div><strong id="s3">–</strong><small>fastest flyby in the list, km/s</small></div>
+  <div><strong id="s4">–</strong><small>objects on NASA’s Sentry impact-risk list</small></div>
+</div>
+
+<main class="wrap">
+<section id="approaches">
+  <h2>Upcoming close approaches</h2>
+  <p class="lede">Pulled live from the CNEOS close-approach database. Size is an estimate from absolute magnitude (H) assuming a typical 14% albedo. <span class="tag v">Verified NASA data</span></p>
+  <div class="scroll"><table>
+    <thead><tr><th>Object</th><th>Closest approach (UTC)</th><th>Miss distance</th><th></th><th>Speed</th><th>Est. size</th></tr></thead>
+    <tbody id="rows"><tr><td colspan="6">Loading…</td></tr></tbody>
+  </table></div>
+</section>
+
+<section id="impact" class="two">
+  <div>
+    <h2>Impact watch</h2>
+    <p class="lede">Objects with a non-zero chance of hitting Earth in the coming century, ranked by cumulative impact probability. <span class="tag v">Verified · Sentry</span></p>
+    <ul class="list" id="sentry"><li>Loading…</li></ul>
+  </div>
+  <div>
+    <h2>Recent fireballs</h2>
+    <p class="lede">Bright meteors already detected by US government sensors, with the energy they released. <span class="tag v">Verified · CNEOS</span></p>
+    <ul class="list" id="fire"><li>Loading…</li></ul>
+  </div>
+</section>
+
+<section id="sim">
+  <h2>Scenario simulator</h2>
+  <p class="lede">Change the size, speed, and rock type of a hypothetical asteroid to see the energy released on impact. <span class="tag s">Simulated scenario</span> Nothing here is a prediction about a real object.</p>
+  <div class="sim">
+    <div>
+      <label>Diameter <b id="vd">50 m</b><input id="d" type="range" min="10" max="1000" value="50"></label>
+      <label>Impact speed <b id="vv">20 km/s</b><input id="v" type="range" min="11" max="72" value="20"></label>
+      <label>Material <b id="vr">Stony</b><input id="r" type="range" min="1" max="3" step="1" value="2"></label>
+    </div>
+    <div class="out">
+      <strong id="mt">–</strong>
+      <p id="cmp"></p>
+    </div>
+  </div>
+</section>
+
+<section id="services">
+  <h2>What we offer</h2>
+  <p class="lede">Everything above, packaged for schools, researchers, newsrooms, and curious people.</p>
+  <div class="svc">
+    <div><h3>Approach watchlist</h3><p>A live, filterable list of upcoming flybys with distance, speed, and size, refreshed from NASA each time you open it.</p><span class="tag v">NASA data</span></div>
+    <div><h3>3D orbit viewer</h3><p>Each asteroid’s real orbit drawn against Earth’s, built from JPL Small-Body Database elements and placed at today’s position.</p><span class="tag v">NASA data</span></div>
+    <div><h3>Impact-risk briefings</h3><p>Plain-language summaries of Sentry-listed objects: what the numbers mean and what they don’t.</p><span class="tag v">NASA data</span></div>
+    <div><h3>Scenario lab</h3><p>Adjustable what-if impacts for classrooms and exhibits, always labelled as simulated and kept apart from observed data.</p><span class="tag s">Simulated</span></div>
+  </div>
+</section>
+</main>
+
+<footer><div class="wrap"><a class="back" href="EcoOrbit.html" style="color:var(--sun)">&larr; Back to EcoOrbit</a><br>
+  Data: <a href="https://ssd-api.jpl.nasa.gov/doc/cad.html">CNEOS Close Approach</a>, <a href="https://ssd-api.jpl.nasa.gov/doc/sbdb.html">JPL Small-Body Database</a>, <a href="https://ssd-api.jpl.nasa.gov/doc/sentry.html">Sentry</a>, <a href="https://ssd-api.jpl.nasa.gov/doc/fireball.html">Fireball</a>. NASA does not endorse EcoOrbit. Not an official hazard warning.
+</div></footer>
+
+<script>
+(function(){var b=document.getElementById("mobile-menu-button"),m=document.getElementById("mobile-menu");if(b&&m)b.addEventListener("click",function(){var h=m.classList.toggle("hidden");b.setAttribute("aria-expanded",String(!h))})})();
+</script>
+<script>
+const $=s=>document.querySelector(s), esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const API='https://ssd-api.jpl.nasa.gov/', LD=0.00256955, RAD=Math.PI/180, JD=Date.now()/864e5+2440587.5, COL=['#ffd23f','#5fe0c4','#ff8a5c','#c39bff','#7fb8ff','#ff7fb0','#b6e36a','#ffffff'];
+let objs=[], sel=0, yaw=.5, pitch=1.1, drag=null, idle=true;
+
+/* ---------- orbit math ---------- */
+function kepler(M,e){let E=M;for(let i=0;i<8;i++)E=M+e*Math.sin(E);return E}
+function point(o,E){
+  const x=o.a*(Math.cos(E)-o.e), y=o.a*Math.sqrt(1-o.e*o.e)*Math.sin(E);
+  const cw=Math.cos(o.w*RAD),sw=Math.sin(o.w*RAD),co=Math.cos(o.om*RAD),so=Math.sin(o.om*RAD),ci=Math.cos(o.i*RAD),si=Math.sin(o.i*RAD);
+  return [x*(cw*co-sw*so*ci)-y*(sw*co+cw*so*ci), x*(cw*so+sw*co*ci)-y*(sw*so-cw*co*ci), x*sw*si+y*cw*si];
+}
+function now(o){let M=((o.M+o.n*(JD-o.epoch))%360)*RAD;return point(o,kepler(M,o.e))}
+const earth={name:'Earth',a:1.0000,e:.0167,i:0,om:0,w:102.94,M:(100.46-102.94)+0.98564736*(JD-2451545),n:0,epoch:JD,color:'#5fb4ff'};
+earth.M=((100.46+0.98564736*(JD-2451545))-102.94);
+
+/* ---------- drawing ---------- */
+const cv=$('#orbit'),ctx=cv.getContext('2d');
+function size(){const r=cv.getBoundingClientRect(),d=devicePixelRatio||1;cv.width=r.width*d;cv.height=r.height*d;ctx.setTransform(d,0,0,d,0,0)}
+function proj(p,W,H,s){
+  const cy=Math.cos(yaw),sy=Math.sin(yaw),cp=Math.cos(pitch),sp=Math.sin(pitch);
+  const x1=p[0]*cy-p[1]*sy, y1=p[0]*sy+p[1]*cy, z2=y1*sp+p[2]*cp;
+  return [W*(innerWidth>860?.62:.5)+x1*s, H*(innerWidth>860?.55:.5)-z2*s];
+}
+function draw(){
+  const r=cv.getBoundingClientRect(),W=r.width,H=r.height;
+  ctx.clearRect(0,0,W,H);
+  const far=Math.min(4,Math.max(1.8,...objs.map(o=>o.a*(1+o.e))));
+  const s=Math.min(W*(innerWidth>860?.38:.45),H*.45)/far;
+  ctx.lineWidth=1;
+  for(const R of [.5,1,1.5,2,3,4]){ if(R>far+.3)continue;
+    ctx.beginPath();for(let t=0;t<=64;t++){const q=proj([R*Math.cos(t/64*6.2832),R*Math.sin(t/64*6.2832),0],W,H,s);t?ctx.lineTo(...q):ctx.moveTo(...q)}
+    ctx.strokeStyle='#e6f4f822';ctx.stroke()}
+  [earth,...objs].forEach((o,k)=>{
+    const on=k===0||k-1===sel;
+    ctx.beginPath();for(let t=0;t<=140;t++){const q=proj(point(o,t/140*6.2832),W,H,s);t?ctx.lineTo(...q):ctx.moveTo(...q)}
+    ctx.strokeStyle=o.color+(on?'ff':'55');ctx.lineWidth=on?2:1;ctx.stroke();
+    const p=proj(k?now(o):point(o,kepler(earth.M*RAD,o.e)),W,H,s);
+    ctx.beginPath();ctx.arc(p[0],p[1],k===0?6:on?5:3,0,6.2832);ctx.fillStyle=o.color;ctx.fill();
+    if(on){ctx.fillStyle='#e6f4f8';ctx.font='14px Hanken Grotesk,sans-serif';ctx.fillText(o.name,p[0]+10,p[1]-8)}
+  });
+  const c=proj([0,0,0],W,H,s);ctx.beginPath();ctx.arc(c[0],c[1],7,0,6.2832);ctx.fillStyle='#ffd23f';ctx.shadowColor='#ffd23f';ctx.shadowBlur=22;ctx.fill();ctx.shadowBlur=0;
+}
+const calm=matchMedia('(prefers-reduced-motion:reduce)').matches;
+(function loop(){if(idle&&!calm)yaw+=.0018;draw();requestAnimationFrame(loop)})();
+cv.addEventListener('pointerdown',e=>{drag=[e.clientX,e.clientY];idle=false;cv.setPointerCapture(e.pointerId)});
+cv.addEventListener('pointermove',e=>{if(!drag)return;yaw+=(e.clientX-drag[0])*.008;pitch=Math.max(.15,Math.min(1.5,pitch-(e.clientY-drag[1])*.006));drag=[e.clientX,e.clientY]});
+cv.addEventListener('pointerup',()=>drag=null);
+addEventListener('resize',size);size();
+
+/* ---------- selection panel ---------- */
+function showSel(){
+  const o=objs[sel];if(!o){return}
+  $('#sel').innerHTML=`<h3>${esc(o.name)}</h3><span class="tag ${o.offline?'s':'v'}">${o.offline?'Reference elements (offline)':'JPL orbit solution'}</span>
+  <dl><dt>Orbit size</dt><dd>${o.a.toFixed(3)} au</dd><dt>Shape (e)</dt><dd>${o.e.toFixed(3)}</dd><dt>Tilt</dt><dd>${o.i.toFixed(1)}°</dd>
+  <dt>Closest to Sun</dt><dd>${(o.a*(1-o.e)).toFixed(3)} au</dd><dt>Farthest</dt><dd>${(o.a*(1+o.e)).toFixed(3)} au</dd></dl>`;
+  document.querySelectorAll('#rows tr').forEach(r=>r.classList.toggle('on',r.dataset.k==o.k));
+}
+function setStatus(live,msg){const s=$('#status');s.className='chip '+(live?'live':'offline');s.querySelector('span').textContent=msg}
+
+/* ---------- data ---------- */
+const get=async u=>{const r=await fetch(API+u);if(!r.ok)throw 0;return r.json()};
+const rowsOf=j=>j.data.map(d=>Object.fromEntries(j.fields.map((f,i)=>[f,d[i]])));
+const FALLBACK=[
+ {name:'99942 Apophis',a:.9224,e:.1914,i:3.34,om:203.9,w:126.7,M:0,n:1.1119,epoch:JD},
+ {name:'101955 Bennu',a:1.1264,e:.2037,i:6.03,om:2.06,w:66.2,M:0,n:.8244,epoch:JD},
+ {name:'65803 Didymos',a:1.6444,e:.3837,i:3.41,om:73.2,w:319.3,M:0,n:.5178,epoch:JD},
+ {name:'162173 Ryugu',a:1.1896,e:.1903,i:5.88,om:251.6,w:211.4,M:0,n:.7536,epoch:JD}
+].map((o,k)=>({...o,color:COL[k],offline:true}));
+
+async function loadOrbit(des,k){
+  const j=await get('sbdb.api?sstr='+encodeURIComponent(des)+'&phys-par=0');
+  const el={};j.orbit.elements.forEach(x=>el[x.name]=parseFloat(x.value));
+  return {name:j.object.fullname.trim(),a:el.a,e:el.e,i:el.i,om:el.om,w:el.w,M:el.ma,n:el.n,epoch:parseFloat(j.orbit.epoch),color:COL[k%8]};
+}
+async function approaches(){
+  const j=await get('cad.api?dist-max=20LD&date-min=now&date-max=%2B90&sort=dist&limit=10&diameter=false');
+  const rows=rowsOf(j);
+  const maxD=Math.max(...rows.map(r=>+r.dist/LD));
+  $('#rows').innerHTML=rows.map((r,k)=>{const ld=r.dist/LD,km=r.dist*149597871,D=1329/Math.sqrt(.14)*Math.pow(10,-r.h/5)*1000;
+    return `<tr data-k="${k}" tabindex="0"><td><b>${esc(r.des)}</b></td><td>${esc(r.cd)}</td><td>${ld.toFixed(1)} LD <small style="color:var(--mute)">(${Math.round(km/1000)*1000>=1e6?(km/1e6).toFixed(2)+' M km':Math.round(km/1000)+' k km'})</small></td><td style="width:90px"><i class="bar" style="width:${Math.max(6,ld/maxD*100)}%"></i></td><td>${(+r.v_rel).toFixed(1)} km/s</td><td>~${D<1000?Math.round(D)+' m':(D/1000).toFixed(1)+' km'}</td></tr>`}).join('');
+  $('#rows').querySelectorAll('tr').forEach(tr=>{const go=()=>{const i=objs.findIndex(o=>o.k===+tr.dataset.k);if(i<0)return;sel=i;idle=false;showSel();$('#orbit').scrollIntoView({behavior:'smooth',block:'center'})};tr.onclick=go;tr.onkeydown=e=>e.key==='Enter'&&go()});
+  $('#s1').textContent=j.count||rows.length;
+  $('#s2').textContent=(Math.min(...rows.map(r=>r.dist/LD))).toFixed(1);
+  $('#s3').textContent=Math.max(...rows.map(r=>+r.v_rel)).toFixed(1);
+  const res=await Promise.allSettled(rows.map((r,k)=>loadOrbit(r.des,k)));
+  objs=res.map((x,k)=>x.status==='fulfilled'?Object.assign(x.value,{k,color:COL[k%8]}):null).filter(Boolean);
+  // keep table index aligned with orbit list
+  if(objs.length){ sel=0; setStatus(true,'Live NASA/JPL data · '+new Date().toUTCString().slice(5,22)+' UTC'); showSel() }
+  else throw 0;
+}
+async function sentry(){
+  const j=await get('sentry.api'),all=j.data;
+  $('#s4').textContent=all.length;
+  const top=all.slice().sort((a,b)=>parseFloat(b.ip)-parseFloat(a.ip)).slice(0,6);
+  $('#sentry').innerHTML=top.map(o=>{const ip=parseFloat(o.ip);return `<li><b>${esc(o.des)}</b><span>Possible impacts ${esc(o.range)} · ${(parseFloat(o.diameter)*1000).toFixed(0)} m wide · Torino ${esc(o.ts_max)}</span><em>1 in ${Math.round(1/ip).toLocaleString()}</em></li>`}).join('');
+}
+async function fire(){
+  const rows=rowsOf(await get('fireball.api?limit=7'));
+  $('#fire').innerHTML=rows.map(r=>`<li><b>${esc(r.date.slice(0,10))}</b><span>${r.lat?Math.abs(r.lat)+'°'+r['lat-dir']+', '+Math.abs(r.lon)+'°'+r['lon-dir']:'Location not reported'}${r.alt?' · '+r.alt+' km altitude':''}${r.vel?' · '+r.vel+' km/s':''}</span><em>${esc(r['impact-e'])} kt</em></li>`).join('');
+}
+const fail=(sel_,t)=>{$(sel_).innerHTML=`<li><b>${t}</b><span>NASA’s service didn’t respond. Refresh to try again.</span></li>`};
+approaches().catch(()=>{objs=FALLBACK;showSel();setStatus(false,'Offline · showing simulated reference orbits');$('#rows').innerHTML='<tr><td colspan="6">Couldn’t reach NASA’s close-approach service. Refresh to try again.</td></tr>'});
+sentry().catch(()=>fail('#sentry','Sentry list unavailable'));
+fire().catch(()=>fail('#fire','Fireball data unavailable'));
+
+/* ---------- simulator (simulated) ---------- */
+const MAT=['Icy',' Stony','Iron'].map(s=>s.trim()),RHO=[900,2700,7800];
+function sim(){
+  const d=+$('#d').value,v=+$('#v').value,k=+$('#r').value-1;
+  $('#vd').textContent=d+' m';$('#vv').textContent=v+' km/s';$('#vr').textContent=MAT[k];
+  const m=RHO[k]*Math.PI/6*d**3,E=.5*m*(v*1000)**2,mt=E/4.184e15;
+  $('#mt').textContent=(mt<10?mt.toFixed(2):Math.round(mt).toLocaleString())+' Mt';
+  const ch=mt/.5;
+  $('#cmp').textContent=`TNT-equivalent energy if it reached the ground at full speed (most small rocks break up first). That’s about ${ch<1?(ch*100).toFixed(0)+'%':ch<100?ch.toFixed(1)+'×':Math.round(ch).toLocaleString()+'×'} the 2013 Chelyabinsk airburst (~0.5 Mt). Simulated scenario.`;
+}
+['d','v','r'].forEach(i=>$('#'+i).addEventListener('input',sim));sim();
+</script>
+</body>
+</html>

@@ -1,0 +1,1094 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>AgroOrbit: satellite crop intelligence for farmers | EcoOrbit</title>
+    <meta
+      name="description"
+      content="AgroOrbit reads satellite images with AI and tells farmers where a field needs water, drainage or a closer look. Part of EcoOrbit."
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+    <style>
+      /*
+        Design tokens
+        bg #030712 / card #0b1329 : the EcoOrbit space palette, so this page feels like the same site
+        leaf #10b981              : AgroOrbit's own colour (EcoOrbit's emerald)
+        orbit #00f2fe             : satellite / scan accents, used sparingly
+        sand #e0a526, rose #f43f5e: warning and risk, only where the data says so
+      */
+      :root {
+        --bg: #030712;
+        --card: #0b1329;
+        --ink: #f3f4f6;
+        --body: #cbd5e1;
+        --mute: #94a3b8;
+        --line: rgba(255, 255, 255, 0.09);
+        --leaf: #10b981;
+        --leaf-soft: rgba(16, 185, 129, 0.14);
+        --orbit: #00f2fe;
+        --sand: #e0a526;
+        --rose: #f43f5e;
+        --wrap: 1180px;
+      }
+      * { box-sizing: border-box; }
+      html { scroll-behavior: smooth; scroll-padding-top: 84px; }
+      body {
+        margin: 0;
+        font-family: "Inter", system-ui, sans-serif;
+        font-size: 16px;
+        line-height: 1.65;
+        color: var(--body);
+        background: var(--bg);
+        overflow-x: hidden;
+      }
+      a { color: inherit; }
+      h1, h2, h3, h4 { color: var(--ink); margin: 0; }
+      p { margin: 0; }
+      .wrap { max-width: var(--wrap); margin: 0 auto; padding: 0 24px; }
+      :focus-visible { outline: 2px solid var(--orbit); outline-offset: 3px; border-radius: 6px; }
+      ::-webkit-scrollbar { width: 8px; }
+      ::-webkit-scrollbar-track { background: var(--bg); }
+      ::-webkit-scrollbar-thumb { background: #1e293b; border-radius: 4px; }
+
+      /* ---------- header ---------- */
+      .site-head {
+        position: sticky;
+        top: 0;
+        z-index: 50;
+        background: rgba(3, 7, 18, 0.82);
+        backdrop-filter: blur(14px);
+        -webkit-backdrop-filter: blur(14px);
+        border-bottom: 1px solid var(--line);
+      }
+      .head-in { display: flex; align-items: center; gap: 28px; height: 64px; }
+      .brand {
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+        text-decoration: none;
+        font-weight: 800;
+        font-size: 19px;
+        letter-spacing: -0.02em;
+        color: var(--ink);
+      }
+      .brand-mark {
+        display: grid;
+        place-items: center;
+        width: 32px;
+        height: 32px;
+        border-radius: 10px;
+        font-size: 15px;
+        color: #03120d;
+        background: linear-gradient(135deg, var(--leaf), var(--orbit));
+      }
+      .head-nav { display: flex; gap: 22px; margin-left: 8px; font-size: 14px; font-weight: 500; }
+      .head-nav a { text-decoration: none; color: var(--mute); transition: color 0.2s; }
+      .head-nav a:hover { color: var(--leaf); }
+      .head-back {
+        margin-left: auto;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 8px 14px;
+        border-radius: 10px;
+        font-size: 13px;
+        font-weight: 600;
+        text-decoration: none;
+        color: var(--ink);
+        border: 1px solid var(--line);
+        transition: border-color 0.2s, color 0.2s;
+      }
+      .head-back:hover { color: var(--orbit); border-color: rgba(0, 242, 254, 0.5); }
+      @media (max-width: 860px) { .head-nav { display: none; } }
+
+      /* ---------- hero ---------- */
+      .hero {
+        position: relative;
+        padding: 56px 0 80px;
+        background:
+          radial-gradient(60% 50% at 85% 10%, rgba(16, 185, 129, 0.13), transparent 70%),
+          radial-gradient(40% 40% at 0% 0%, rgba(0, 242, 254, 0.06), transparent 70%);
+      }
+      .hero-grid {
+        display: grid;
+        grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
+        gap: 48px;
+        align-items: center;
+      }
+      @media (max-width: 980px) { .hero-grid { grid-template-columns: 1fr; gap: 36px; } }
+      .hero h1 {
+        font-size: clamp(2.5rem, 5.2vw, 4.1rem);
+        font-weight: 800;
+        line-height: 1.03;
+        letter-spacing: -0.04em;
+      }
+      .hero .lede { margin-top: 20px; font-size: 18px; max-width: 46ch; color: var(--body); }
+      .hero-cta { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 30px; }
+      .btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 9px;
+        padding: 12px 20px;
+        border-radius: 12px;
+        font-size: 14px;
+        font-weight: 700;
+        text-decoration: none;
+        cursor: pointer;
+        border: 1px solid transparent;
+        transition: transform 0.15s, box-shadow 0.2s, border-color 0.2s, color 0.2s;
+      }
+      .btn-primary {
+        color: #03120d;
+        background: linear-gradient(90deg, var(--leaf), var(--orbit));
+        box-shadow: 0 8px 28px rgba(16, 185, 129, 0.25);
+      }
+      .btn-primary:hover { box-shadow: 0 8px 36px rgba(16, 185, 129, 0.45); transform: translateY(-1px); }
+      .btn-ghost { color: var(--ink); border-color: var(--line); background: rgba(255, 255, 255, 0.03); }
+      .btn-ghost:hover { color: var(--orbit); border-color: rgba(0, 242, 254, 0.5); }
+      .hero-note { margin-top: 22px; font-size: 13px; color: var(--mute); max-width: 50ch; }
+
+      /* the field scanner */
+      .scanner {
+        padding: 16px;
+        border-radius: 20px;
+        background: rgba(11, 19, 41, 0.72);
+        border: 1px solid var(--line);
+        box-shadow: 0 0 60px rgba(16, 185, 129, 0.08), 0 24px 60px rgba(0, 0, 0, 0.45);
+      }
+      .sc-head { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 10px; margin-bottom: 12px; }
+      .sc-title { font-size: 14px; font-weight: 700; color: var(--ink); }
+      .sc-title small { display: block; font-size: 12px; font-weight: 400; color: var(--mute); }
+      .seg { display: inline-flex; padding: 3px; border-radius: 11px; background: rgba(3, 7, 18, 0.7); border: 1px solid var(--line); }
+      .seg button {
+        padding: 6px 12px;
+        border: 0;
+        border-radius: 8px;
+        font: 600 12px "Inter", sans-serif;
+        color: var(--mute);
+        background: transparent;
+        cursor: pointer;
+        transition: color 0.2s, background 0.2s;
+      }
+      .seg button:hover { color: var(--ink); }
+      .seg button[aria-selected="true"] { color: #03120d; background: var(--leaf); }
+      .sc-stage { position: relative; border-radius: 12px; overflow: hidden; background: #070e20; border: 1px solid var(--line); }
+      #field { display: block; width: 100%; aspect-ratio: 18 / 11; cursor: crosshair; touch-action: none; }
+      .sc-legend { display: flex; align-items: center; gap: 10px; margin-top: 12px; font-size: 11.5px; color: var(--mute); }
+      .sc-legend .bar { flex: 1; height: 8px; border-radius: 99px; }
+      .sc-read {
+        display: grid;
+        grid-template-columns: 1.2fr 1fr 1fr;
+        gap: 14px 18px;
+        margin-top: 14px;
+        padding-top: 14px;
+        border-top: 1px solid var(--line);
+      }
+      @media (max-width: 560px) { .sc-read { grid-template-columns: 1fr 1fr; } }
+      .sc-read dt { font-size: 11.5px; color: var(--mute); }
+      .sc-read dd { margin: 2px 0 0; font-size: 14px; font-weight: 600; color: var(--ink); }
+      .sc-read .span { grid-column: 1 / -1; }
+      .chip { display: inline-block; padding: 2px 10px; border-radius: 99px; font-size: 12px; font-weight: 700; }
+      .chip.ok { color: #6ee7b7; background: rgba(16, 185, 129, 0.16); }
+      .chip.dry { color: #fbbf24; background: rgba(224, 165, 38, 0.16); }
+      .chip.wet { color: #67e8f9; background: rgba(0, 242, 254, 0.14); }
+      .chip.stress { color: #fda4af; background: rgba(244, 63, 94, 0.16); }
+      #ro-advice { font-weight: 400; color: var(--body); font-size: 14px; line-height: 1.55; }
+
+      /* ---------- generic sections ---------- */
+      section.block { padding: 88px 0; border-top: 1px solid var(--line); }
+      .sec-head { max-width: 62ch; margin-bottom: 44px; }
+      .sec-head h2 { font-size: clamp(1.8rem, 3.4vw, 2.7rem); font-weight: 800; line-height: 1.1; letter-spacing: -0.03em; }
+      .sec-head p { margin-top: 14px; font-size: 17px; }
+
+      /* overview */
+      .split { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 56px; }
+      @media (max-width: 900px) { .split { grid-template-columns: 1fr; gap: 36px; } }
+      .split .copy p + p { margin-top: 16px; }
+      .users { margin: 0; }
+      .users > div { padding: 16px 0; border-top: 1px solid var(--line); }
+      .users > div:last-child { border-bottom: 1px solid var(--line); }
+      .users dt { font-weight: 700; color: var(--ink); }
+      .users dd { margin: 2px 0 0; font-size: 15px; color: var(--mute); }
+
+      /* how it works: a real sequence, so numbered */
+      .steps { list-style: none; margin: 0; padding: 0; max-width: 760px; }
+      .steps li { display: grid; grid-template-columns: 52px minmax(0, 1fr); gap: 18px; padding-bottom: 36px; position: relative; }
+      .steps li:last-child { padding-bottom: 0; }
+      .steps li::before { content: ""; position: absolute; left: 25px; top: 52px; bottom: 6px; width: 2px; background: linear-gradient(var(--leaf), transparent); opacity: 0.45; }
+      .steps li:last-child::before { display: none; }
+      .step-n {
+        display: grid;
+        place-items: center;
+        width: 52px;
+        height: 52px;
+        border-radius: 50%;
+        font-weight: 800;
+        font-size: 18px;
+        color: var(--leaf);
+        background: var(--leaf-soft);
+        border: 1px solid rgba(16, 185, 129, 0.4);
+      }
+      .steps h3 { font-size: 20px; font-weight: 700; letter-spacing: -0.015em; margin-top: 4px; }
+      .steps p { margin-top: 6px; max-width: 58ch; }
+      .steps .get { margin-top: 10px; font-size: 14px; color: var(--mute); }
+      .steps .get b { color: #6ee7b7; font-weight: 600; }
+
+      /* features */
+      .features { display: grid; grid-template-columns: 1fr 1fr; column-gap: 56px; }
+      @media (max-width: 800px) { .features { grid-template-columns: 1fr; } }
+      .feat { display: grid; grid-template-columns: 40px minmax(0, 1fr); gap: 16px; padding: 26px 0; border-top: 1px solid var(--line); }
+      .feat i { margin-top: 3px; font-size: 20px; color: var(--leaf); }
+      .feat h3 { font-size: 18px; font-weight: 700; letter-spacing: -0.01em; }
+      .feat p { margin-top: 6px; font-size: 15px; color: var(--mute); max-width: 52ch; }
+
+      /* bangladesh */
+      .bd-grid { display: grid; grid-template-columns: minmax(0, 7fr) minmax(0, 5fr); gap: 48px; align-items: start; }
+      @media (max-width: 900px) { .bd-grid { grid-template-columns: 1fr; } }
+      .season { margin-top: 18px; padding: 22px; border-radius: 16px; background: rgba(11, 19, 41, 0.7); border: 1px solid var(--line); }
+      .months { display: grid; grid-template-columns: repeat(12, 1fr); gap: 4px; margin-bottom: 18px; }
+      .months span { text-align: center; padding: 6px 0; border-radius: 6px; font-size: 11px; font-weight: 700; color: #475569; background: rgba(255, 255, 255, 0.04); }
+      .months span.on { color: #03120d; background: var(--leaf); }
+      .season dl { margin: 0; }
+      .season dt { font-size: 12.5px; color: var(--mute); }
+      .season dd { margin: 2px 0 14px; color: var(--ink); }
+      .season dd:last-child { margin-bottom: 0; }
+      .season ul { margin: 4px 0 0; padding-left: 18px; color: var(--body); font-size: 15px; }
+      .season li + li { margin-top: 4px; }
+      .places h3 { font-size: 18px; font-weight: 700; margin-bottom: 4px; }
+      .places > div { padding: 14px 0; border-top: 1px solid var(--line); }
+      .places > div:last-child { border-bottom: 1px solid var(--line); }
+      .places b { color: var(--ink); }
+      .places span { display: block; font-size: 14.5px; color: var(--mute); }
+
+      /* carbon */
+      .carbon { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 56px; align-items: center; }
+      @media (max-width: 900px) { .carbon { grid-template-columns: 1fr; gap: 36px; } }
+      .carbon .copy p + p { margin-top: 16px; }
+      .est { padding: 24px; border-radius: 18px; background: rgba(11, 19, 41, 0.78); border: 1px solid rgba(16, 185, 129, 0.3); }
+      .est label { display: block; font-size: 13px; font-weight: 600; color: var(--ink); }
+      .est .row { margin-top: 8px; display: flex; align-items: center; gap: 14px; }
+      .est output { min-width: 78px; text-align: right; font-weight: 700; color: var(--leaf); }
+      .est input[type="range"] { flex: 1; accent-color: var(--leaf); height: 28px; }
+      .est .field + .field { margin-top: 18px; }
+      .est .result { margin-top: 22px; padding-top: 20px; border-top: 1px solid var(--line); }
+      .est .result small { display: block; color: var(--mute); font-size: 13px; }
+      .est .big { margin-top: 2px; font-size: 32px; font-weight: 800; letter-spacing: -0.03em; color: var(--ink); line-height: 1.15; }
+      .est .big span { font-size: 16px; font-weight: 600; color: var(--mute); letter-spacing: 0; }
+      .est .fine { margin-top: 12px; font-size: 12.5px; color: var(--mute); line-height: 1.5; }
+
+      /* data table */
+      .table-wrap { overflow-x: auto; border-radius: 14px; border: 1px solid var(--line); }
+      table { width: 100%; border-collapse: collapse; min-width: 640px; font-size: 15px; }
+      th, td { text-align: left; padding: 16px 18px; vertical-align: top; border-bottom: 1px solid var(--line); }
+      tr:last-child td { border-bottom: 0; }
+      th { font-size: 12.5px; font-weight: 600; color: var(--mute); background: rgba(11, 19, 41, 0.8); }
+      td:first-child { font-weight: 700; color: var(--ink); white-space: nowrap; }
+      td { color: var(--body); }
+
+      /* faq */
+      .faq { max-width: 780px; }
+      .faq details { border-top: 1px solid var(--line); }
+      .faq details:last-child { border-bottom: 1px solid var(--line); }
+      .faq summary {
+        display: flex;
+        justify-content: space-between;
+        gap: 16px;
+        padding: 20px 0;
+        cursor: pointer;
+        font-weight: 600;
+        font-size: 17px;
+        color: var(--ink);
+        list-style: none;
+      }
+      .faq summary::-webkit-details-marker { display: none; }
+      .faq summary::after { content: "+"; font-size: 22px; line-height: 1; color: var(--leaf); transition: transform 0.2s; }
+      .faq details[open] summary::after { transform: rotate(45deg); }
+      .faq details p { padding: 0 0 22px; max-width: 64ch; color: var(--mute); }
+
+      /* closing band */
+      .closer { padding: 88px 0; border-top: 1px solid var(--line); text-align: center; background: radial-gradient(50% 80% at 50% 100%, rgba(16, 185, 129, 0.14), transparent 70%); }
+      .closer h2 { font-size: clamp(1.8rem, 3.6vw, 2.8rem); font-weight: 800; letter-spacing: -0.03em; line-height: 1.1; }
+      .closer p { margin: 14px auto 0; max-width: 52ch; }
+      .closer .hero-cta { justify-content: center; }
+      footer { padding: 28px 0 40px; border-top: 1px solid var(--line); font-size: 13px; color: var(--mute); }
+      footer .wrap { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 10px 24px; }
+
+      @media (prefers-reduced-motion: reduce) {
+        html { scroll-behavior: auto; }
+        .btn, .faq summary::after { transition: none; }
+      }
+    </style>
+  </head>
+
+  <body>
+    <header class="site-head">
+      <div class="wrap head-in">
+        <img style="width: 57px;" src="/images/AgroOrbit.jpg" alt="">
+        <nav class="head-nav" aria-label="Page sections">
+          <a href="#overview">Overview</a>
+          <a href="#how">How it works</a>
+          <a href="#features">Features</a>
+          <a href="#bangladesh">Bangladesh</a>
+          <a href="#carbon">Carbon farming</a>
+          <a href="#data">Data</a>
+          <a href="#faq">FAQ</a>
+        </nav>
+        <a class="head-back" href="EcoOrbit.html#simulator">
+          <i class="fa-solid fa-earth-asia" aria-hidden="true"></i>
+          Back to EcoOrbit
+        </a>
+      </div>
+    </header>
+
+    <main id="top">
+      <!-- ============ HERO ============ -->
+      <section class="hero">
+        <div class="wrap hero-grid">
+          <div>
+            <h1>Every field, read from orbit.</h1>
+            <p class="lede">
+              AgroOrbit turns satellite images into plain advice for farmers:
+              which corner of the field is thirsty, where water is standing,
+              and what to check before the crop is lost.
+            </p>
+            <div class="hero-cta">
+              <a class="btn btn-primary" href="#how">
+                <i class="fa-solid fa-satellite" aria-hidden="true"></i>See how it works
+              </a>
+              <a class="btn btn-ghost" href="EcoOrbit.html#simulator">
+                <i class="fa-solid fa-globe" aria-hidden="true"></i>Open the orbit globe
+              </a>
+            </div>
+            <p class="hero-note">
+              The scanner on this page uses sample data. Move over a plot, or
+              tap it, to read what AgroOrbit would tell the farmer.
+            </p>
+          </div>
+
+          <div class="scanner" aria-label="Field scanner demo">
+            <div class="sc-head">
+              <div class="sc-title">
+                Sample farm, 4 plots
+                <small>Boro rice season, one satellite pass</small>
+              </div>
+              <div class="seg" role="tablist" aria-label="Map layer">
+                <button role="tab" aria-selected="true" data-layer="health">Crop health</button>
+                <button role="tab" aria-selected="false" data-layer="moisture">Soil moisture</button>
+                <button role="tab" aria-selected="false" data-layer="risk">Risk</button>
+              </div>
+            </div>
+
+            <div class="sc-stage">
+              <canvas
+                id="field"
+                tabindex="0"
+                role="img"
+                aria-label="Satellite map of a sample farm. Use arrow keys to move between plots."
+              ></canvas>
+            </div>
+
+            <div class="sc-legend">
+              <span id="lg-lo">Weak growth</span>
+              <span class="bar" id="lg-bar"></span>
+              <span id="lg-hi">Strong growth</span>
+            </div>
+
+            <dl class="sc-read" aria-live="polite">
+              <div>
+                <dt>Plot</dt>
+                <dd id="ro-parcel">-</dd>
+              </div>
+              <div>
+                <dt>Crop health index</dt>
+                <dd id="ro-h">-</dd>
+              </div>
+              <div>
+                <dt>Soil moisture</dt>
+                <dd id="ro-m">-</dd>
+              </div>
+              <div>
+                <dt>Crop and stage</dt>
+                <dd id="ro-crop">-</dd>
+              </div>
+              <div>
+                <dt>Status</dt>
+                <dd id="ro-status">-</dd>
+              </div>
+              <div class="span">
+                <dt>What to do</dt>
+                <dd id="ro-advice">-</dd>
+              </div>
+            </dl>
+          </div>
+        </div>
+      </section>
+
+      <!-- ============ OVERVIEW ============ -->
+      <section class="block" id="overview">
+        <div class="wrap split">
+          <div class="copy">
+            <div class="sec-head" style="margin-bottom: 20px">
+              <h2>AgroOrbit is the farming side of EcoOrbit.</h2>
+            </div>
+            <p>
+              EcoOrbit tracks satellites and debris in low Earth orbit. AgroOrbit
+              points that same orbit knowledge at the ground. It collects
+              satellite images of farmland, reads them with AI, and sends each
+              farmer short advice they can act on the same day.
+            </p>
+            <p>
+              A farmer does not need to understand satellites, indexes or maps.
+              The message says which plot, what is wrong, and what to do about
+              it. Cooperatives, officers and banks see the same facts on one map.
+            </p>
+          </div>
+          <dl class="users">
+            <div>
+              <dt>Farmers</dt>
+              <dd>Find the corner of a field that needs water or attention without walking all of it.</dd>
+            </div>
+            <div>
+              <dt>Cooperatives</dt>
+              <dd>Follow hundreds of members' fields on one map and plan shared pumps and harvest crews.</dd>
+            </div>
+            <div>
+              <dt>Extension officers</dt>
+              <dd>Visit the fields that need help first, instead of covering every village in turn.</dd>
+            </div>
+            <div>
+              <dt>Banks and insurers</dt>
+              <dd>Check crop loss claims against satellite evidence, with the farmer's consent.</dd>
+            </div>
+            <div>
+              <dt>Local government and NGOs</dt>
+              <dd>Watch for floods, drought and salty soil across a district during the season.</dd>
+            </div>
+          </dl>
+        </div>
+      </section>
+
+      <!-- ============ HOW IT WORKS ============ -->
+      <section class="block" id="how">
+        <div class="wrap">
+          <div class="sec-head">
+            <h2>From a satellite pass to a message on your phone</h2>
+            <p>Four steps, repeated every time a satellite flies over your district.</p>
+          </div>
+          <ol class="steps">
+            <li>
+              <span class="step-n" aria-hidden="true">1</span>
+              <div>
+                <h3>A satellite passes over</h3>
+                <p>
+                  Optical satellites photograph the fields in daylight. Radar
+                  satellites see through cloud, which matters in the monsoon.
+                  EcoOrbit's orbit simulator tells AgroOrbit when the next pass
+                  over each district will happen.
+                </p>
+                <p class="get"><b>You get:</b> a fresh image of every field, every few days.</p>
+              </div>
+            </li>
+            <li>
+              <span class="step-n" aria-hidden="true">2</span>
+              <div>
+                <h3>AI reads each plot</h3>
+                <p>
+                  The model measures how green the crop is, how wet the soil is
+                  and where water is standing. It compares each plot with its
+                  own past, its neighbours and the crop calendar for that
+                  season.
+                </p>
+                <p class="get"><b>You get:</b> a health, moisture and risk reading for every plot.</p>
+              </div>
+            </li>
+            <li>
+              <span class="step-n" aria-hidden="true">3</span>
+              <div>
+                <h3>You get a short message</h3>
+                <p>
+                  Alerts arrive in Bangla or English, as an app notification or
+                  an SMS for basic phones. Each one names the plot, the problem
+                  and the first thing to do.
+                </p>
+                <p class="get"><b>You get:</b> advice such as "Irrigate the south-west corner within two days."</p>
+              </div>
+            </li>
+            <li>
+              <span class="step-n" aria-hidden="true">4</span>
+              <div>
+                <h3>Your actions become a record</h3>
+                <p>
+                  You mark what you did: irrigated, drained, replanted. Over the
+                  season these entries, checked against later satellite images,
+                  build a farm record that banks, insurers and carbon programs
+                  can trust.
+                </p>
+                <p class="get"><b>You get:</b> a season history you can share when you choose to.</p>
+              </div>
+            </li>
+          </ol>
+        </div>
+      </section>
+
+      <!-- ============ FEATURES ============ -->
+      <section class="block" id="features">
+        <div class="wrap">
+          <div class="sec-head">
+            <h2>What AgroOrbit does for a farm</h2>
+            <p>Six tools that share the same map and the same plot boundaries.</p>
+          </div>
+          <div class="features">
+            <div class="feat">
+              <i class="fa-solid fa-leaf" aria-hidden="true"></i>
+              <div>
+                <h3>Crop health map</h3>
+                <p>A greenness reading for every plot, compared with last week and with healthy fields nearby. Weak patches show up before they are visible from the path.</p>
+              </div>
+            </div>
+            <div class="feat">
+              <i class="fa-solid fa-droplet" aria-hidden="true"></i>
+              <div>
+                <h3>Soil moisture and irrigation advice</h3>
+                <p>Tells you which plots to water and which to leave alone, so pumps run only when the crop needs them and diesel or electricity is not wasted.</p>
+              </div>
+            </div>
+            <div class="feat">
+              <i class="fa-solid fa-cloud-showers-water" aria-hidden="true"></i>
+              <div>
+                <h3>Flood and drought early warning</h3>
+                <p>Radar shows standing water and rising rivers through cloud. Alerts reach you with time to drain, harvest early or move seed and equipment.</p>
+              </div>
+            </div>
+            <div class="feat">
+              <i class="fa-solid fa-chart-line" aria-hidden="true"></i>
+              <div>
+                <h3>Yield forecast</h3>
+                <p>An estimate of harvest size per plot, updated as the season goes. It helps you book labour and storage, and talk to buyers with real numbers.</p>
+              </div>
+            </div>
+            <div class="feat">
+              <i class="fa-solid fa-bug" aria-hidden="true"></i>
+              <div>
+                <h3>Stress watch</h3>
+                <p>Flags patches that are weaker than their surroundings in a way water does not explain. It does not diagnose, it sends you to the exact spot to look for pests, disease or missing nutrients.</p>
+              </div>
+            </div>
+            <div class="feat">
+              <i class="fa-solid fa-book-open" aria-hidden="true"></i>
+              <div>
+                <h3>Farm records and carbon credits</h3>
+                <p>Logs your irrigation and field practice, confirms it from space, and prepares the evidence a carbon program needs to pay you for lower emissions.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ============ BANGLADESH ============ -->
+      <section class="block" id="bangladesh">
+        <div class="wrap">
+          <div class="sec-head">
+            <h2>Built around the Bangladeshi crop year</h2>
+            <p>
+              AgroOrbit follows the three rice seasons and the places where
+              each one goes wrong. Choose a season to see what it watches.
+            </p>
+          </div>
+          <div class="bd-grid">
+            <div>
+              <div class="seg" role="tablist" aria-label="Rice season">
+                <button role="tab" aria-selected="true" data-season="boro">Boro</button>
+                <button role="tab" aria-selected="false" data-season="aman">Aman</button>
+                <button role="tab" aria-selected="false" data-season="aus">Aus</button>
+              </div>
+              <div class="season" id="season-panel" aria-live="polite">
+                <div class="months" id="season-months" aria-hidden="true"></div>
+                <dl>
+                  <dt>Growing window</dt>
+                  <dd id="se-window"></dd>
+                  <dt>How the season runs</dt>
+                  <dd id="se-run"></dd>
+                  <dt>What AgroOrbit watches</dt>
+                  <dd><ul id="se-watch"></ul></dd>
+                </dl>
+              </div>
+            </div>
+            <div class="places">
+              <h3>Places that need different watching</h3>
+              <div>
+                <b>Haor basin</b> (Sunamganj, Sylhet, Kishoreganj)
+                <span>Early flash floods can hit just before the Boro harvest, so flood alerts come first here.</span>
+              </div>
+              <div>
+                <b>Coastal belt</b> (Khulna, Satkhira, Bagerhat)
+                <span>Salty soil and water, and cyclone damage, decide what can be planted.</span>
+              </div>
+              <div>
+                <b>Barind Tract</b> (Rajshahi, Naogaon, Chapainawabganj)
+                <span>Dry spells and falling groundwater make irrigation timing the main question.</span>
+              </div>
+              <div>
+                <b>Char lands and river banks</b>
+                <span>Fields change shape each year, so plot boundaries are redrawn from fresh images.</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ============ CARBON ============ -->
+      <section class="block" id="carbon">
+        <div class="wrap carbon">
+          <div class="copy">
+            <div class="sec-head" style="margin-bottom: 20px">
+              <h2>Turn better water use into carbon records</h2>
+            </div>
+            <p>
+              Flooded rice paddies release methane, a strong greenhouse gas.
+              Letting the field dry out briefly between irrigations, called
+              alternate wetting and drying, cuts that methane and also saves
+              pumping cost.
+            </p>
+            <p>
+              AgroOrbit shows from satellite images when each plot was flooded
+              and when it was dry. That gives carbon programs evidence they can
+              check, and EcoOrbit's offset platform is where the verified result
+              can be listed. Try the estimator to see the scale for a farm.
+            </p>
+          </div>
+
+          <div class="est" aria-label="Carbon estimator">
+            <div class="field">
+              <label for="est-ha">Rice area</label>
+              <div class="row">
+                <input id="est-ha" type="range" min="0.5" max="20" step="0.5" value="2" />
+                <output id="est-ha-out" for="est-ha">2 ha</output>
+              </div>
+            </div>
+            <div class="field">
+              <label for="est-seasons">Rice seasons per year</label>
+              <div class="row">
+                <input id="est-seasons" type="range" min="1" max="3" step="1" value="2" />
+                <output id="est-seasons-out" for="est-seasons">2</output>
+              </div>
+            </div>
+            <div class="result">
+              <small>Estimated emissions avoided with alternate wetting and drying</small>
+              <div class="big"><span id="est-out">-</span> <span>tonnes CO&#8322;e a year</span></div>
+              <p class="fine">
+                Illustration only. It assumes about 4.4 tonnes CO&#8322;e per
+                hectare per season from continuously flooded rice and a 25 to 45
+                percent cut from drying cycles. Real credits depend on an
+                approved method, field checks and local conditions.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ============ DATA ============ -->
+      <section class="block" id="data">
+        <div class="wrap">
+          <div class="sec-head">
+            <h2>Where the information comes from</h2>
+            <p>AgroOrbit combines several sources, because no single one works every day.</p>
+          </div>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th scope="col">Source</th>
+                  <th scope="col">What it tells us</th>
+                  <th scope="col">How often</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Optical satellites</td>
+                  <td>How green and dense the crop is, and its growth stage. Detail of about 10 metres.</td>
+                  <td>About every 5 days when the sky is clear</td>
+                </tr>
+                <tr>
+                  <td>Radar satellites</td>
+                  <td>Standing water, flood extent and soil wetness. Works through cloud, day or night.</td>
+                  <td>About every 6 to 12 days</td>
+                </tr>
+                <tr>
+                  <td>Weather data</td>
+                  <td>Rainfall, heat, cold spells and short-range forecasts for each plot.</td>
+                  <td>Several times a day</td>
+                </tr>
+                <tr>
+                  <td>EcoOrbit orbit simulator</td>
+                  <td>When the next satellite passes over each district, so you know when new readings arrive.</td>
+                  <td>Live</td>
+                </tr>
+                <tr>
+                  <td>Farmer reports</td>
+                  <td>Planting dates, photos and field notes. These correct the AI when it gets a plot wrong.</td>
+                  <td>Whenever you send them</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- ============ FAQ ============ -->
+      <section class="block" id="faq">
+        <div class="wrap">
+          <div class="sec-head">
+            <h2>Questions farmers and partners ask</h2>
+          </div>
+          <div class="faq">
+            <details>
+              <summary>Do I need a smartphone?</summary>
+              <p>No. Alerts also arrive as short SMS messages in Bangla or English, and a cooperative officer can go through the map with you.</p>
+            </details>
+            <details>
+              <summary>Can it see through monsoon clouds?</summary>
+              <p>Radar images pass through cloud, so flood and soil wetness readings keep coming. Crop greenness readings from optical images pause under heavy cloud and resume at the next clear pass.</p>
+            </details>
+            <details>
+              <summary>How small a field can it read?</summary>
+              <p>The images have about 10 metre detail, so a plot of around 0.1 hectare gets roughly ten readings. Smaller plots are read together with the land around them.</p>
+            </details>
+            <details>
+              <summary>How accurate is the advice?</summary>
+              <p>AgroOrbit gives guidance, not guarantees. It points you to the spot worth checking, and a walk through the field confirms it. Your feedback improves the model each season.</p>
+            </details>
+            <details>
+              <summary>Who owns my field data?</summary>
+              <p>You do. Plot boundaries and records stay yours, and they are shared with a bank, insurer or carbon program only when you allow it.</p>
+            </details>
+            <details>
+              <summary>How does AgroOrbit connect to the EcoOrbit globe?</summary>
+              <p>Open the orbit globe on EcoOrbit, press Fullscreen, and choose AgroOrbit from the bar on the left. The globe also shows which satellites are about to pass over your area.</p>
+            </details>
+          </div>
+        </div>
+      </section>
+
+      <!-- ============ CLOSER ============ -->
+      <section class="closer">
+        <div class="wrap">
+          <h2>Watch the orbit that watches the fields.</h2>
+          <p>Go back to the live globe to see the satellites AgroOrbit relies on.</p>
+          <div class="hero-cta">
+            <a class="btn btn-primary" href="EcoOrbit.html#simulator">
+              <i class="fa-solid fa-globe" aria-hidden="true"></i>Open the orbit globe
+            </a>
+            <a class="btn btn-ghost" href="#top">
+              <i class="fa-solid fa-arrow-up" aria-hidden="true"></i>Back to top
+            </a>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer>
+      <div class="wrap">
+        <span>AgroOrbit is part of EcoOrbit.</span>
+        <span>Field data, figures and estimates on this page are demonstration values.</span>
+      </div>
+    </footer>
+
+    <script>
+      /* ================= Field scanner ================= */
+      (function () {
+        var COLS = 18,
+          ROWS = 11;
+        var reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+        var parcels = [
+          { name: "North paddy", crop: "Rice, BRRI dhan28", stage: "tillering", c0: 0, c1: 7, r0: 0, r1: 5, h: 0.72, m: 55 },
+          { name: "East paddy", crop: "Rice, BRRI dhan29", stage: "panicle initiation", c0: 8, c1: 17, r0: 0, r1: 4, h: 0.8, m: 58 },
+          { name: "Maize block", crop: "Hybrid maize", stage: "vegetative growth", c0: 0, c1: 5, r0: 6, r1: 10, h: 0.66, m: 44 },
+          { name: "South paddy", crop: "Rice, BRRI dhan29", stage: "grain filling", c0: 6, c1: 17, r0: 5, r1: 10, h: 0.76, m: 62 },
+        ];
+
+        function mulberry(a) {
+          return function () {
+            a |= 0; a = (a + 0x6d2b79f5) | 0;
+            var t = Math.imul(a ^ (a >>> 15), 1 | a);
+            t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+            return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+          };
+        }
+        var clamp = function (v, a, b) { return Math.max(a, Math.min(b, v)); };
+        var blob = function (c, r, cx, cy, rad) { return Math.max(0, 1 - Math.hypot(c - cx, r - cy) / rad); };
+
+        var rnd = mulberry(11);
+        var cells = [];
+        for (var r = 0; r < ROWS; r++) {
+          for (var c = 0; c < COLS; c++) {
+            var p = parcels.filter(function (q) { return c >= q.c0 && c <= q.c1 && r >= q.r0 && r <= q.r1; })[0];
+            var wave = Math.sin(c * 0.9 + 1.3) * Math.cos(r * 0.7 + 0.4) * 0.5 + Math.sin((c + r) * 0.5) * 0.5;
+            var h = p.h + wave * 0.05 + (rnd() - 0.5) * 0.05;
+            var m = p.m + wave * 4 + (rnd() - 0.5) * 5;
+            var dry = blob(c, r, 1.5, 9, 3);       /* dry corner in the maize block */
+            var wet = blob(c, r, 16, 9, 3.8);      /* water standing in the south paddy */
+            var str = blob(c, r, 13, 1.5, 2.4);    /* weak patch in the east paddy */
+            h -= dry * 0.3 + wet * 0.18 + str * 0.3;
+            m += -dry * 26 + wet * 34;
+            h = clamp(h, 0.15, 0.92);
+            m = clamp(m, 12, 95);
+            var dryR = clamp((38 - m) / 20, 0, 1),
+              wetR = clamp((m - 80) / 12, 0, 1),
+              strR = clamp((p.h - h - 0.1) / 0.2, 0, 1);
+            var risk = Math.max(dryR, wetR, strR), cause = "ok";
+            if (risk >= 0.15) cause = dryR >= wetR && dryR >= strR ? "dry" : wetR >= strR ? "wet" : "stress";
+            cells.push({ c: c, r: r, p: p, h: h, m: m, risk: risk, cause: cause });
+          }
+        }
+
+        var STATUS = {
+          ok: ["Healthy", "Looks healthy. No action needed this week."],
+          dry: ["Needs water", "Soil is dry here. Irrigate within two days and check the channel feeding this corner."],
+          wet: ["Waterlogged", "Water is standing here. Open the outlet and drain 5 to 7 cm to protect the roots."],
+          stress: ["Crop stress", "The crop is weaker here than around it, and water does not explain it. Walk to this spot and look for pests or missing nutrients."],
+        };
+
+        /* colour ramps */
+        var RAMPS = {
+          health: { stops: [[0.2, "#8a4b12"], [0.4, "#e0a526"], [0.55, "#9bd13a"], [0.7, "#2faa4f"], [0.9, "#0b6b3a"]], lo: 0.2, hi: 0.9, a: "Weak growth", b: "Strong growth", val: function (x) { return x.h; } },
+          moisture: { stops: [[15, "#a8742f"], [35, "#d6c27a"], [55, "#5ec3d9"], [75, "#1f6fd1"], [92, "#1e3a8a"]], lo: 15, hi: 92, a: "Dry soil", b: "Wet soil", val: function (x) { return x.m; } },
+          risk: { stops: [[0, "#12301f"], [0.35, "#2a6b3c"], [0.6, "#e0a526"], [1, "#f43f5e"]], lo: 0, hi: 1, a: "Calm", b: "Needs action", val: function (x) { return x.risk; } },
+        };
+        function hex(s) { return [parseInt(s.slice(1, 3), 16), parseInt(s.slice(3, 5), 16), parseInt(s.slice(5, 7), 16)]; }
+        function ramp(layer, v) {
+          var st = RAMPS[layer].stops;
+          if (v <= st[0][0]) return "rgb(" + hex(st[0][1]).join(",") + ")";
+          for (var i = 1; i < st.length; i++) {
+            if (v <= st[i][0]) {
+              var t = (v - st[i - 1][0]) / (st[i][0] - st[i - 1][0]);
+              var a = hex(st[i - 1][1]), b = hex(st[i][1]);
+              return "rgb(" + a.map(function (x, k) { return Math.round(x + (b[k] - x) * t); }).join(",") + ")";
+            }
+          }
+          return "rgb(" + hex(st[st.length - 1][1]).join(",") + ")";
+        }
+
+        var cv = document.getElementById("field");
+        var ctx = cv.getContext("2d");
+        var layer = "health", hover = null, selected = null, dirty = true, dpr = 1;
+        var t0 = performance.now();
+        var REVEAL_MS = 2400, PULSE_EVERY = 9000, PULSE_MS = 2000;
+
+        function resize() {
+          dpr = Math.min(window.devicePixelRatio || 1, 2);
+          var w = cv.clientWidth, h = cv.clientHeight;
+          cv.width = Math.round(w * dpr);
+          cv.height = Math.round(h * dpr);
+          dirty = true;
+        }
+
+        function scanState(now) {
+          if (reduce) return { revealX: 1, line: null };
+          var t = now - t0;
+          if (t < REVEAL_MS) {
+            var k = t / REVEAL_MS;
+            k = k < 0.5 ? 2 * k * k : 1 - Math.pow(-2 * k + 2, 2) / 2;
+            return { revealX: k, line: k };
+          }
+          var q = (t - REVEAL_MS) % PULSE_EVERY;
+          return { revealX: 1, line: q < PULSE_MS ? q / PULSE_MS : null };
+        }
+
+        function draw(now) {
+          var W = cv.clientWidth, H = cv.clientHeight;
+          ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+          ctx.clearRect(0, 0, W, H);
+          var cw = W / COLS, ch = H / ROWS, g = 1.5, sc = scanState(now);
+          var i, x, y, cell;
+          for (i = 0; i < cells.length; i++) {
+            cell = cells[i];
+            x = cell.c * cw; y = cell.r * ch;
+            var seen = (cell.c + 0.5) / COLS <= sc.revealX;
+            ctx.fillStyle = seen ? ramp(layer, RAMPS[layer].val(cell)) : "#0d1730";
+            ctx.fillRect(x + g / 2, y + g / 2, cw - g, ch - g);
+          }
+          /* field bunds: draw a line wherever neighbouring cells belong to different plots */
+          ctx.strokeStyle = "rgba(255,255,255,0.55)";
+          ctx.lineWidth = 2;
+          ctx.beginPath();
+          for (i = 0; i < cells.length; i++) {
+            cell = cells[i]; x = cell.c * cw; y = cell.r * ch;
+            var right = cell.c < COLS - 1 ? cells[i + 1] : null, below = cell.r < ROWS - 1 ? cells[i + COLS] : null;
+            if (right && right.p !== cell.p) { ctx.moveTo(x + cw, y); ctx.lineTo(x + cw, y + ch); }
+            if (below && below.p !== cell.p) { ctx.moveTo(x, y + ch); ctx.lineTo(x + cw, y + ch); }
+          }
+          ctx.stroke();
+          /* selection and hover */
+          function ring(cc, col, lw) {
+            if (!cc) return;
+            ctx.strokeStyle = col; ctx.lineWidth = lw;
+            ctx.strokeRect(cc.c * cw + 1.5, cc.r * ch + 1.5, cw - 3, ch - 3);
+          }
+          ring(selected, "#ffffff", 2.5);
+          if (hover && hover !== selected) ring(hover, "rgba(0,242,254,0.95)", 2);
+          /* satellite scan line */
+          if (sc.line !== null) {
+            var lx = sc.line * W;
+            var gr = ctx.createLinearGradient(lx - 90, 0, lx, 0);
+            gr.addColorStop(0, "rgba(0,242,254,0)");
+            gr.addColorStop(1, "rgba(0,242,254,0.22)");
+            ctx.fillStyle = gr;
+            ctx.fillRect(lx - 90, 0, 90, H);
+            ctx.fillStyle = "#00f2fe";
+            ctx.shadowColor = "#00f2fe"; ctx.shadowBlur = 12;
+            ctx.fillRect(lx - 1, 0, 2, H);
+            ctx.shadowBlur = 0;
+          }
+        }
+
+        function frame(now) {
+          var sc = scanState(now);
+          if (dirty || sc.line !== null) { draw(now); dirty = false; }
+          requestAnimationFrame(frame);
+        }
+
+        /* readout */
+        var el = function (id) { return document.getElementById(id); };
+        function readout() {
+          var cell = hover || selected;
+          if (!cell) return;
+          var s = STATUS[cell.cause];
+          el("ro-parcel").textContent = cell.p.name;
+          el("ro-crop").textContent = cell.p.crop + ", " + cell.p.stage;
+          var lab = cell.h >= 0.7 ? "strong" : cell.h >= 0.55 ? "fair" : "weak";
+          el("ro-h").textContent = cell.h.toFixed(2) + " (" + lab + ")";
+          el("ro-m").textContent = Math.round(cell.m) + "%";
+          el("ro-status").innerHTML = '<span class="chip ' + cell.cause + '">' + s[0] + "</span>";
+          el("ro-advice").textContent = s[1];
+        }
+
+        function cellAt(ev) {
+          var rect = cv.getBoundingClientRect();
+          var c = Math.floor(((ev.clientX - rect.left) / rect.width) * COLS);
+          var r = Math.floor(((ev.clientY - rect.top) / rect.height) * ROWS);
+          if (c < 0 || r < 0 || c >= COLS || r >= ROWS) return null;
+          return cells[r * COLS + c];
+        }
+        cv.addEventListener("pointermove", function (e) { hover = cellAt(e); readout(); dirty = true; });
+        cv.addEventListener("pointerleave", function () { hover = null; readout(); dirty = true; });
+        cv.addEventListener("pointerdown", function (e) { selected = cellAt(e) || selected; hover = null; readout(); dirty = true; });
+        cv.addEventListener("keydown", function (e) {
+          var d = { ArrowLeft: [-1, 0], ArrowRight: [1, 0], ArrowUp: [0, -1], ArrowDown: [0, 1] }[e.key];
+          if (!d || !selected) return;
+          e.preventDefault();
+          var c = clamp(selected.c + d[0], 0, COLS - 1), r = clamp(selected.r + d[1], 0, ROWS - 1);
+          selected = cells[r * COLS + c]; hover = null; readout(); dirty = true;
+        });
+
+        /* layer tabs + legend */
+        function setLayer(name) {
+          layer = name;
+          var R = RAMPS[name];
+          el("lg-lo").textContent = R.a;
+          el("lg-hi").textContent = R.b;
+          el("lg-bar").style.background =
+            "linear-gradient(90deg," +
+            R.stops.map(function (s) { return s[1] + " " + Math.round(((s[0] - R.lo) / (R.hi - R.lo)) * 100) + "%"; }).join(",") + ")";
+          document.querySelectorAll("[data-layer]").forEach(function (b) {
+            b.setAttribute("aria-selected", String(b.dataset.layer === name));
+          });
+          dirty = true;
+        }
+        document.querySelectorAll("[data-layer]").forEach(function (b) {
+          b.addEventListener("click", function () { setLayer(b.dataset.layer); });
+        });
+
+        selected = cells[8 * COLS + 2]; /* start on the dry corner so the demo shows something useful */
+        setLayer("health");
+        readout();
+        resize();
+        if (window.ResizeObserver) new ResizeObserver(resize).observe(cv);
+        else window.addEventListener("resize", resize);
+        requestAnimationFrame(frame);
+      })();
+
+      /* ================= Season tabs ================= */
+      (function () {
+        var M = ["J", "F", "M", "A", "M", "J", "J", "A", "S", "O", "N", "D"];
+        var SEASONS = {
+          boro: {
+            months: [11, 0, 1, 2, 3, 4],
+            window: "December to May",
+            run: "Seedlings are raised in a nursery in November and December, transplanted from December to February, and harvested in April and May. Boro depends on irrigation, because it grows in the dry season.",
+            watch: [
+              "Soil moisture, so pumps run at the right time and not more than needed",
+              "Cold spells in January that slow young seedlings",
+              "Early flash floods before harvest, especially in the haor basin",
+            ],
+          },
+          aman: {
+            months: [6, 7, 8, 9, 10, 11],
+            window: "July to December",
+            run: "Aman is transplanted from July to August and harvested in November and December. It grows through the monsoon, so rain usually waters it and too much water is the bigger risk.",
+            watch: [
+              "Flooding and fields that stay under water for too long",
+              "Dry gaps late in the monsoon, when rain stops early",
+              "Cyclone warnings in October and November, and crops that fall over after storms",
+            ],
+          },
+          aus: {
+            months: [2, 3, 4, 5, 6],
+            window: "March to July",
+            run: "Aus is sown in March and April and harvested in July and August. It depends on pre-monsoon rain, and it has to be out of the field in time for Aman transplanting.",
+            watch: [
+              "Whether pre-monsoon rain arrives in time for sowing",
+              "Waterlogging after the first heavy rains",
+              "The handover from Aus harvest to Aman planting on the same land",
+            ],
+          },
+        };
+        var monthsEl = document.getElementById("season-months");
+        function show(key) {
+          var s = SEASONS[key];
+          monthsEl.innerHTML = M.map(function (m, i) {
+            return '<span class="' + (s.months.indexOf(i) > -1 ? "on" : "") + '">' + m + "</span>";
+          }).join("");
+          document.getElementById("se-window").textContent = s.window;
+          document.getElementById("se-run").textContent = s.run;
+          document.getElementById("se-watch").innerHTML = s.watch.map(function (w) { return "<li>" + w + "</li>"; }).join("");
+          document.querySelectorAll("[data-season]").forEach(function (b) {
+            b.setAttribute("aria-selected", String(b.dataset.season === key));
+          });
+        }
+        document.querySelectorAll("[data-season]").forEach(function (b) {
+          b.addEventListener("click", function () { show(b.dataset.season); });
+        });
+        show("boro");
+      })();
+
+      /* ================= Carbon estimator ================= */
+      (function () {
+        var ha = document.getElementById("est-ha"),
+          se = document.getElementById("est-seasons"),
+          out = document.getElementById("est-out");
+        var PER_HA_SEASON = 4.4, LOW = 0.25, HIGH = 0.45;
+        function fmt(n) { return n < 10 ? n.toFixed(1) : String(Math.round(n)); }
+        function update() {
+          var h = parseFloat(ha.value), s = parseInt(se.value, 10);
+          document.getElementById("est-ha-out").textContent = h + " ha";
+          document.getElementById("est-seasons-out").textContent = s;
+          var base = h * s * PER_HA_SEASON;
+          out.textContent = fmt(base * LOW) + " to " + fmt(base * HIGH);
+        }
+        ha.addEventListener("input", update);
+        se.addEventListener("input", update);
+        update();
+      })();
+    </script>
+  </body>
+</html>

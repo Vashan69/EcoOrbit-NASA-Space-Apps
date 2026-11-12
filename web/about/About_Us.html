@@ -1,0 +1,947 @@
+<!doctype html>
+<html lang="en" data-theme="dark">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>About Us | The Third World Peace VLZO UFO</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Fira+Sans:wght@500;600&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Sora:wght@500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        --bg: #030712;
+        --surface: #0b1329;
+        --raised: #111f42;
+        --line: #1e2e57;
+        --text: #e8eefc;
+        --muted: #a3b3d6;
+        --accent: #00f2fe;
+        --purple: #4facfe;
+        --green: #10b981;
+        --pink: #f43f5e;
+        --r: 18px;
+      }
+      * {
+        box-sizing: border-box;
+      }
+      html {
+        scroll-behavior: smooth;
+        scroll-padding-top: 92px;
+      }
+      body {
+        margin: 0;
+        background:
+          radial-gradient(900px 500px at 80% -10%, #0e2a5c55, transparent),
+          var(--bg);
+        color: var(--text);
+        font:
+          16px/1.65 Inter,
+          system-ui,
+          sans-serif;
+      }
+      h1,
+      h2,
+      h3 {
+        font-family: Sora, Inter, sans-serif;
+        line-height: 1.2;
+        margin: 0;
+      }
+      a {
+        color: var(--accent);
+      }
+      :focus-visible {
+        outline: 3px solid var(--accent);
+        outline-offset: 3px;
+        border-radius: 8px;
+      }
+      header {
+        position: sticky;
+        top: 0;
+        z-index: 50;
+        background: #030712dd;
+        backdrop-filter: blur(16px);
+        border-bottom: 1px solid var(--line);
+      }
+      .bar {
+        max-width: 1180px;
+        margin: auto;
+        min-height: 82px;
+        padding: 12px 20px;
+        display: flex;
+        align-items: center;
+        gap: 16px;
+        flex-wrap: nowrap;
+      }
+      .brand {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        text-decoration: none;
+        color: var(--text);
+        font:
+          700 15px Sora,
+          sans-serif;
+        min-width: 0;
+      }
+      .brand-title {
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+      .brand small {
+        display: block;
+        font: 400 11px Inter;
+        color: var(--muted);
+        margin-top: 2px;
+      }
+      .grow {
+        flex: 1;
+      }
+      .nav {
+        display: flex;
+        align-items: center;
+        gap: 20px;
+        font-size: 13px;
+        font-weight: 600;
+        white-space: nowrap;
+      }
+      .nav a {
+        text-decoration: none;
+        color: var(--muted);
+      }
+      .nav a:hover {
+        color: var(--accent);
+      }
+      .btn {
+        padding: 10px 16px;
+        border-radius: 999px;
+        border: 1px solid var(--line);
+        background: var(--surface);
+        color: var(--text);
+        font-size: 13px;
+        font-weight: 600;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        white-space: nowrap;
+      }
+      .btn:hover {
+        background: var(--raised);
+      }
+      .btn.primary {
+        background: var(--accent);
+        color: #04101f;
+        border-color: transparent;
+      }
+      .wrap {
+        max-width: 1180px;
+        margin: auto;
+        padding: 0 20px;
+      }
+      .hero {
+        padding: 72px 0 50px;
+        display: grid;
+        grid-template-columns: 1.2fr 0.8fr;
+        gap: 42px;
+        align-items: center;
+      }
+      .eyebrow {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 7px 12px;
+        border-radius: 999px;
+        background: #00f2fe12;
+        border: 1px solid #00f2fe44;
+        color: var(--accent);
+        font-size: 11px;
+        font-weight: 800;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+      }
+      .hero h1 {
+        font-size: clamp(38px, 6vw, 68px);
+        letter-spacing: -0.035em;
+        margin-top: 16px;
+      }
+      .hero h1 span {
+        background: linear-gradient(
+          90deg,
+          var(--accent),
+          #67e8f9,
+          var(--purple)
+        );
+        -webkit-background-clip: text;
+        background-clip: text;
+        color: transparent;
+      }
+      .hero p {
+        color: var(--muted);
+        font-size: 18px;
+        max-width: 65ch;
+        margin: 18px 0 26px;
+      }
+      .hero-actions {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 12px;
+      }
+      .orbit-card {
+        background: linear-gradient(145deg, #0b1329, #07101f);
+        border: 1px solid #00f2fe30;
+        border-radius: 24px;
+        padding: 26px;
+        box-shadow: 0 0 35px #00f2fe12;
+      }
+      .orbit {
+        height: 250px;
+        display: grid;
+        place-items: center;
+        position: relative;
+      }
+      .orbit:before,
+      .orbit:after {
+        content: "";
+        position: absolute;
+        border: 1px solid #00f2fe40;
+        border-radius: 50%;
+        transform: rotate(-22deg);
+      }
+      .orbit:before {
+        width: 220px;
+        height: 100px;
+      }
+      .orbit:after {
+        width: 150px;
+        height: 220px;
+      }
+      .planet {
+        width: 78px;
+        height: 78px;
+        border-radius: 50%;
+        background: radial-gradient(
+          circle at 35% 30%,
+          #b7faff,
+          #4facfe 45%,
+          #123b74 80%
+        );
+        box-shadow: 0 0 35px #00f2fe66;
+        z-index: 2;
+      }
+      .sat {
+        position: absolute;
+        width: 10px;
+        height: 10px;
+        border-radius: 50%;
+        background: var(--accent);
+        box-shadow: 0 0 15px var(--accent);
+        z-index: 3;
+      }
+      .s1 {
+        transform: translate(108px, -45px);
+      }
+      .s2 {
+        transform: translate(-90px, 55px);
+        background: var(--pink);
+        box-shadow: 0 0 15px var(--pink);
+      }
+      .section {
+        padding: 68px 0;
+        border-top: 1px solid var(--line);
+      }
+      .section-head {
+        max-width: 760px;
+        margin-bottom: 30px;
+      }
+      .section-head .eyebrow {
+        margin-bottom: 12px;
+      }
+      .section-head h2 {
+        font-size: clamp(28px, 4vw, 42px);
+      }
+      .section-head p {
+        color: var(--muted);
+        margin: 12px 0 0;
+      }
+      .cards {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 16px;
+      }
+      .card {
+        background: var(--surface);
+        border: 1px solid var(--line);
+        border-radius: var(--r);
+        padding: 24px;
+        transition:
+          transform 0.18s,
+          border-color 0.18s;
+      }
+      .card:hover {
+        transform: translateY(-3px);
+        border-color: #00f2fe66;
+      }
+      .icon {
+        width: 44px;
+        height: 44px;
+        border-radius: 12px;
+        display: grid;
+        place-items: center;
+        background: var(--raised);
+        font-size: 21px;
+        margin-bottom: 16px;
+      }
+      .card h3 {
+        font-size: 18px;
+        margin-bottom: 8px;
+      }
+      .card p {
+        margin: 0;
+        color: var(--muted);
+        font-size: 14.5px;
+      }
+      .members {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 16px;
+      }
+      .member {
+        background: var(--surface);
+        border: 1px solid var(--line);
+        border-radius: 20px;
+        padding: 18px;
+        overflow: hidden;
+      }
+      .member-image-link {
+        display: block;
+        text-decoration: none;
+      }
+      .member-image {
+        width: 100%;
+        aspect-ratio: 1/1;
+        border-radius: 15px;
+        display: grid;
+        place-items: center;
+        background: radial-gradient(circle at 50% 35%, #123b74, #07101f 70%);
+        border: 1px solid #00f2fe30;
+        overflow: hidden;
+      }
+      .member-image img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        display: block;
+      }
+      .member h3 {
+        font-size: 16px;
+        margin-top: 16px;
+      }
+      .role {
+        display: block;
+        color: var(--accent);
+        font-size: 12px;
+        font-weight: 800;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        margin-top: 5px;
+      }
+      .member p {
+        color: var(--muted);
+        font-size: 13.5px;
+        margin: 9px 0 0;
+      }
+      .timeline {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 16px;
+      }
+      .step {
+        padding: 22px;
+        border-left: 2px solid var(--accent);
+        background: #00f2fe08;
+        border-radius: 0 15px 15px 0;
+      }
+      .step b {
+        display: block;
+        color: var(--accent);
+        font-size: 12px;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        margin-bottom: 7px;
+      }
+      .step p {
+        margin: 0;
+        color: var(--muted);
+        font-size: 14px;
+      }
+      .note {
+        background: linear-gradient(135deg, #00f2fe0c, #4facfe0c);
+        border: 1px solid #00f2fe2c;
+        border-radius: 20px;
+        padding: 25px;
+      }
+      .note p {
+        color: var(--muted);
+        margin: 8px 0 0;
+      }
+      footer {
+        border-top: 1px solid var(--line);
+        padding: 32px 20px;
+        color: var(--muted);
+        font-size: 13px;
+      }
+      .footer-grid {
+        max-width: 1180px;
+        margin: auto;
+        display: grid;
+        grid-template-columns: 1fr 1fr 1fr;
+        gap: 28px;
+      }
+      .footer-grid h3 {
+        font-size: 14px;
+        color: var(--text);
+        margin-bottom: 8px;
+      }
+      .footer-grid p {
+        margin: 0;
+      }
+      .footer-links {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px 18px;
+      }
+      .footer-links a {
+        text-decoration: none;
+      }
+
+      /* ---------- EcoOrbit by the numbers ---------- */
+      .numbers {
+        position: relative;
+        overflow: hidden;
+        padding: 72px 0 80px;
+        background: linear-gradient(90deg, #0042c8 0%, #0a3aa8 60%, #16277f 100%);
+        font-family: "Fira Sans", Inter, system-ui, sans-serif;
+      }
+      .numbers:before {
+        content: "";
+        position: absolute;
+        inset: -40px;
+        background: url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20width%3D%221800%22%20height%3D%22860%22%3E%3Ctext%20x%3D%22-10%22%20y%3D%2260%22%20font-family%3D%22Fira%20Sans%2CArial%2Csans-serif%22%20font-weight%3D%22500%22%20font-size%3D%2282%22%20fill%3D%22white%22%20fill-opacity%3D%220.07%22%3E1010001000011000100001000011001000%3C/text%3E%3Ctext%20x%3D%22-10%22%20y%3D%22152%22%20font-family%3D%22Fira%20Sans%2CArial%2Csans-serif%22%20font-weight%3D%22500%22%20font-size%3D%2282%22%20fill%3D%22white%22%20fill-opacity%3D%220.07%22%3E1000011111110000111110010101100111%3C/text%3E%3Ctext%20x%3D%22-10%22%20y%3D%22244%22%20font-family%3D%22Fira%20Sans%2CArial%2Csans-serif%22%20font-weight%3D%22500%22%20font-size%3D%2282%22%20fill%3D%22white%22%20fill-opacity%3D%220.07%22%3E1100110011111011001001001110011101%3C/text%3E%3Ctext%20x%3D%22-10%22%20y%3D%22336%22%20font-family%3D%22Fira%20Sans%2CArial%2Csans-serif%22%20font-weight%3D%22500%22%20font-size%3D%2282%22%20fill%3D%22white%22%20fill-opacity%3D%220.07%22%3E1111000000001011001110011111011000%3C/text%3E%3Ctext%20x%3D%22-10%22%20y%3D%22428%22%20font-family%3D%22Fira%20Sans%2CArial%2Csans-serif%22%20font-weight%3D%22500%22%20font-size%3D%2282%22%20fill%3D%22white%22%20fill-opacity%3D%220.07%22%3E0100100000100010111100111110001110%3C/text%3E%3Ctext%20x%3D%22-10%22%20y%3D%22520%22%20font-family%3D%22Fira%20Sans%2CArial%2Csans-serif%22%20font-weight%3D%22500%22%20font-size%3D%2282%22%20fill%3D%22white%22%20fill-opacity%3D%220.07%22%3E0010010110101000100110011101111000%3C/text%3E%3Ctext%20x%3D%22-10%22%20y%3D%22612%22%20font-family%3D%22Fira%20Sans%2CArial%2Csans-serif%22%20font-weight%3D%22500%22%20font-size%3D%2282%22%20fill%3D%22white%22%20fill-opacity%3D%220.07%22%3E0101010110010101101110000001011000%3C/text%3E%3Ctext%20x%3D%22-10%22%20y%3D%22704%22%20font-family%3D%22Fira%20Sans%2CArial%2Csans-serif%22%20font-weight%3D%22500%22%20font-size%3D%2282%22%20fill%3D%22white%22%20fill-opacity%3D%220.07%22%3E0001000101011100111000100000100110%3C/text%3E%3Ctext%20x%3D%22-10%22%20y%3D%22796%22%20font-family%3D%22Fira%20Sans%2CArial%2Csans-serif%22%20font-weight%3D%22500%22%20font-size%3D%2282%22%20fill%3D%22white%22%20fill-opacity%3D%220.07%22%3E0001001001101110101010111001001001%3C/text%3E%3C/svg%3E") 0 0 / 1800px 860px;
+        transform: rotate(-3deg);
+        pointer-events: none;
+      }
+      .numbers .wrap { position: relative; }
+      .numbers h2 {
+        font-family: "Fira Sans", Inter, sans-serif;
+        font-weight: 600;
+        font-size: clamp(28px, 4vw, 42px);
+        text-transform: uppercase;
+        color: #fff;
+        letter-spacing: 0.005em;
+      }
+      .numbers .sub {
+        color: #e5ff5a;
+        margin: 22px 0 28px;
+        font-size: 17px;
+      }
+      .stats {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 24px;
+      }
+      .stat .val {
+        font-size: clamp(44px, 6vw, 64px);
+        font-weight: 600;
+        line-height: 1;
+        color: #fff;
+        font-variant-numeric: tabular-nums;
+      }
+      .stat .lbl {
+        margin-top: 12px;
+        color: #e5ff5a;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        font-size: 17px;
+      }
+
+      /* ---------- Sponsors ---------- */
+      .sponsors h1 {
+        font-size: clamp(28px, 4vw, 42px);
+        margin-bottom: 28px;
+      }
+      .sponsor-list {
+        display: flex;
+        flex-direction: column;
+        gap: 16px;
+        max-width: 520px;
+      }
+      .sponsor {
+        background: var(--surface);
+        border: 1px solid var(--line);
+        border-radius: var(--r);
+        padding: 22px;
+        text-align: center;
+      }
+      .sponsor img {
+        max-width: 100%;
+        max-height: 120px;
+        object-fit: contain;
+        display: block;
+        margin: 0 auto 12px;
+      }
+      .sponsor span {
+        font-weight: 600;
+        font-size: 15px;
+      }
+      @media (max-width: 800px) { .stats { grid-template-columns: 1fr 1fr; row-gap: 36px; } }
+      @media (max-width: 480px) { .stats { grid-template-columns: 1fr; } }
+      @media (max-width: 1000px) {
+        .nav {
+          display: none;
+        }
+        .hero {
+          grid-template-columns: 1fr;
+        }
+        .members {
+          grid-template-columns: repeat(2, 1fr);
+        }
+        .cards,
+        .timeline {
+          grid-template-columns: 1fr 1fr;
+        }
+      }
+      @media (max-width: 600px) {
+        .bar {
+          min-height: 72px;
+        }
+        .hero {
+          padding-top: 45px;
+        }
+        .cards,
+        .members,
+        .timeline,
+        .footer-grid {
+          grid-template-columns: 1fr;
+        }
+        .hero h1 {
+          font-size: 42px;
+        }
+        .btn {
+          width: 100%;
+          justify-content: center;
+        }
+        .hero-actions {
+          flex-direction: column;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <div class="bar">
+        <a
+          class="brand"
+          href="EcoOrbit.html"
+          title="Back to the main site"
+        >
+          <span
+            aria-hidden="true"
+            
+            ><img style="width: 65px;" src="/images/EcoOrbit_Logo.png" alt=""></span
+          >
+          <span class="brand-title"
+            >About US<small
+              >About Us • NASA Space Apps 2026</small
+            ></span
+          >
+        </a>
+        <div class="grow"></div>
+        <nav class="nav" aria-label="Main navigation">
+          <a href="EcoOrbit.html">Home</a>
+          <a href="About_Us.html" aria-current="page">About Us</a>
+          <a href="About_EcoOrbit.html">About EcoOrbit</a>
+          <a href="EcoOrbit_Growths.html">EcoOrbit Growths</a>
+          <a href="EcoOrbit_Guidelines.html">EcoOrbit Guidelines</a>
+          <a href="Membership.html">Membership</a>
+          <a href="Privacy_and_Safety.html">Privacy & Safety</a>
+          <a href="Our_Services.html">Our Services</a>
+        </nav>
+        <a class="btn primary" href="EcoOrbit.html">Back to app</a>
+      </div>
+    </header>
+
+    <main>
+      <section class="wrap hero">
+        <div>
+          <span class="eyebrow">🚀 NASA Space Apps Challenge 2026</span>
+          <h1>Meet the team behind <span>the mission.</span></h1>
+          <p>
+            We are building The Third World Peace VLZO UFO as an educational
+            space-technology concept focused on orbital sustainability,
+            satellite and debris awareness, carbon impact, and accessible tools
+            for exploring the next frontier.
+          </p>
+          <div class="hero-actions">
+            <a class="btn primary" href="#team">Meet our members</a>
+            <a class="btn" href="Our_Services.html">Explore our services</a>
+          </div>
+        </div>
+        <div class="orbit-card" aria-label="Orbital mission illustration">
+          <div class="orbit">
+            <div class="sat s1"></div>
+            <div class="sat s2"></div>
+            <div class="planet"></div>
+          </div>
+          <h3 style="text-align: center">The Next Frontier</h3>
+          <p
+            style="
+              text-align: center;
+              color: var(--muted);
+              font-size: 13px;
+              margin: 7px 0 0;
+            "
+          >
+            Learn • Explore • Model • Protect
+          </p>
+        </div>
+      </section>
+
+      <section class="numbers" aria-labelledby="numbers-title">
+        <div class="wrap">
+          <h2 id="numbers-title">EcoOrbit by the numbers</h2>
+          <p class="sub">
+            The registration count updates automatically every time someone
+            signs up on EcoOrbit or joins a membership plan.
+          </p>
+          <div class="stats">
+            <div class="stat">
+              <div class="val" id="stat-reg" aria-live="polite">0</div>
+              <div class="lbl">Registrations</div>
+            </div>
+            <div class="stat">
+              <div class="val">1</div>
+              <div class="lbl">Countries / Territories</div>
+            </div>
+            <div class="stat">
+              <div class="val">3</div>
+              <div class="lbl">EcoOrbit Partners</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="section">
+        <div class="wrap">
+          <div class="section-head">
+            <span class="eyebrow">About the project</span>
+            <h2>Why we built it</h2>
+            <p>
+              The project brings several ideas together into one space-themed
+              experience so visitors can learn about orbital sustainability
+              without needing specialist software or mission-control experience.
+            </p>
+          </div>
+          <div class="cards">
+            <article class="card">
+              <div class="icon">🛰️</div>
+              <h3>Orbital awareness</h3>
+              <p>
+                Interactive satellite and debris experiences help explain
+                orbital objects, their movement, and why congestion and debris
+                matter.
+              </p>
+            </article>
+            <article class="card">
+              <div class="icon">🌱</div>
+              <h3>Sustainability</h3>
+              <p>
+                Our sustainability tools explore launch footprint, de-orbit
+                planning, debris mitigation, and the idea of measuring
+                environmental impact in space operations.
+              </p>
+            </article>
+            <article class="card">
+              <div class="icon">🧠</div>
+              <h3>Education first</h3>
+              <p>
+                The platform is designed for learning and demonstration. Risk
+                and sustainability outputs are educational estimates, not real
+                flight guidance.
+              </p>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <section class="section" id="team">
+        <div class="wrap">
+          <div class="section-head">
+            <span class="eyebrow">Our people</span>
+            <h2>The team</h2>
+            <p>
+              A six-person team bringing leadership, partnership, advisory
+              guidance, design and project coordination together.
+            </p>
+          </div>
+          <div class="members">
+            <article class="member">
+              <a href="" class="member-image-link"
+                aria-label="Abdullah Al Mahmud Mozumder profile link — add link later"
+              >
+                <div class="member-image"><img src="/images/Vashan Nasa Image.png" alt="Abdullah Al Mahmud Mozumder" loading="lazy"></div>
+              </a>
+              <h3>Abdullah Al Mahmud Mozumder</h3>
+              <span class="role">Team Advisor</span>
+              <p>
+                 <p style="color: #00f2fe;">Email: vlzocp2@gmail.com </p>
+                Provides project guidance and an additional perspective on the
+                team's concepts, helping keep the work focused and practical.
+              </p>
+            </article>
+            <article class="member">
+              <a href="" class="member-image-link"
+                aria-label="Sabekun Naher profile link — add link later"
+              >
+                <div class="member-image"><img src="/images/Sabekun_Naher.png" alt="Sabekun Naher" loading="lazy"></div>
+              </a>
+              <h3>Sabekun Naher</h3>
+              <span class="role">Team Manager</span>
+              <p>
+                 <p style="color: #00f2fe;">Email: vlzocp1@gmail.com </p>
+                Helps coordinate the team and project workflow, keeping tasks
+                organized as the platform grows toward the challenge submission.
+              </p>
+            </article>
+            <article class="member">
+              <a href="" class="member-image-link"
+                aria-label="Sultana Rajia profile link — add link later"
+              >
+                <div class="member-image"><img src="/images/Sultana_Rajia.png" alt="Sultana Rajia" loading="lazy"></div>
+              </a>
+              <h3>Sultana Rajia</h3>
+              <span class="role">Co-Advisor</span>
+              <p style="color: white;">
+                Additional District Commissioner (Education &amp; ICT,
+                Development and Human Resource Management), District
+                Commissioner's Office, Cumilla. Offers guidance and support to
+                the team as Co-Advisor.
+              </p>
+            </article>
+            <article class="member">
+              <a href="" class="member-image-link"
+                aria-label="Omar Ibne Abdullah profile link — add link later"
+              >
+                <div class="member-image"><img src="/images/Omar_Ibne_Abdullah.png" alt="Omar Ibne Abdullah" loading="lazy"></div>
+              </a>
+              <h3>Omar Ibne Abdullah</h3>
+              <span class="role">Team Leader</span>
+              <p>
+                <p style="color: #00f2fe;">Email: vashani.it.eng@gmail.com </p>
+                Leads the project direction, coordinates the overall mission
+                concept, and helps bring the platform's space, sustainability
+                and technology ideas together.
+              </p>
+            </article>
+            <article class="member">
+              <a href="" class="member-image-link"
+                aria-label="Amira Mozumder Zara profile link — add link later"
+              >
+                <div class="member-image"><img src="/images/Amira_Mozumder_Zara.png" alt="Amira Mozumder Zara" loading="lazy"></div>
+              </a>
+              <h3>Amira Mozumder Zara</h3>
+              <span class="role">Team Partner</span>
+              <p>
+                 <p style="color: #00f2fe;">Email: vashani.it.eng@gmail.com </p>
+                Supports the team across the project experience, helping shape
+                ideas, communication and the way visitors interact with the
+                platform.
+              </p>
+            </article>
+            <article class="member">
+              <a href="" class="member-image-link"
+                aria-label="Sayeeda Sara profile link — add link later"
+              >
+                <div class="member-image"><img src="/images/Sayeeda_Sara.jpeg" alt="Sayeeda Sara" loading="lazy"></div>
+              </a>
+              <h3>Sayeeda Sara</h3>
+              <span class="role">Team Designer • Class 3</span>
+              <p style="color: white;">
+                Our youngest team member, adding creativity and fresh ideas to
+                the look and feel of the project as Team Designer.
+              </p>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <section class="section">
+        <div class="wrap">
+          <div class="section-head">
+            <span class="eyebrow">What we are exploring</span>
+            <h2>More about our mission</h2>
+            <p>
+              Our work connects the project's existing tools and pages into a
+              single story about responsible activity in low Earth orbit.
+            </p>
+          </div>
+          <div class="timeline">
+            <div class="step">
+              <b>01 • Observe</b>
+              <p>
+                Explore satellite and debris information through the interactive
+                globe and telemetry experiences.
+              </p>
+            </div>
+            <div class="step">
+              <b>02 • Understand</b>
+              <p>
+                Use the calculators, explanations and educational pages to
+                connect orbital activity with sustainability and safety.
+              </p>
+            </div>
+            <div class="step">
+              <b>03 • Imagine</b>
+              <p>
+                Use the concept of green credits and responsible orbital
+                operations to think about possible future solutions.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="section">
+        <div class="wrap">
+          <div class="note">
+            <h2>About NASA Space Apps Challenge</h2>
+            <p>
+              NASA Space Apps Challenge is a global hackathon-style event where
+              participants use space and Earth science data, technology and
+              creative problem-solving to develop ideas and prototypes. Our
+              project is being prepared for the 2026 challenge and is presented
+              as an independent participant project; it is not affiliated with
+              or endorsed by NASA.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <section class="section sponsors">
+        <div class="wrap">
+          <h1>Sponsors:</h1>
+          <div class="sponsor-list">
+            <div class="sponsor">
+              <img src="Startup_Bangladesh_Limited.png" alt="Startup Bangladesh Limited logo" loading="lazy" onerror="this.style.display='none'" />
+              <span>Startup Bangladesh Limited</span>
+            </div>
+            <div class="sponsor">
+              <img src="DEIED.png" alt="DEIED logo" loading="lazy" onerror="this.style.display='none'" />
+              <span>DEIED</span>
+            </div>
+            <div class="sponsor">
+              <img src="Bangladesh_Hi-Tech_Park.png" alt="Bangladesh Hi-Tech Park logo" loading="lazy" onerror="this.style.display='none'" />
+              <span>Bangladesh Hi-Tech Park</span>
+            </div>
+            <div class="sponsor">
+              <img src="World_Bank.png" alt="World Bank logo" loading="lazy" onerror="this.style.display='none'" />
+              <span>World Bank</span>
+            </div>
+            <div class="sponsor">
+              <img src="NASA.png" alt="NASA logo" loading="lazy" onerror="this.style.display='none'" />
+              <span>NASA</span>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer>
+      <div class="footer-grid">
+        <div>
+          <h3>The Third World Peace VLZO UFO</h3>
+          <p>
+            Educational space technology concept for orbital sustainability and
+            debris awareness.
+          </p>
+        </div>
+        <div>
+          <h3>Explore</h3>
+          <div class="footer-links">
+            <a href="EcoOrbit.html">Home</a
+            ><a href="About_EcoOrbit.html">About EcoOrbit</a
+            ><a href="EcoOrbit_Growths.html">EcoOrbit Growths</a
+            ><a href="EcoOrbit_Guidelines.html">EcoOrbit Guidelines</a
+            ><a href="Membership.html">Membership</a
+            ><a href="Our_Services.html">Our Services</a
+            ><a href="Privacy_and_Safety.html">Privacy & Safety</a
+            ><a href="VLZO_TV.html">VLZO TV</a>
+          </div>
+        </div>
+        <div>
+          <h3>NASA Space Apps Challenge 2026</h3>
+          <p>
+            Built under the “The Next Frontier” theme. This project is not
+            affiliated with NASA.
+          </p>
+        </div>
+      </div>
+      <div
+        style="
+          max-width: 1180px;
+          margin: 25px auto 0;
+          padding-top: 18px;
+          border-top: 1px solid var(--line);
+          text-align: center;
+        "
+      >
+        © 2026 The Third World Peace VLZO UFO Platform
+      </div>
+    </footer>
+    <script>
+      // Live registration counter: EcoOrbit.html and Membership.html bump
+      // localStorage["EcoOrbit_registrations"] on every new sign-up.
+      (function () {
+        var KEY = "EcoOrbit_registrations";
+        var el = document.getElementById("stat-reg");
+        var shown = 0;
+        function read() {
+          try {
+            var n = parseInt(localStorage.getItem(KEY), 10);
+            if (!isNaN(n)) return Math.max(0, n);
+            var u = JSON.parse(localStorage.getItem("EcoOrbit_users")) || {};
+            return Object.keys(u).length; // accounts made before the counter existed
+          } catch (e) {
+            return 0;
+          }
+        }
+        function fmt(n) {
+          if (n >= 1e6) return (n / 1e6).toFixed(n >= 1e7 ? 0 : 1).replace(/\.0$/, "") + "M+";
+          if (n >= 1e4) return Math.floor(n / 1e3) + "K+";
+          return n.toLocaleString();
+        }
+        function animate(to) {
+          var from = shown, t0 = performance.now();
+          if (matchMedia("(prefers-reduced-motion: reduce)").matches || from === to) {
+            shown = to; el.textContent = fmt(to); return;
+          }
+          (function step(t) {
+            var k = Math.min(1, (t - t0) / 700);
+            shown = Math.round(from + (to - from) * k);
+            el.textContent = fmt(shown);
+            if (k < 1) requestAnimationFrame(step);
+          })(t0);
+        }
+        animate(read());
+        window.addEventListener("storage", function () { animate(read()); }); // other tab signs someone up
+        document.addEventListener("visibilitychange", function () { if (!document.hidden) animate(read()); });
+      })();
+    </script>
+    <script src="voice_guide.js" defer></script>
+  </body>
+</html>

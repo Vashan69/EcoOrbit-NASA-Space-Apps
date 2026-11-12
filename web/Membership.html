@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Membership | The Third World Peace VLZO UFO</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Sora:wght@600;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#050b1a;--surface:#0c1630;--raised:#111f42;--line:#1e2e57;--text:#e8eefc;--muted:#a3b3d6;--accent:#4fd1ff;--ink:#04101f;--gold:#e0b84f;--ok:#34d399;--bad:#fda4af}
+*{box-sizing:border-box}
+body{margin:0;background:radial-gradient(1000px 500px at 50% -10%,#0e2a5c66,transparent),var(--bg);color:var(--text);font:16px/1.6 Inter,system-ui,sans-serif}
+h1,h2,h3{font-family:Sora,Inter,sans-serif;margin:0;line-height:1.2}
+button,input{font:inherit}button{cursor:pointer}a{color:var(--accent)}
+:focus-visible{outline:3px solid var(--accent);outline-offset:2px;border-radius:8px}
+header{position:sticky;top:0;z-index:10;background:#050b1aee;backdrop-filter:blur(12px);border-bottom:1px solid var(--line)}
+.bar{max-width:1180px;margin:auto;padding:12px 20px;display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.brand{font:600 15px Sora;color:var(--text);text-decoration:none;flex:1;min-width:180px}.brand small{display:block;font:400 12px Inter;color:var(--muted)}
+.btn{padding:11px 20px;border-radius:99px;border:1px solid var(--line);background:var(--surface);color:var(--text);font-size:14.5px;font-weight:600;text-decoration:none;display:inline-block;text-align:center;transition:background .15s,transform .15s}
+.btn:hover{background:var(--raised)}.btn:active{transform:scale(.98)}.btn.primary{background:var(--accent);color:var(--ink);border-color:transparent}.btn.primary:hover{filter:brightness(1.1)}
+.btn.sm{padding:7px 14px;font-size:13px}
+.wrap{max-width:1180px;margin:auto;padding:0 20px}
+.hero{text-align:center;padding:64px 0 28px}.hero h1{font-size:clamp(32px,5vw,54px);letter-spacing:-.02em}
+.hero p{color:var(--muted);font-size:18px;max-width:56ch;margin:14px auto 28px}
+.sw{display:inline-flex;background:var(--surface);border:1px solid var(--line);border-radius:99px;padding:5px}
+.sw button{border:0;background:none;color:var(--muted);padding:10px 22px;border-radius:99px;font-weight:600}
+.sw button.on{background:var(--accent);color:var(--ink)}.sw em{font-style:normal;font-size:12px;background:#34d39922;color:var(--ok);padding:2px 8px;border-radius:99px;margin-left:6px}
+.sw .on em{background:#04101f22;color:var(--ink)}
+.plans{display:grid;grid-template-columns:repeat(auto-fit,minmax(245px,1fr));gap:18px;padding:36px 0 20px;align-items:stretch}
+.plan{position:relative;background:var(--surface);border:1px solid var(--line);border-radius:20px;padding:26px;display:flex;flex-direction:column;transition:transform .2s,border-color .2s}
+.plan:hover{transform:translateY(-4px);border-color:var(--accent)}
+.plan.pop{border-color:var(--gold);background:linear-gradient(180deg,#1a2650,var(--surface))}
+.badge{position:absolute;top:-13px;left:50%;transform:translateX(-50%);background:var(--gold);color:#1a1200;font:700 12px Inter;padding:4px 14px;border-radius:99px;white-space:nowrap}
+.plan h3{font-size:20px}.plan .for{color:var(--muted);font-size:14.5px;margin:4px 0 16px;min-height:44px}
+.price{font:700 40px Sora;letter-spacing:-.02em}.price small{font:500 15px Inter;color:var(--muted)}
+.note{color:var(--muted);font-size:13px;min-height:20px;margin-bottom:16px}
+.plan ul{list-style:none;margin:20px 0;padding:0;flex:1}.plan li{padding:6px 0 6px 26px;position:relative;font-size:15px}
+.plan li::before{content:"\2713";position:absolute;left:0;color:var(--ok);font-weight:700}
+.tbl{overflow-x:auto;margin:40px 0}.tbl h2{font-size:26px;margin-bottom:16px}
+table{width:100%;border-collapse:collapse;min-width:640px;background:var(--surface);border-radius:14px;overflow:hidden}
+th,td{padding:13px 16px;text-align:center;border-bottom:1px solid var(--line);font-size:15px}
+th:first-child,td:first-child{text-align:left}thead th{background:var(--raised);font-family:Sora}
+.y{color:var(--ok);font-weight:700}.n{color:#5d6f9c}
+
+/* member card + directory */
+.promo{margin:22px auto 0;max-width:420px}
+.promo form{display:flex;gap:8px}
+.promo input{flex:1;min-width:0;background:var(--surface);border:1px solid var(--line);border-radius:99px;padding:11px 18px;color:var(--text)}
+.promo input:focus{outline:none;border-color:var(--accent)}
+.promo .ok{color:var(--ok);font-weight:600;font-size:15px}.promo .ok button{margin-left:8px}
+.promo .pe{color:var(--bad);font-size:14px;min-height:20px;margin:6px 0 0}
+.sec{margin:44px 0}.sec>h2{font-size:26px;margin-bottom:6px}.sec>.lead{color:var(--muted);margin:0 0 18px;max-width:70ch}
+.mcard{display:flex;flex-wrap:wrap;gap:18px 28px;align-items:center;justify-content:space-between;background:linear-gradient(135deg,#12306a,var(--surface));border:1px solid var(--accent);border-radius:20px;padding:24px}
+.mcard .who b{font:700 22px Sora;display:block}.mcard .who span{color:var(--muted);font-size:14px}
+.nums{display:flex;flex-wrap:wrap;gap:12px}
+.num{background:#04101f99;border:1px solid var(--line);border-radius:14px;padding:10px 14px;min-width:190px}
+.num small{display:block;color:var(--muted);font-size:12px;text-transform:uppercase;letter-spacing:.06em}
+.num .v{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.num b{font:700 21px Sora;letter-spacing:.04em;font-variant-numeric:tabular-nums}
+.cp{background:none;border:1px solid var(--line);color:var(--muted);border-radius:8px;padding:4px 9px;font-size:12px}.cp:hover{color:var(--text);border-color:var(--accent)}
+.mact{display:flex;gap:10px;flex-wrap:wrap}
+.join{background:var(--surface);border:1px dashed var(--line);border-radius:20px;padding:22px;display:flex;flex-wrap:wrap;gap:14px;justify-content:space-between;align-items:center}
+.join p{margin:0;color:var(--muted);max-width:60ch}
+.dirbar{display:flex;gap:10px;margin-bottom:12px}
+.dirbar input{flex:1;min-width:0;background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:12px 14px;color:var(--text)}
+.dirbar input:focus{outline:none;border-color:var(--accent)}
+.dirlist{background:var(--surface);border:1px solid var(--line);border-radius:14px;overflow:hidden}
+.row{display:grid;grid-template-columns:42px minmax(0,1fr) auto auto;gap:12px;align-items:center;padding:12px 16px;border-bottom:1px solid var(--line)}
+.row:last-child{border-bottom:0}
+.av{width:42px;height:42px;border-radius:50%;display:grid;place-items:center;font:700 14px Sora;color:var(--ink);background:linear-gradient(135deg,var(--accent),#4facfe)}
+.row .nm{min-width:0}.row .nm b{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.row .nm small{color:var(--muted)}
+.row .cn{font:600 15px Sora;letter-spacing:.04em;font-variant-numeric:tabular-nums}
+.you{font-size:11px;color:var(--ok);border:1px solid #34d39966;border-radius:99px;padding:1px 8px;margin-left:6px}
+.empty{padding:26px;text-align:center;color:var(--muted)}
+.fine{color:var(--muted);font-size:13px;margin:10px 2px 0}
+@media(max-width:640px){.row{grid-template-columns:42px minmax(0,1fr);}.row .cn{grid-column:2}.row .ra{grid-column:2}}
+
+.faq{max-width:760px;margin:0 auto 80px}.faq h2{font-size:26px;margin-bottom:16px;text-align:center}
+details{background:var(--surface);border:1px solid var(--line);border-radius:12px;margin-bottom:10px}
+summary{padding:16px 18px;font-weight:600;cursor:pointer;list-style:none;display:flex;justify-content:space-between}
+summary::-webkit-details-marker{display:none}summary::after{content:"+";color:var(--accent);font-size:20px;transition:transform .2s}details[open] summary::after{transform:rotate(45deg)}
+details p{margin:0;padding:0 18px 18px;color:var(--muted);font-size:15px}
+dialog{width:min(480px,calc(100% - 32px));background:var(--surface);color:var(--text);border:1px solid var(--line);border-radius:20px;padding:0}
+dialog::backdrop{background:#000a;backdrop-filter:blur(3px)}
+.d{padding:26px}.d h2{font-size:22px;margin-bottom:4px}.d .sub{color:var(--muted);font-size:14.5px;margin-bottom:16px}
+.ln{display:flex;justify-content:space-between;padding:11px 0;border-top:1px solid var(--line);font-size:15.5px}.ln.t{font-weight:700;font-size:18px}
+.d .warn{background:var(--raised);border-radius:12px;padding:12px 14px;font-size:13.5px;color:var(--muted);margin:14px 0}
+.d .acts{display:flex;gap:10px;flex-wrap:wrap}.d .acts .btn{flex:1}
+.d label{display:block;font-size:14px;color:var(--muted);margin:14px 0 6px}
+.d input[type=text]{width:100%;background:var(--bg);border:1px solid var(--line);border-radius:12px;padding:12px 14px;color:var(--text)}
+.d input[type=text]:focus{outline:none;border-color:var(--accent)}
+.chk{display:flex;gap:10px;align-items:flex-start;font-size:14px;color:var(--muted);margin:14px 0}.chk input{margin-top:5px;accent-color:var(--accent)}
+.fe{color:var(--bad);font-size:14px;min-height:20px;margin:8px 0 0}
+.big{background:var(--bg);border:1px solid var(--line);border-radius:14px;padding:12px 16px;margin:10px 0}
+.big small{color:var(--muted);font-size:12px;text-transform:uppercase;letter-spacing:.06em}
+.big .v{display:flex;justify-content:space-between;align-items:center;gap:10px}.big b{font:700 26px Sora;letter-spacing:.05em;font-variant-numeric:tabular-nums}
+footer{border-top:1px solid var(--line);padding:26px 20px;text-align:center;color:var(--muted);font-size:14px}
+.toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);background:var(--raised);border:1px solid var(--line);border-radius:12px;padding:10px 16px;font-size:14px;z-index:50}
+@media(prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+<header><div class="bar"><a class="brand" href="EcoOrbit.html">The Third World Peace VLZO UFO<small>Membership</small></a>
+<a class="btn" id="hMeet" href="EcoOrbit_Meetings.html">Meetings &amp; calls</a><a class="btn primary" href="EcoOrbit.html">Back to app</a></div></header>
+
+<main class="wrap">
+  <section class="hero">
+    <h1>Choose your membership</h1>
+    <p>Get more from the platform with a plan that fits how you explore, learn and protect orbit. Every paid member gets a Member ID and a call number, so you can call other members directly. Switch or cancel any time.</p>
+    <div class="sw" role="group" aria-label="Billing period"><button id="bm" class="on" aria-pressed="true">Monthly</button><button id="by" aria-pressed="false">Yearly<em id="save"></em></button></div>
+    <div class="promo" id="promoBar"></div>
+  </section>
+  <section class="plans" id="plans"></section>
+
+  <section class="sec" id="mine" aria-live="polite"></section>
+
+  <section class="sec" id="dirsec">
+    <h2>Members directory</h2>
+    <p class="lead">Members who chose to be listed appear here with their call numbers. Press Call to ring them in Eco Orbit Meetings, from any device.</p>
+    <div class="dirbar"><input id="q" type="search" placeholder="Search by name or number" aria-label="Search members"></div>
+    <div class="dirlist" id="dir"></div>
+    <p class="fine" id="dirNote"></p>
+  </section>
+
+  <section class="tbl"><h2>Compare plans</h2><table id="cmp"></table></section>
+  <section class="faq"><h2>Questions</h2>
+    <details><summary>How do I pay?</summary><p>When you choose a plan you are sent to a secure payment page run by our payment provider. We never see or store your card details on this site.</p></details>
+    <details><summary>What are my Member ID and call number?</summary><p>After you join you get a Member ID (like EO-1234567) and a 9 digit call number. Share your call number with other members. When they enter it in Eco Orbit Meetings, your device rings and you can talk with video and voice.</p></details>
+    <details><summary>Can I use my numbers on another device?</summary><p>Yes. Choose "Sign in with my numbers" and enter your name, Member ID and call number. You will be reachable on that device whenever the Meetings page is open.</p></details>
+    <details><summary>Can I switch plans later?</summary><p>Yes. You can move up or down whenever you like, and the change applies from your next billing period. Your numbers stay the same.</p></details>
+    <details><summary>What does the yearly option save?</summary><p>Paying yearly gives you two months free compared with paying month by month.</p></details>
+    <details><summary>Do I need to be a member to use the site?</summary><p>No. The Explorer plan is free and lets you try the core tools, including the 3D simulator and the cyber security test. Member calling needs a paid plan.</p></details>
+  </section>
+</main>
+
+<dialog id="dlg" aria-labelledby="dh"><div class="d" id="db"></div></dialog>
+<footer>Built for the NASA Space Apps Challenge &middot; Not affiliated with NASA</footer>
+
+<script src="eco-members.js"></script>
+<script>
+/* ===== EDIT THIS SECTION ===== */
+const CUR='$';                            // currency symbol
+const CONTACT='memberships@example.com';  // where "request by email" goes
+const APP='EcoOrbit.html', MEET='EcoOrbit_Meetings.html';
+/* TEST_MODE lets anyone press "Activate now" without paying, so you can try the numbers and calling.
+   Set it to false before you launch. */
+const TEST_MODE=true;
+const PROMO_CODE='VLZO69$#gsBD';   // enter this at checkout for any membership free (case sensitive)
+const PLANS=[
+{id:'explorer',name:'Explorer',for:'For curious minds getting started.',m:0,link:'',
+ feats:['3D VLZO UFO Simulator','Cyber security test and certificate','VLZO TV','Voice guide']},
+{id:'navigator',name:'Navigator',for:'For students and space fans who want more.',m:9,link:'',
+ feats:['Everything in Explorer','Member ID and call number','Call other members','Sustainability Score reports','Collision risk alerts','Email support']},
+{id:'commander',name:'Commander',for:'For researchers and small teams.',m:29,link:'',pop:true,
+ feats:['Everything in Navigator','Carbon credit tracking','Early access to new tools','Priority support','Up to 5 team seats']},
+{id:'mission',name:'Mission Control',for:'For agencies and organisations.',m:99,link:'',
+ feats:['Everything in Commander','Unlimited team seats','Custom sustainability reports','Dedicated onboarding','Direct line to the author']}
+];
+/* payment link: paste your Stripe / PayPal / other payment link into "link" for each plan.
+   In Stripe, set the link's "after payment" redirect to  Membership.html?paid=navigator  (use the plan id)
+   so buyers land back here and get their numbers. */
+/* ============================== */
+const FEATS=[['3D VLZO UFO Simulator',[1,1,1,1]],['Cyber security test & certificate',[1,1,1,1]],['VLZO TV',[1,1,1,1]],['Member ID & call number',[0,1,1,1]],['Call other members',[0,1,1,1]],['Sustainability Score reports',[0,1,1,1]],['Collision risk alerts',[0,1,1,1]],['Carbon credit tracking',[0,0,1,1]],['Early access to new tools',[0,0,1,1]],['Team seats',['1','1','5','Unlimited']],['Support',['Community','Email','Priority','Dedicated']]];
+const $=s=>document.querySelector(s),esc=EOM.esc;let yearly=false,pending=null,promo=false;
+function renderPromo(msg){
+  $('#promoBar').innerHTML=promo?`<div class="ok">✓ Promo code applied. Every paid plan is free.<button class="cp" type="button" id="hpRemove">Remove</button></div>`
+  :`<form id="hpForm" autocomplete="off"><input id="hpromo" type="text" placeholder="Have a promo code?" aria-label="Promo code" autocapitalize="off" spellcheck="false"><button class="btn primary" type="submit">Apply</button></form><p class="pe" id="hpe" role="alert">${msg||''}</p>`}
+function applyPromo(v){if(String(v).trim()===PROMO_CODE){promo=true;render();renderPromo();return true}return false}
+const price=p=>yearly?p.m*10:p.m, per=()=>yearly?'/year':'/month';
+const fmt=n=>n===0?'Free':CUR+n.toLocaleString();
+const ini=n=>(n||'?').trim().split(/\s+/).slice(0,2).map(w=>w[0]).join('').toUpperCase()||'?';
+$('#save').textContent='2 months free';
+function toast(t){const d=document.createElement('div');d.className='toast';d.textContent=t;document.body.appendChild(d);setTimeout(()=>d.remove(),2600)}
+
+function render(){
+  $('#plans').innerHTML=PLANS.map(p=>`<article class="plan${p.pop?' pop':''}">${p.pop?'<span class="badge">Most popular</span>':''}<h3>${p.name}</h3><div class="for">${p.for}</div>
+   <div class="price">${p.m&&promo?'Free':fmt(price(p))}${p.m&&!promo?`<small> ${per()}</small>`:''}</div>
+   <div class="note">${p.m&&promo?'Free with your promo code.':p.m?(yearly?`That is ${CUR}${(p.m*10/12).toFixed(2)} a month. You save ${CUR}${p.m*2}.`:'Billed monthly.'):'No payment needed.'}</div>
+   <button class="btn ${p.pop?'primary':''}" data-id="${p.id}">${p.m?(promo?'Get '+p.name+' free':'Get '+p.name):'Start free'}</button>
+   <ul>${p.feats.map(f=>'<li>'+f+'</li>').join('')}</ul></article>`).join('');
+  $('#cmp').innerHTML='<thead><tr><th>Feature</th>'+PLANS.map(p=>'<th>'+p.name+'</th>').join('')+'</tr></thead><tbody>'+
+   FEATS.map(f=>'<tr><td>'+f[0]+'</td>'+f[1].map(v=>'<td>'+(v===1?'<span class="y">✓</span>':v===0?'<span class="n">—</span>':v)+'</td>').join('')+'</tr>').join('')+'</tbody>';
+  $('#bm').classList.toggle('on',!yearly);$('#by').classList.toggle('on',yearly);$('#bm').setAttribute('aria-pressed',!yearly);$('#by').setAttribute('aria-pressed',yearly)}
+
+/* ---------- member card ---------- */
+function renderMine(){
+  const m=EOM.me();
+  $('#mine').innerHTML=m&&m.demo?`<div class="mcard"><div class="who"><b>${esc(m.name)}</b><span>Demo number · ${m.credits} ${m.credits===1?'credit':'credits'} left</span></div><div class="nums"><div class="num"><small>Demo call number</small><div class="v"><b>${EOM.fmtCall(m.call)}</b><button class="cp" data-copy="${m.call}">Copy</button></div></div></div><div class="mact"><a class="btn primary" href="${MEET}">Open Meetings</a></div></div><p class="fine">Choose a plan above to get a full Member ID and unlimited calls.</p>`
+  :m?`<div class="mcard"><div class="who"><b>${esc(m.name)}</b><span>${esc(m.plan)} member${m.listed?' · listed in the directory':' · not listed'}</span></div>
+    <div class="nums"><div class="num"><small>Member ID</small><div class="v"><b>${esc(m.id)}</b><button class="cp" data-copy="${esc(m.id)}">Copy</button></div></div>
+    <div class="num"><small>Call number</small><div class="v"><b>${EOM.fmtCall(m.call)}</b><button class="cp" data-copy="${m.call}">Copy</button></div></div></div>
+    <div class="mact"><a class="btn primary" href="${MEET}">Open Meetings</a><button class="btn" id="so">Sign out</button></div></div>`
+  :`<div class="join"><p><b>Already a member?</b> Use your Member ID and call number on this device, then you can call and be called in Eco Orbit Meetings.</p><button class="btn primary" id="si">Sign in with my numbers</button></div>`}
+
+/* ---------- directory ---------- */
+function renderDir(list){
+  list=list||EOM.directory();const q=($('#q').value||'').toLowerCase().replace(/\s+/g,' ').trim(),qd=q.replace(/\D/g,'');
+  const f=list.filter(x=>!q||x.name.toLowerCase().includes(q)||(qd&&x.call.includes(qd)));
+  $('#dir').innerHTML=f.length?f.map(x=>`<div class="row"><div class="av" aria-hidden="true">${esc(ini(x.name))}</div>
+    <div class="nm"><b>${esc(x.name)}${x.mine?'<span class="you">You</span>':''}</b><small>${esc(x.plan||'Member')}</small></div>
+    <div class="cn">${EOM.fmtCall(x.call)}</div>
+    <div class="ra mact"><button class="cp" data-copy="${x.call}">Copy</button>${x.mine?'':`<a class="btn primary sm" href="${MEET}?call=${x.call}">Call</a>`}</div></div>`).join('')
+   :`<div class="empty">${list.length?'No member matches your search.':'No members are listed yet.'}</div>`;
+  $('#dirNote').textContent=EOM.hasRemote?'':'This list is stored in this browser. To share one list across every device, connect a directory server (see DIRECTORY_URL in eco-members.js).'}
+
+/* ---------- dialogs ---------- */
+function openPlan(id,keep){
+  const p=PLANS.find(x=>x.id===id);
+  if(!p.m){location.href=APP;return}
+  const m=EOM.me(),total=promo?0:price(p),lnk=p.link;pending=id;
+  const mail=`mailto:${CONTACT}?subject=${encodeURIComponent('Membership: '+p.name+' ('+(yearly?'yearly':'monthly')+')')}&body=${encodeURIComponent('Hi, I would like the '+p.name+' plan, billed '+(yearly?'yearly':'monthly')+' ('+CUR+total+').')}`;
+  $('#db').innerHTML=`<h2 id="dh">Your order</h2><div class="sub">Review your plan before you continue.</div>
+  <div class="ln"><span>${p.name} plan</span><span>${yearly?'Yearly':'Monthly'}</span></div>
+  <div class="ln"><span>Price</span><span>${CUR}${price(p)} ${per()}</span></div>
+  ${yearly?`<div class="ln"><span>You save</span><span style="color:var(--ok)">${CUR}${p.m*2}</span></div>`:''}
+  ${promo?`<div class="ln"><span>Promo code</span><span style="color:var(--ok)">Applied · 100% off</span></div>`
+  :`<label for="promo" style="display:block;font-size:14px;color:var(--muted);margin:14px 0 6px">Promo code</label><div class="dirbar" style="margin:0"><input id="promo" type="text" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="Enter code" style="flex:1;min-width:0;background:var(--bg);border:1px solid var(--line);border-radius:12px;padding:11px 14px;color:var(--text)"><button class="btn" id="promoGo" type="button">Apply</button></div><p class="fe" id="pe" role="alert"></p>`}
+  <div class="ln t"><span>Total today</span><span>${total?CUR+total:'Free'}</span></div>
+  <div class="warn">${promo?'Your code is accepted. No payment is needed. ':''}${m?'You are already a member. Your Member ID and call number will stay the same.':'After payment you will get your Member ID and call number.'} ${lnk?'You will be taken to a secure payment page. We never see your card details.':'Online payment is not connected yet. Send us a request and we will contact you with payment details.'}</div>
+  <div class="acts">${promo?`<button class="btn primary" id="act">Activate my free membership</button>`:lnk?`<a class="btn primary" href="${lnk}" target="_blank" rel="noopener">Continue to secure payment</a>`:`<a class="btn primary" href="${mail}">Request this plan by email</a>`}<button class="btn" data-x>Cancel</button></div>
+  ${TEST_MODE&&!promo?`<div class="acts" style="margin-top:10px"><button class="btn" id="act">Test mode: activate now</button></div>`:''}`;
+  if(!dlg.open)dlg.showModal()}
+
+function openActivate(id){
+  const p=PLANS.find(x=>x.id===id)||PLANS[1],m=EOM.me();
+  $('#db').innerHTML=`<h2 id="dh">${m?'Update your plan':'Get your numbers'}</h2><div class="sub">${p.name} plan. Your name is shown to members you call.</div>
+  <label for="nm">Your name</label><input id="nm" type="text" maxlength="30" autocomplete="name" value="${esc(m?m.name:'')}">
+  <label class="chk"><input id="ls" type="checkbox" ${!m||m.listed?'checked':''}><span>List me in the members directory so others can find my call number.</span></label>
+  <p class="fe" id="fe" role="alert"></p>
+  <div class="acts"><button class="btn primary" id="go">${m?'Update':'Get my Member ID'}</button><button class="btn" data-x>Cancel</button></div>`;
+  pending=p.id;dlg.showModal();setTimeout(()=>$('#nm').focus(),50)}
+
+function openCard(m,fresh){
+  $('#db').innerHTML=`<h2 id="dh">${fresh?'Welcome, '+esc(m.name):'Your numbers'}</h2><div class="sub">${esc(m.plan)} member. Keep these safe.</div>
+  <div class="big"><small>Member ID</small><div class="v"><b>${esc(m.id)}</b><button class="cp" data-copy="${esc(m.id)}">Copy</button></div></div>
+  <div class="big"><small>Your call number</small><div class="v"><b>${EOM.fmtCall(m.call)}</b><button class="cp" data-copy="${m.call}">Copy</button></div></div>
+  <div class="warn">Give your call number to other members. Open Eco Orbit Meetings and keep that page open to receive calls. To use your numbers on another device, choose "Sign in with my numbers".</div>
+  <div class="acts"><a class="btn primary" href="${MEET}">Open Meetings</a><button class="btn" data-x>Done</button></div>`;
+  dlg.showModal()}
+
+function openSignIn(){
+  $('#db').innerHTML=`<h2 id="dh">Sign in with my numbers</h2><div class="sub">Use the numbers you got when you joined.</div>
+  <label for="sn">Your name</label><input id="sn" type="text" maxlength="30" autocomplete="name">
+  <label for="sid">Member ID</label><input id="sid" type="text" placeholder="EO-1234567" autocapitalize="characters" autocomplete="off">
+  <label for="scl">Call number</label><input id="scl" type="text" inputmode="numeric" placeholder="123 456 789" autocomplete="off">
+  <label class="chk"><input id="sls" type="checkbox" checked><span>List me in the members directory.</span></label>
+  <p class="fe" id="fe" role="alert"></p>
+  <div class="acts"><button class="btn primary" id="sgo">Sign in</button><button class="btn" data-x>Cancel</button></div>`;
+  dlg.showModal();setTimeout(()=>$('#sn').focus(),50)}
+
+/* ---------- wiring ---------- */
+const dlg=$('#dlg');dlg.addEventListener('click',e=>{if(e.target===dlg)dlg.close()});
+$('#bm').onclick=()=>{yearly=false;render()};$('#by').onclick=()=>{yearly=true;render()};
+$('#q').oninput=()=>renderDir();
+document.addEventListener('submit',e=>{if(e.target.id==='hpForm'){e.preventDefault();if(!applyPromo($('#hpromo').value))renderPromo('That code is not valid.')}});
+document.addEventListener('click',e=>{if(e.target.closest('#hpRemove')){promo=false;render();renderPromo()}});
+document.addEventListener('keydown',e=>{if(e.key==='Enter'&&e.target.id==='promo'){e.preventDefault();$('#promoGo').click()}});
+document.addEventListener('click',async e=>{
+  const t=e.target;
+  const cp=t.closest('[data-copy]');if(cp){toast(await EOM.copy(cp.dataset.copy)?'Copied':'Could not copy');return}
+  if(t.closest('[data-x]')){dlg.close();return}
+  const b=t.closest('#plans button[data-id]');if(b){openPlan(b.dataset.id);return}
+  if(t.closest('#promoGo')){if(applyPromo($('#promo').value)){openPlan(pending,true)}else $('#pe').textContent='That code is not valid.';return}
+  if(t.closest('#act')){openActivate(pending);return}
+  if(t.closest('#si')){openSignIn();return}
+  if(t.closest('#so')){if(confirm('Sign out on this device? Keep your numbers so you can sign in again.')){EOM.signOut();renderMine();renderDir()}return}
+  if(t.closest('#go')){
+    const name=EOM.cleanName($('#nm').value);if(!name){$('#fe').textContent='Please enter your name.';return}
+    const p=PLANS.find(x=>x.id===pending)||PLANS[1];
+    const wasNew=!EOM.me()||EOM.me().demo;
+    const m=EOM.create({name,plan:p.name,listed:$('#ls').checked});
+    if(wasNew){try{ /* bump the public registration counter shown on the About Us page */
+      const RK='EcoOrbit_registrations';let rc=parseInt(localStorage.getItem(RK),10);
+      if(isNaN(rc)){try{rc=Object.keys(JSON.parse(localStorage.getItem('EcoOrbit_users'))||{}).length}catch(_){rc=0}}
+      localStorage.setItem(RK,String(rc+1));
+      const LK='EcoOrbit_reg_log';let lg=[];try{lg=JSON.parse(localStorage.getItem(LK))||[]}catch(_){}
+      lg.push(Date.now());localStorage.setItem(LK,JSON.stringify(lg.slice(-5000)))}catch(_){}}
+    dlg.close();renderMine();renderDir();openCard(m,true);return}
+  if(t.closest('#sgo')){
+    const r=EOM.signIn({name:$('#sn').value,id:$('#sid').value,call:$('#scl').value,listed:$('#sls').checked});
+    if(r.error){$('#fe').textContent=r.error;return}
+    dlg.close();renderMine();renderDir();toast('Signed in. You can now use Meetings.');return}
+});
+render();renderPromo();renderMine();renderDir();
+EOM.syncRemote().then(renderDir);
+
+/* returning from the payment page: Membership.html?paid=navigator ; sign-in link: Membership.html#signin */
+(function(){
+  const q=new URLSearchParams(location.search),id=q.get('paid');
+  if(id&&PLANS.some(p=>p.m&&p.id===id)){history.replaceState(null,'',location.pathname);openActivate(id)}
+  else if(location.hash==='#signin'&&!EOM.me())openSignIn()})();
+</script>
+<script src="voice_guide.js" defer></script>
+<script src="chatbot.js" data-name="Zara VLZO Chatbot" data-avatar="amira_ai_customer_service_talking.gif" data-zoom="1" defer></script>
+</body>
+</html>

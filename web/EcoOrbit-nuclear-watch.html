@@ -1,0 +1,562 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Global Nuclear Watch | EcoOrbit</title>
+<link rel="icon" type="image/png" href="favicon.png">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Sora:wght@600;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#02050d;--panel:rgba(6,14,32,.72);--line:rgba(120,170,255,.16);--text:#e8eefc;--muted:#8fa3c8;--cy:#00f2fe;--red:#f43f5e;--org:#fb923c;--grn:#0ecb81;--amb:#fbbf24}
+*{box-sizing:border-box}
+html,body{height:100%;margin:0;overflow:hidden;background:var(--bg);color:var(--text);font:14px/1.45 Inter,system-ui,sans-serif}
+button{font:inherit;cursor:pointer;color:inherit}
+:focus-visible{outline:2px solid var(--cy);outline-offset:2px}
+#stage{position:fixed;inset:0}
+#gl{display:block;width:100%;height:100%;touch-action:none;cursor:grab}
+#gl.drag{cursor:grabbing}#gl.hover{cursor:pointer}
+.mono{font-family:ui-monospace,SFMono-Regular,Consolas,monospace}
+
+/* header */
+header{position:fixed;top:0;left:0;right:0;z-index:20;display:flex;align-items:center;gap:14px;padding:10px 18px;background:linear-gradient(180deg,rgba(2,5,13,.92),rgba(2,5,13,0));pointer-events:none}
+header>*{pointer-events:auto}
+.brand{display:flex;align-items:center;gap:12px;text-decoration:none;color:var(--text)}
+.brand img{width:46px;height:46px;object-fit:contain;filter:drop-shadow(0 0 8px rgba(0,242,254,.5))}
+.brand b{display:block;font:700 21px/1.1 Sora,sans-serif}.brand small{display:block;color:var(--muted);font-size:11.5px;letter-spacing:.04em}
+.hgrow{flex:1}
+.live{display:flex;align-items:center;gap:8px;padding:7px 12px;border-radius:99px;border:1px solid var(--line);background:var(--panel);font-size:12px;backdrop-filter:blur(8px)}
+.dot{width:8px;height:8px;border-radius:50%;background:var(--grn);box-shadow:0 0 10px var(--grn);animation:blink 1.4s infinite}
+.btn{padding:8px 14px;border-radius:99px;border:1px solid var(--line);background:var(--panel);font-size:13px;font-weight:500;text-decoration:none;color:var(--text);backdrop-filter:blur(8px);transition:background .15s,border-color .15s}
+.btn:hover{background:rgba(20,40,80,.8);border-color:rgba(0,242,254,.5)}
+
+/* panels */
+.panel{position:fixed;z-index:10;background:var(--panel);border:1px solid var(--line);border-radius:16px;backdrop-filter:blur(12px);padding:14px}
+.panel h2{margin:0 0 10px;font:600 11px/1 Inter,system-ui,sans-serif;letter-spacing:.16em;color:var(--cy);text-transform:uppercase;display:flex;align-items:center;gap:8px}
+#left{left:16px;top:78px;bottom:96px;width:300px;display:flex;flex-direction:column}
+#right{position:fixed;z-index:10;right:16px;top:78px;bottom:96px;width:320px;display:flex;flex-direction:column;gap:12px;background:none;border:0;padding:0;backdrop-filter:none}
+#right .panel{position:relative}
+#ledger{list-style:none;margin:0;padding:0;overflow:auto;flex:1;display:flex;flex-direction:column;gap:6px}
+.row{display:grid;grid-template-columns:1fr auto;gap:2px 8px;padding:8px 10px;border-radius:12px;border:1px solid transparent;background:rgba(255,255,255,.03);cursor:pointer;transition:background .15s,border-color .15s}
+.row:hover{background:rgba(255,255,255,.07)}.row.sel{border-color:rgba(0,242,254,.55);background:rgba(0,242,254,.08)}
+.row .n{font-weight:600}.row .c{font-variant-numeric:tabular-nums;font-weight:700;text-align:right}
+.bar{grid-column:1/-1;height:5px;border-radius:9px;background:rgba(255,255,255,.08);overflow:hidden}
+.bar i{display:block;height:100%;width:100%;background:var(--red);border-radius:9px;transition:width .2s linear,background .4s}
+.row .st{grid-column:1/-1;font-size:11px;color:var(--muted)}
+.row.dis .bar i,.row.clr .bar i{background:var(--grn)}.row.dis .st{color:var(--cy)}.row.clr .st{color:var(--grn)}
+.row.mid .bar i{background:var(--org)}
+
+/* radar */
+#radarBox{position:relative;aspect-ratio:1/1;width:min(100%,250px);align-self:center;flex-shrink:0;padding:0;overflow:hidden}
+#radar{position:absolute;inset:0;width:100%;height:100%;cursor:pointer}
+#radarBox .tag{position:absolute;left:12px;top:10px;font-size:10px;letter-spacing:.16em;color:var(--cy)}
+#radarBox .tag2{position:absolute;right:12px;top:10px;font-size:10px;letter-spacing:.1em;color:var(--muted)}
+#detail{min-height:150px;flex-shrink:0}
+#detail h3{margin:0;font:700 18px/1.2 Sora,sans-serif}
+#detail .kv{display:grid;grid-template-columns:auto 1fr;gap:3px 12px;margin:8px 0;font-size:12.5px;color:var(--muted)}
+#detail .kv b{color:var(--text);font-weight:500}
+.disp{width:100%;padding:11px 14px;border-radius:12px;border:1px solid rgba(14,203,129,.6);background:linear-gradient(180deg,rgba(14,203,129,.28),rgba(14,203,129,.12));color:#d9fff0;font-weight:700;letter-spacing:.04em;transition:transform .12s,box-shadow .2s}
+.disp:hover{box-shadow:0 0 22px rgba(14,203,129,.45)}.disp:active{transform:scale(.98)}
+.disp[disabled]{opacity:.55;cursor:default;box-shadow:none}
+#feedBox{flex:1;min-height:110px;display:flex;flex-direction:column;overflow:hidden}
+#feed{list-style:none;margin:0;padding:0;flex:1;display:flex;flex-direction:column;justify-content:flex-end;gap:4px;overflow:hidden}
+#feed li{font-size:11.5px;line-height:1.35;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:#cbd5e1;animation:in .4s ease-out}
+#feed li time{color:#64748b;margin-right:8px}
+#feed li b{font-weight:600}
+#feed li.ok b{color:var(--grn)}#feed li.info b{color:var(--cy)}#feed li.warn b{color:var(--amb)}
+#feed li:nth-last-child(n+6){opacity:.55}#feed li:nth-last-child(n+9){opacity:.3}
+
+/* global counter + bottom bar */
+#top{position:fixed;z-index:12;left:50%;top:74px;transform:translateX(-50%);text-align:center;pointer-events:none}
+#top small{display:block;font-size:10.5px;letter-spacing:.22em;color:var(--muted)}
+#total{font:700 clamp(34px,5vw,56px)/1.05 Sora,sans-serif;font-variant-numeric:tabular-nums;color:#fff;text-shadow:0 0 28px rgba(244,63,94,.55);transition:color .6s,text-shadow .6s}
+#total.zero{color:var(--grn);text-shadow:0 0 30px rgba(14,203,129,.7)}
+#top .sub{font-size:12px;color:var(--muted)}
+#bottom{position:fixed;z-index:12;left:50%;bottom:20px;transform:translateX(-50%);display:flex;gap:10px;flex-wrap:wrap;justify-content:center;max-width:calc(100% - 24px)}
+.big{padding:13px 26px;border-radius:99px;border:1px solid rgba(14,203,129,.7);background:linear-gradient(180deg,rgba(14,203,129,.4),rgba(14,203,129,.16));color:#eafff6;font:700 14px Inter,system-ui,sans-serif;letter-spacing:.06em;box-shadow:0 0 30px rgba(14,203,129,.3);transition:transform .12s,box-shadow .2s}
+.big:hover{box-shadow:0 0 42px rgba(14,203,129,.6)}.big:active{transform:scale(.97)}.big[disabled]{opacity:.5;cursor:default}
+.tog{padding:10px 16px;border-radius:99px;border:1px solid var(--line);background:var(--panel);backdrop-filter:blur(8px);font-size:13px}
+.tog[aria-pressed=true]{border-color:rgba(0,242,254,.6);color:var(--cy)}
+.tog:hover{background:rgba(20,40,80,.8)}
+.sheetbtn{display:none}
+
+/* globe labels */
+#labels{position:fixed;inset:0;z-index:5;pointer-events:none;overflow:hidden}
+.lb{position:absolute;transform:translate(10px,-50%);padding:3px 8px;border-radius:8px;background:rgba(2,8,20,.78);border:1px solid var(--line);font-size:11px;white-space:nowrap;transition:opacity .2s}
+.lb b{font-weight:600}.lb span{color:var(--org);margin-left:6px;font-variant-numeric:tabular-nums}
+.lb.dis span,.lb.clr span{color:var(--grn)}
+
+/* win overlay + toast */
+#win{position:fixed;inset:0;z-index:40;display:none;align-items:center;justify-content:center;flex-direction:column;text-align:center;padding:24px;background:radial-gradient(circle at 50% 45%,rgba(14,203,129,.22),rgba(2,5,13,.9));backdrop-filter:blur(6px)}
+#win.on{display:flex;animation:in .6s ease-out}
+#win h1{font:700 clamp(28px,5vw,52px)/1.1 Sora,sans-serif;margin:8px 0;color:#eafff6;text-shadow:0 0 30px rgba(14,203,129,.7)}
+#win p{max-width:52ch;color:#b9e8d3;margin:0 0 20px}
+#win .dove{font-size:64px;animation:float 3s ease-in-out infinite}
+#toast{position:fixed;left:50%;bottom:86px;transform:translate(-50%,20px);z-index:30;padding:10px 18px;border-radius:99px;background:rgba(2,8,20,.9);border:1px solid rgba(0,242,254,.4);font-size:13px;opacity:0;pointer-events:none;transition:.25s}
+#toast.on{opacity:1;transform:translate(-50%,0)}
+#note{position:fixed;z-index:9;left:0;right:0;bottom:3px;text-align:center;font-size:10.5px;color:#5c6f94;pointer-events:none;padding:0 12px}
+#noWebgl{position:fixed;inset:0;display:none;align-items:center;justify-content:center;text-align:center;padding:30px;z-index:50;background:var(--bg)}
+
+@keyframes blink{50%{opacity:.3}}@keyframes in{from{opacity:0;transform:translateY(6px)}}@keyframes float{50%{transform:translateY(-10px)}}
+
+/* small screens */
+@media(max-width:980px){
+  #left,#right{display:none;left:10px;right:10px;width:auto;top:auto;bottom:84px;max-height:52vh;overflow:auto}
+  #right{flex-direction:column}
+  body.show-left #left{display:flex}body.show-right #right{display:flex}
+  #radarBox{max-width:300px;margin:0 auto}
+  .sheetbtn{display:inline-block}
+  .live{display:none}
+  #top{top:64px}
+}
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<div id="stage"><canvas id="gl" aria-label="Interactive 3D globe showing nuclear-armed states. Drag to rotate, scroll to zoom, click a marker for details."></canvas></div>
+<div id="labels" aria-hidden="true"></div>
+
+<header>
+  <a class="brand" href="EcoOrbit.html" title="Back to EcoOrbit">
+    <img src="/images/EcoOrbit_Logo.png" alt="EcoOrbit logo" width="46" height="46">
+    <span><b><span class="eo-eco">Eco</span><span class="eo-orbit">Orbit</span></b><small>GLOBAL NUCLEAR WATCH &middot; PEACE MONITORING</small></span>
+  </a>
+  <div class="hgrow"></div>
+  <div class="live mono"><i class="dot"></i><span>LIVE 24/7</span><span id="clock" style="color:var(--cy)">--:--:--</span></div>
+  <a class="btn" href="EcoOrbit.html">&larr; Back to EcoOrbit</a>
+</header>
+
+<section id="top" aria-live="polite">
+  <small>WORLD WARHEAD INVENTORY (EST.)</small>
+  <div id="total" class="mono">0</div>
+  <div class="sub" id="sub">9 nuclear-armed states tracked</div>
+</section>
+
+<aside id="left" class="panel" aria-label="Warhead ledger">
+  <h2><i class="dot" style="background:var(--red);box-shadow:0 0 10px var(--red)"></i>Warhead ledger</h2>
+  <ul id="ledger"></ul>
+</aside>
+
+<aside id="right" aria-label="Radar and details">
+  <section id="radarBox" class="panel" aria-label="Polar radar of tracked states">
+    <canvas id="radar"></canvas><span class="tag mono">POLAR RADAR</span><span class="tag2 mono" id="cycle">SCAN #1</span>
+  </section>
+  <section id="detail" class="panel"></section>
+  <section id="feedBox" class="panel" aria-label="Monitoring feed">
+    <h2><i class="dot"></i>Monitoring feed</h2>
+    <ul id="feed" class="mono" aria-live="off"></ul>
+  </section>
+</aside>
+
+<nav id="bottom" aria-label="Controls">
+  <button class="tog sheetbtn" id="bLeft" aria-pressed="false">Ledger</button>
+  <button class="big" id="disposeAll">DISPOSE ALL WARHEADS</button>
+  <button class="tog" id="bReset">Reset</button>
+  <button class="tog" id="bRot" aria-pressed="true">Auto-rotate</button>
+  <button class="tog" id="bOrb" aria-pressed="true">Satellites</button>
+  <button class="tog sheetbtn" id="bRight" aria-pressed="false">Radar</button>
+</nav>
+
+<div id="toast" role="status"></div>
+<div id="note">Educational simulation &middot; rounded public estimates (FAS / SIPRI, early 2026) &middot; markers show capitals, not weapon sites &middot; &ldquo;Dispose&rdquo; is symbolic and affects no real weapons</div>
+
+<div id="win" role="dialog" aria-modal="true" aria-labelledby="wt">
+  <div class="dove" aria-hidden="true">&#128330;&#65039;</div>
+  <h1 id="wt">A nuclear-free world</h1>
+  <p>Every simulated warhead has been dismantled and verified. Real disarmament takes treaties, trust and time &mdash; this is the future worth working toward.</p>
+  <button class="big" id="winReset">Run the simulation again</button>
+</div>
+<div id="noWebgl"><div><h2>3D globe unavailable</h2><p>Your browser could not start WebGL. Try a recent version of Chrome, Edge, Firefox or Safari.</p><a class="btn" href="EcoOrbit.html">Back to EcoOrbit</a></div></div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="eco-earth-textures.js"></script>
+<script>
+(function () {
+  'use strict';
+  if (!window.THREE) { document.getElementById('noWebgl').style.display = 'flex'; return; }
+
+  /* ---------------- data (rounded public estimates, early 2026) ---------------- */
+  var STATES = [
+    { id: 'ru', name: 'Russia',      lat: 55.75, lon: 37.62,  total: 5420, since: 1949, npt: 'NPT nuclear-weapon state' },
+    { id: 'us', name: 'United States', lat: 38.90, lon: -77.04, total: 5150, since: 1945, npt: 'NPT nuclear-weapon state' },
+    { id: 'cn', name: 'China',       lat: 39.90, lon: 116.40, total: 600,  since: 1964, npt: 'NPT nuclear-weapon state' },
+    { id: 'fr', name: 'France',      lat: 48.86, lon: 2.35,   total: 290,  since: 1960, npt: 'NPT nuclear-weapon state' },
+    { id: 'uk', name: 'United Kingdom', lat: 51.50, lon: -0.12, total: 225, since: 1952, npt: 'NPT nuclear-weapon state' },
+    { id: 'in', name: 'India',       lat: 28.61, lon: 77.21,  total: 180,  since: 1974, npt: 'Outside the NPT' },
+    { id: 'pk', name: 'Pakistan',    lat: 33.69, lon: 73.05,  total: 170,  since: 1998, npt: 'Outside the NPT' },
+    { id: 'il', name: 'Israel',      lat: 31.77, lon: 35.21,  total: 90,   since: 'undeclared', npt: 'Outside the NPT' },
+    { id: 'kp', name: 'North Korea', lat: 39.02, lon: 125.75, total: 50,   since: 2006, npt: 'Withdrew from the NPT (2003)' }
+  ];
+  var MAXT = 5420, selected = null;
+  STATES.forEach(function (s) { s.cur = s.total; s.job = null; s.seen = 0; });
+
+  var $ = function (id) { return document.getElementById(id); };
+  var fmt = function (n) { return Math.round(n).toLocaleString('en-US'); };
+  var rnd = function (a, b) { return a + Math.random() * (b - a); };
+  var pick = function (a) { return a[Math.floor(Math.random() * a.length)]; };
+  var reduce = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
+  function stateOf(s) { return s.cur <= 0.5 ? 'clr' : s.job ? 'dis' : s.cur < s.total ? 'mid' : 'arm'; }
+
+  /* ---------------- three.js scene ---------------- */
+  var cvs = $('gl'), renderer;
+  try { renderer = new THREE.WebGLRenderer({ canvas: cvs, antialias: true, alpha: true }); }
+  catch (e) { $('noWebgl').style.display = 'flex'; return; }
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
+  var scene = new THREE.Scene();
+  var camera = new THREE.PerspectiveCamera(42, 1, 0.1, 100);
+  var camDist = 3.4, camTarget = 3.4;
+  camera.position.set(0, 0, camDist);
+
+  scene.add(new THREE.AmbientLight(0x6f86b8, 0.9));
+  var sun = new THREE.DirectionalLight(0xffffff, 1.25); sun.position.set(-4, 2.2, 4); scene.add(sun);
+
+  /* stars */
+  (function () {
+    var n = 1400, p = new Float32Array(n * 3);
+    for (var i = 0; i < n; i++) {
+      var r = 30 + Math.random() * 20, th = Math.random() * 6.283, ph = Math.acos(2 * Math.random() - 1);
+      p[i * 3] = r * Math.sin(ph) * Math.cos(th); p[i * 3 + 1] = r * Math.cos(ph); p[i * 3 + 2] = r * Math.sin(ph) * Math.sin(th);
+    }
+    var g = new THREE.BufferGeometry(); g.setAttribute('position', new THREE.BufferAttribute(p, 3));
+    scene.add(new THREE.Points(g, new THREE.PointsMaterial({ color: 0xcfe3ff, size: 0.12, sizeAttenuation: true, transparent: true, opacity: 0.8, depthWrite: false })));
+  })();
+
+  var globe = new THREE.Group(); scene.add(globe);
+  var loader = new THREE.TextureLoader();
+  var earthMat = new THREE.MeshPhongMaterial({ color: 0x2a5d9e, shininess: 14, specular: 0x223355 });
+  var earth = new THREE.Mesh(new THREE.SphereGeometry(1, 96, 96), earthMat); globe.add(earth);
+  var cloudMat = new THREE.MeshPhongMaterial({ transparent: true, opacity: 0.0, depthWrite: false });
+  var clouds = new THREE.Mesh(new THREE.SphereGeometry(1.012, 72, 72), cloudMat); globe.add(clouds);
+  if (window.EO_TEX) {
+    loader.load(EO_TEX.earth, function (t) { earthMat.map = t; earthMat.color.set(0xffffff); earthMat.needsUpdate = true; });
+    loader.load(EO_TEX.clouds, function (t) { cloudMat.map = t; cloudMat.opacity = 0.35; cloudMat.needsUpdate = true; });
+  }
+  /* lat/long graticule */
+  (function () {
+    var m = new THREE.LineBasicMaterial({ color: 0x4fd1ff, transparent: true, opacity: 0.10 });
+    function ll(lat, lon, r) { return P(lat, lon, r); }
+    for (var lat = -60; lat <= 60; lat += 30) { var pts = []; for (var lo = -180; lo <= 180; lo += 4) pts.push(ll(lat, lo, 1.003)); globe.add(new THREE.Line(new THREE.BufferGeometry().setFromPoints(pts), m)); }
+    for (var lon = -180; lon < 180; lon += 30) { var q = []; for (var la = -90; la <= 90; la += 4) q.push(ll(la, lon, 1.003)); globe.add(new THREE.Line(new THREE.BufferGeometry().setFromPoints(q), m)); }
+  })();
+  /* atmosphere */
+  scene.add(new THREE.Mesh(new THREE.SphereGeometry(1.16, 64, 64), new THREE.ShaderMaterial({
+    side: THREE.BackSide, transparent: true, depthWrite: false, blending: THREE.AdditiveBlending,
+    vertexShader: 'varying vec3 vN;void main(){vN=normalize(normalMatrix*normal);gl_Position=projectionMatrix*modelViewMatrix*vec4(position,1.0);}',
+    fragmentShader: 'varying vec3 vN;void main(){float i=pow(0.72-dot(vN,vec3(0.,0.,1.)),3.2);gl_FragColor=vec4(0.0,0.62,1.0,1.0)*i*1.25;}'
+  })));
+
+  function P(lat, lon, r) {
+    var ph = (90 - lat) * Math.PI / 180, th = (lon + 180) * Math.PI / 180;
+    return new THREE.Vector3(-r * Math.sin(ph) * Math.cos(th), r * Math.cos(ph), r * Math.sin(ph) * Math.sin(th));
+  }
+
+  /* markers: pillar + head + pulse ring + hit sphere */
+  var Y = new THREE.Vector3(0, 1, 0), Z = new THREE.Vector3(0, 0, 1);
+  var pickMeshes = [];
+  STATES.forEach(function (s) {
+    var n = P(s.lat, s.lon, 1).normalize(); s.normal = n;
+    s.mat = new THREE.MeshBasicMaterial({ color: 0xf43f5e });
+    s.pillar = new THREE.Mesh(new THREE.CylinderGeometry(0.011, 0.016, 1, 12), s.mat);
+    s.pillar.quaternion.setFromUnitVectors(Y, n); globe.add(s.pillar);
+    s.head = new THREE.Mesh(new THREE.SphereGeometry(0.03, 16, 16), s.mat); globe.add(s.head);
+    s.ringMat = new THREE.MeshBasicMaterial({ color: 0xf43f5e, transparent: true, opacity: 0.8, side: THREE.DoubleSide, depthWrite: false });
+    s.ring = new THREE.Mesh(new THREE.RingGeometry(0.035, 0.042, 40), s.ringMat);
+    s.ring.position.copy(n).multiplyScalar(1.004); s.ring.quaternion.setFromUnitVectors(Z, n); globe.add(s.ring);
+    s.hit = new THREE.Mesh(new THREE.SphereGeometry(0.07, 8, 8), new THREE.MeshBasicMaterial({ visible: false }));
+    s.hit.userData.id = s.id; globe.add(s.hit); pickMeshes.push(s.hit);
+    s.phase = Math.random();
+    /* html label */
+    s.lb = document.createElement('div'); s.lb.className = 'lb mono';
+    s.lb.innerHTML = '<b>' + s.name + '</b><span></span>'; $('labels').appendChild(s.lb);
+  });
+
+  /* monitoring satellites */
+  var SATS = [], orbitLines = new THREE.Group(); scene.add(orbitLines);
+  (function () {
+    for (var i = 0; i < 12; i++) {
+      var o = { alt: rnd(1.22, 1.55), incl: rnd(0.3, 1.45), raan: rnd(0, 6.283), th: rnd(0, 6.283), w: rnd(0.12, 0.26) * (Math.random() < .8 ? 1 : -1) };
+      SATS.push(o);
+      var pts = []; for (var a = 0; a <= 128; a++) pts.push(orbitPos(o, a / 128 * 6.2832));
+      orbitLines.add(new THREE.Line(new THREE.BufferGeometry().setFromPoints(pts), new THREE.LineBasicMaterial({ color: 0x00f2fe, transparent: true, opacity: 0.12 })));
+    }
+  })();
+  function orbitPos(o, th) {
+    var x = Math.cos(th), y = Math.sin(th), ci = Math.cos(o.incl), si = Math.sin(o.incl);
+    var y1 = y * ci, z1 = y * si, cr = Math.cos(o.raan), sr = Math.sin(o.raan);
+    return new THREE.Vector3((x * cr + z1 * sr) * o.alt, y1 * o.alt, (-x * sr + z1 * cr) * o.alt);
+  }
+  var glow = (function () {
+    var c = document.createElement('canvas'); c.width = c.height = 64; var g = c.getContext('2d');
+    var gr = g.createRadialGradient(32, 32, 0, 32, 32, 32); gr.addColorStop(0, 'rgba(255,255,255,1)'); gr.addColorStop(.25, 'rgba(0,242,254,.9)'); gr.addColorStop(1, 'rgba(0,242,254,0)');
+    g.fillStyle = gr; g.fillRect(0, 0, 64, 64); return new THREE.CanvasTexture(c);
+  })();
+  var satGeo = new THREE.BufferGeometry(); satGeo.setAttribute('position', new THREE.BufferAttribute(new Float32Array(SATS.length * 3), 3));
+  var satPts = new THREE.Points(satGeo, new THREE.PointsMaterial({ map: glow, size: 0.11, transparent: true, depthWrite: false, blending: THREE.AdditiveBlending }));
+  satPts.frustumCulled = false; scene.add(satPts);
+
+  /* dismantle beams (satellite -> marker) */
+  var beams = {};
+  STATES.forEach(function (s) {
+    var g = new THREE.BufferGeometry(); g.setAttribute('position', new THREE.BufferAttribute(new Float32Array(6), 3));
+    var l = new THREE.Line(g, new THREE.LineBasicMaterial({ color: 0x0ecb81, transparent: true, opacity: 0.9, depthWrite: false, blending: THREE.AdditiveBlending }));
+    l.visible = false; l.frustumCulled = false; scene.add(l); beams[s.id] = l;
+  });
+
+  /* sparks when dismantling */
+  var SPARKS = [], sparkGeo = new THREE.BufferGeometry(), SMAX = 260;
+  sparkGeo.setAttribute('position', new THREE.BufferAttribute(new Float32Array(SMAX * 3), 3));
+  var sparkPts = new THREE.Points(sparkGeo, new THREE.PointsMaterial({ color: 0x7dffc8, size: 0.03, transparent: true, opacity: 0.95, depthWrite: false, blending: THREE.AdditiveBlending }));
+  sparkPts.frustumCulled = false; scene.add(sparkPts);
+  function emit(s, count) {
+    var base = new THREE.Vector3().copy(s.normal).multiplyScalar(1.03).applyQuaternion(globe.quaternion);
+    for (var i = 0; i < count && SPARKS.length < SMAX; i++) {
+      var v = new THREE.Vector3(rnd(-1, 1), rnd(-1, 1), rnd(-1, 1)).normalize().multiplyScalar(rnd(0.05, 0.28)).add(base.clone().normalize().multiplyScalar(0.12));
+      SPARKS.push({ p: base.clone(), v: v, life: rnd(0.6, 1.4) });
+    }
+  }
+
+  /* ---------------- camera / interaction ---------------- */
+  var yaw = 0.6, pitch = 0.35, tYaw = 0.6, tPitch = 0.35, auto = true, drag = null, idle = 0;
+  function focus(s) {
+    var n = P(s.lat, s.lon, 1), ay = Math.atan2(-n.x, n.z);
+    var d = ay - yaw; d = Math.atan2(Math.sin(d), Math.cos(d)); tYaw = yaw + d;
+    tPitch = Math.max(-1.1, Math.min(1.1, s.lat * Math.PI / 180)); camTarget = Math.min(camTarget, 2.9); idle = 0;
+  }
+  cvs.addEventListener('pointerdown', function (e) { cvs.setPointerCapture(e.pointerId); drag = { x: e.clientX, y: e.clientY, mx: 0, pid: e.pointerId }; cvs.classList.add('drag'); idle = 0; });
+  cvs.addEventListener('pointermove', function (e) {
+    if (drag) { var dx = e.clientX - drag.x, dy = e.clientY - drag.y; drag.x = e.clientX; drag.y = e.clientY; drag.mx += Math.abs(dx) + Math.abs(dy); tYaw += dx * 0.006 * (camDist / 3.4); tPitch = Math.max(-1.2, Math.min(1.2, tPitch + dy * 0.005 * (camDist / 3.4))); yaw = tYaw; pitch = tPitch; idle = 0; }
+    else { var h = hitTest(e); cvs.classList.toggle('hover', !!h); }
+  });
+  cvs.addEventListener('pointerup', function (e) {
+    var moved = drag ? drag.mx : 99; drag = null; cvs.classList.remove('drag');
+    if (moved < 6) { var h = hitTest(e); if (h) select(h.userData.id, true); }
+  });
+  cvs.addEventListener('wheel', function (e) { e.preventDefault(); camTarget = Math.max(1.9, Math.min(6, camTarget + e.deltaY * 0.002)); idle = 0; }, { passive: false });
+  var pinch = null;
+  cvs.addEventListener('touchmove', function (e) {
+    if (e.touches.length === 2) { var d = Math.hypot(e.touches[0].clientX - e.touches[1].clientX, e.touches[0].clientY - e.touches[1].clientY); if (pinch) camTarget = Math.max(1.9, Math.min(6, camTarget - (d - pinch) * 0.012)); pinch = d; }
+  }, { passive: true });
+  cvs.addEventListener('touchend', function () { pinch = null; });
+
+  var ray = new THREE.Raycaster(), mv = new THREE.Vector2();
+  function hitTest(e) {
+    var r = cvs.getBoundingClientRect(); mv.set(((e.clientX - r.left) / r.width) * 2 - 1, -((e.clientY - r.top) / r.height) * 2 + 1);
+    ray.setFromCamera(mv, camera); globe.updateMatrixWorld(true);
+    var hits = ray.intersectObjects(pickMeshes, false);
+    if (!hits.length) return null;
+    var h = hits[0], eh = ray.intersectObject(earth, false);   /* ignore markers hidden behind the globe */
+    if (eh.length && eh[0].distance < h.distance - 0.02) return null;
+    return h.object;
+  }
+
+  function resize() {
+    var w = window.innerWidth, h = window.innerHeight; renderer.setSize(w, h, false); camera.aspect = w / h;
+    camera.setViewOffset && 0; camera.updateProjectionMatrix();
+  }
+  window.addEventListener('resize', resize); resize();
+
+  /* ---------------- UI: ledger, detail, counter ---------------- */
+  var ledger = $('ledger');
+  STATES.forEach(function (s) {
+    var li = document.createElement('li'); li.className = 'row'; li.tabIndex = 0; li.dataset.id = s.id;
+    li.innerHTML = '<span class="n">' + s.name + '</span><span class="c mono"></span><div class="bar"><i></i></div><span class="st"></span>';
+    li.addEventListener('click', function () { select(s.id, true); });
+    li.addEventListener('keydown', function (e) { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); select(s.id, true); } });
+    ledger.appendChild(li); s.li = li;
+  });
+  function byId(id) { return STATES.filter(function (s) { return s.id === id; })[0]; }
+  var STXT = { arm: 'Armed \u00B7 tracking', mid: 'Partly dismantled', dis: 'Dismantling\u2026 verified from orbit', clr: 'Nuclear-free \u2713' };
+
+  function select(id, doFocus) {
+    selected = byId(id); if (doFocus) focus(selected);
+    STATES.forEach(function (s) { s.li.classList.toggle('sel', s === selected); });
+    renderDetail(); if (window.innerWidth <= 980) { document.body.classList.add('show-right'); $('bRight').setAttribute('aria-pressed', 'true'); }
+  }
+  function renderDetail() {
+    var d = $('detail'), s = selected;
+    if (!s) { d.innerHTML = '<h2>Details</h2><div style="color:var(--muted)">Click a marker on the globe, a blip on the radar or a row in the ledger.</div>'; return; }
+    var st = stateOf(s);
+    d.innerHTML = '<h2>Selected</h2><h3>' + s.name + '</h3><div class="kv"><span>Warheads (est.)</span><b class="mono" id="dCur">' + fmt(s.cur) + '</b>' +
+      '<span>Started with</span><b class="mono">' + fmt(s.total) + '</b><span>First test</span><b>' + s.since + '</b><span>Treaty status</span><b>' + s.npt + '</b>' +
+      '<span>Status</span><b id="dSt">' + STXT[st] + '</b></div><button class="disp" id="dBtn">' + (st === 'clr' ? 'Nuclear-free \u2713' : st === 'dis' ? 'Dismantling\u2026' : 'DISPOSE ' + s.name.toUpperCase() + '\u2019S WARHEADS') + '</button>';
+    var b = $('dBtn'); b.disabled = st === 'clr' || st === 'dis'; b.onclick = function () { startJob(s); };
+  }
+  function updateUI() {
+    var tot = 0;
+    STATES.forEach(function (s) {
+      tot += s.cur; var st = stateOf(s), pct = Math.max(0, s.cur / s.total * 100);
+      s.li.className = 'row ' + st + (s === selected ? ' sel' : '');
+      s.li.querySelector('.c').textContent = fmt(s.cur);
+      s.li.querySelector('.bar i').style.width = pct + '%';
+      s.li.querySelector('.st').textContent = STXT[st];
+      s.lb.className = 'lb mono ' + st; s.lb.querySelector('span').textContent = fmt(s.cur);
+    });
+    var t = $('total'); t.textContent = fmt(tot); t.classList.toggle('zero', tot <= 0.5);
+    var active = STATES.filter(function (s) { return s.cur > 0.5; }).length;
+    $('sub').textContent = active ? active + ' of 9 states still hold nuclear weapons' : 'All 9 states are nuclear-free (simulated)';
+    $('disposeAll').disabled = STATES.every(function (s) { return s.cur <= 0.5 || s.job; });
+    if (selected) { var c = $('dCur'); if (c) c.textContent = fmt(selected.cur); var ss = stateOf(selected); var sx = $('dSt'); if (sx) sx.textContent = STXT[ss]; var bb = $('dBtn'); if (bb && (ss === 'clr' || ss === 'dis')) { bb.disabled = true; bb.textContent = ss === 'clr' ? 'Nuclear-free \u2713' : 'Dismantling\u2026'; } }
+    return tot;
+  }
+
+  /* ---------------- disposal simulation ---------------- */
+  var toastT;
+  function toast(msg) { var t = $('toast'); t.textContent = msg; t.classList.add('on'); clearTimeout(toastT); toastT = setTimeout(function () { t.classList.remove('on'); }, 2600); }
+  function startJob(s, delay) {
+    if (s.job || s.cur <= 0.5) return;
+    s.job = { dur: rnd(9, 13) + Math.min(6, s.total / 1400), t: -(delay || 0), from: s.cur };
+    log('ok', 'DISPOSE', s.name + ' began dismantlement (simulated)');
+    if (!delay) { toast(s.name + ': dismantlement started'); select(s.id, true); }
+    updateUI();
+  }
+  function jobsTick(dt) {
+    var done = false;
+    STATES.forEach(function (s) {
+      var j = s.job; if (!j) return; j.t += dt; if (j.t < 0) return;
+      var p = Math.min(1, j.t / j.dur), e = 1 - Math.pow(1 - p, 1.6);
+      var before = s.cur; s.cur = Math.max(0, j.from * (1 - e));
+      if (before - s.cur > 0.5 && Math.random() < 0.7) emit(s, 2);
+      if (p >= 1) { s.cur = 0; s.job = null; emit(s, 60); done = true; log('ok', 'VERIFIED', s.name + ' is now nuclear-free (simulated)'); toast(s.name + ' is nuclear-free \u2713'); }
+    });
+    return done;
+  }
+  $('disposeAll').addEventListener('click', function () {
+    var k = 0; STATES.slice().sort(function (a, b) { return b.total - a.total; }).forEach(function (s) { if (!s.job && s.cur > 0.5) startJob(s, (k++) * 0.6); });
+    toast('Global disarmament started'); log('info', 'GLOBAL', 'Coordinated dismantlement of all stockpiles began');
+  });
+  function reset() {
+    STATES.forEach(function (s) { s.cur = s.total; s.job = null; beams[s.id].visible = false; });
+    $('win').classList.remove('on'); winShown = false; renderDetail(); updateUI(); log('info', 'RESET', 'Simulation reset to early-2026 estimates');
+  }
+  $('bReset').addEventListener('click', reset); $('winReset').addEventListener('click', reset);
+  var winShown = false;
+
+  function setPressed(id, v) { $(id).setAttribute('aria-pressed', v ? 'true' : 'false'); }
+  $('bRot').addEventListener('click', function () { auto = !auto; setPressed('bRot', auto); });
+  $('bOrb').addEventListener('click', function () { var v = !satPts.visible; satPts.visible = v; orbitLines.visible = v; setPressed('bOrb', v); });
+  $('bLeft').addEventListener('click', function () { var v = document.body.classList.toggle('show-left'); setPressed('bLeft', v); if (v) { document.body.classList.remove('show-right'); setPressed('bRight', false); } });
+  $('bRight').addEventListener('click', function () { var v = document.body.classList.toggle('show-right'); setPressed('bRight', v); if (v) { document.body.classList.remove('show-left'); setPressed('bLeft', false); } });
+  document.addEventListener('keydown', function (e) { if (e.key === 'Escape' && $('win').classList.contains('on')) $('win').classList.remove('on'); });
+
+  /* ---------------- monitoring feed ---------------- */
+  var feed = $('feed'), SN = ['VERIFY-1', 'VERIFY-2', 'SENTRY-4', 'ECO-12', 'ECO-27', 'ORBIT-9', 'PEACE-3'];
+  var STN = ['Antarctica', 'Svalbard', 'Hawaii', 'Kazakhstan', 'Australia', 'Chile', 'Kenya', 'Iceland'];
+  function ts() { return new Date().toISOString().slice(11, 19); }
+  function log(cls, tag, msg) {
+    var li = document.createElement('li'); li.className = cls; li.innerHTML = '<time>' + ts() + '</time><b>' + tag + '</b> ' + msg;
+    feed.appendChild(li); while (feed.children.length > 12) feed.removeChild(feed.firstChild);
+  }
+  var gens = [
+    function () { log('info', 'ORBIT', pick(SN) + ' pass over ' + pick(STATES).name + ' \u00B7 imaging nominal'); },
+    function () { log('ok', 'SEISMIC', 'station ' + pick(STN) + ' \u00B7 M' + rnd(1.8, 3.4).toFixed(1) + ' natural event \u00B7 no anomaly'); },
+    function () { log('ok', 'AIR', 'radionuclide sample ' + pick(STN) + ' \u00B7 background level'); },
+    function () { log('info', 'RADAR', 'scan complete \u00B7 ' + STATES.filter(function (s) { return s.cur > .5; }).length + ' sites tracked'); },
+    function () { log('info', 'LINK', pick(SN) + ' downlink ' + Math.round(rnd(94, 100)) + '% \u00B7 all stations up'); }
+  ];
+  for (var k = 0; k < 7; k++) pick(gens)();
+  setInterval(function () { if (!document.hidden) pick(gens)(); }, 2300);
+  setInterval(function () { $('clock').textContent = ts() + ' UTC'; }, 1000); $('clock').textContent = ts() + ' UTC';
+
+  /* ---------------- polar radar (2D) ---------------- */
+  var rc = $('radar'), rx = rc.getContext('2d'), RW = 0, RH = 0, rang = 0, scanN = 1;
+  function rsize() { var d = Math.min(devicePixelRatio || 1, 2), r = rc.getBoundingClientRect(); RW = r.width; RH = r.height; rc.width = RW * d; rc.height = RH * d; rx.setTransform(d, 0, 0, d, 0, 0); }
+  new ResizeObserver(rsize).observe(rc); rsize();
+  var ghosts = []; for (var gi = 0; gi < 22; gi++) ghosts.push({ a: rnd(0, 6.283), r: rnd(.1, .95), seen: 0 });
+  function blipXY(s, R, cx, cy) { var a = (s.lon * Math.PI / 180) - Math.PI / 2, r = (90 - s.lat) / 90 * R; return [cx + Math.cos(a) * r, cy + Math.sin(a) * r]; }
+  function drawRadar(t, dt) {
+    if (RW < 60 || RH < 60) return;
+    var R = Math.min(RW, RH) / 2 - 18, cx = RW / 2, cy = RH / 2 + 6, i;
+    rx.clearRect(0, 0, RW, RH);
+    var g = rx.createRadialGradient(cx, cy, 0, cx, cy, R); g.addColorStop(0, 'rgba(0,242,254,.10)'); g.addColorStop(1, 'rgba(0,242,254,0)');
+    rx.fillStyle = g; rx.beginPath(); rx.arc(cx, cy, R, 0, 6.283); rx.fill();
+    rx.strokeStyle = 'rgba(0,242,254,.22)'; rx.lineWidth = 1;
+    for (i = 1; i <= 3; i++) { rx.beginPath(); rx.arc(cx, cy, R * i / 3, 0, 6.283); rx.stroke(); }
+    for (i = 0; i < 12; i++) { var a = i * Math.PI / 6; rx.beginPath(); rx.moveTo(cx, cy); rx.lineTo(cx + Math.cos(a) * R, cy + Math.sin(a) * R); rx.strokeStyle = 'rgba(0,242,254,.10)'; rx.stroke(); }
+    rx.font = '9px ui-monospace,Consolas,monospace'; rx.fillStyle = 'rgba(143,163,200,.85)'; rx.textAlign = 'center';
+    rx.fillText('0\u00B0', cx, cy - R - 4); rx.fillText('180\u00B0', cx, cy + R + 11); rx.textAlign = 'left'; rx.fillText('90\u00B0E', cx + R + 2, cy + 3); rx.textAlign = 'right'; rx.fillText('90\u00B0W', cx - R - 2, cy + 3);
+    rx.textAlign = 'left'; rx.fillStyle = 'rgba(143,163,200,.6)'; rx.fillText('60\u00B0N', cx + 3, cy - R * 1 / 3 + 10); rx.fillText('30\u00B0N', cx + 3, cy - R * 2 / 3 + 10);
+    var prev = rang; rang = (rang + dt * 1.05) % 6.283; if (rang < prev) { scanN++; $('cycle').textContent = 'SCAN #' + scanN; }
+    for (i = 0; i < 50; i++) { var a0 = rang - i * 0.024; rx.strokeStyle = 'rgba(0,242,254,' + (0.24 * (1 - i / 50)).toFixed(3) + ')'; rx.lineWidth = 2; rx.beginPath(); rx.moveTo(cx, cy); rx.lineTo(cx + Math.cos(a0) * R, cy + Math.sin(a0) * R); rx.stroke(); }
+    rx.strokeStyle = 'rgba(0,242,254,.95)'; rx.lineWidth = 1.5; rx.beginPath(); rx.moveTo(cx, cy); rx.lineTo(cx + Math.cos(rang) * R, cy + Math.sin(rang) * R); rx.stroke();
+    ghosts.forEach(function (gh) { var d = ((rang - gh.a) % 6.283 + 6.283) % 6.283; if (d < .09) gh.seen = 1; gh.seen = Math.max(0, gh.seen - .01); rx.fillStyle = 'rgba(0,242,254,' + (0.07 + gh.seen * .5).toFixed(2) + ')'; rx.fillRect(cx + Math.cos(gh.a) * gh.r * R - 1, cy + Math.sin(gh.a) * gh.r * R - 1, 2, 2); });
+    STATES.forEach(function (s) {
+      var xy = blipXY(s, R, cx, cy), a = Math.atan2(xy[1] - cy, xy[0] - cx), d = ((rang - a) % 6.283 + 6.283) % 6.283;
+      if (d < .12) s.seen = 1; s.seen = Math.max(0, s.seen - .008);
+      var st = stateOf(s), col = st === 'clr' || st === 'dis' ? '14,203,129' : s.total > 1000 ? '244,63,94' : '251,146,60';
+      var rad = st === 'clr' ? 3 : 3 + Math.sqrt(s.cur) / 8, al = 0.35 + s.seen * .65;
+      if (s === selected) { rx.strokeStyle = 'rgba(255,255,255,.9)'; rx.lineWidth = 1; rx.beginPath(); rx.arc(xy[0], xy[1], rad + 5, 0, 6.283); rx.stroke(); }
+      if (s.seen > .05) { rx.strokeStyle = 'rgba(' + col + ',' + (s.seen * .6).toFixed(2) + ')'; rx.lineWidth = 1; rx.beginPath(); rx.arc(xy[0], xy[1], rad + (1 - s.seen) * 14, 0, 6.283); rx.stroke(); }
+      rx.fillStyle = 'rgba(' + col + ',' + al.toFixed(2) + ')'; rx.beginPath(); rx.arc(xy[0], xy[1], rad, 0, 6.283); rx.fill();
+      if (s.seen > .3 || s === selected) { rx.fillStyle = 'rgba(232,238,252,' + Math.max(.55, s.seen).toFixed(2) + ')'; rx.textAlign = 'left'; rx.fillText(s.id.toUpperCase(), xy[0] + rad + 4, xy[1] + 3); }
+    });
+  }
+  rc.addEventListener('click', function (e) {
+    var r = rc.getBoundingClientRect(), x = e.clientX - r.left, y = e.clientY - r.top, R = Math.min(RW, RH) / 2 - 18, cx = RW / 2, cy = RH / 2 + 6, best = null, bd = 18;
+    STATES.forEach(function (s) { var xy = blipXY(s, R, cx, cy), d = Math.hypot(xy[0] - x, xy[1] - y); if (d < bd) { bd = d; best = s; } });
+    if (best) select(best.id, true);
+  });
+
+  /* ---------------- main loop ---------------- */
+  var last = 0, tmpV = new THREE.Vector3(), camDir = new THREE.Vector3(), wp = new THREE.Vector3();
+  function frame(ms) {
+    requestAnimationFrame(frame);
+    var t = ms / 1000, raw = last ? t - last : 0.016, dt = Math.min(0.05, raw); last = t;
+    if (!document.hidden) {
+      idle += dt; if (auto && !drag && idle > 2.5) tYaw += dt * 0.12;
+      yaw += (tYaw - yaw) * Math.min(1, dt * 4); pitch += (tPitch - pitch) * Math.min(1, dt * 4);
+      camDist += (camTarget - camDist) * Math.min(1, dt * 5); camera.position.z = camDist;
+      globe.rotation.set(pitch, yaw, 0, 'XYZ'); clouds.rotation.y += dt * 0.012; globe.updateMatrixWorld(true);
+
+      /* markers */
+      STATES.forEach(function (s) {
+        var st = stateOf(s), hot = st === 'arm' || st === 'mid';
+        var col = st === 'clr' ? 0x0ecb81 : st === 'dis' ? 0x00f2fe : s.total > 1000 ? 0xf43f5e : 0xfb923c;
+        s.mat.color.setHex(col); s.ringMat.color.setHex(st === 'dis' || st === 'clr' ? 0x0ecb81 : col);
+        var h = st === 'clr' ? 0.015 : 0.03 + 0.17 * Math.pow(s.cur / MAXT, 0.5);
+        s.pillar.scale.set(1, h, 1); s.pillar.position.copy(s.normal).multiplyScalar(1 + h / 2);
+        s.head.position.copy(s.normal).multiplyScalar(1 + h + 0.012); s.head.scale.setScalar(st === 'clr' ? 0.7 : 1 + 0.18 * Math.sin(t * 5 + s.phase * 6));
+        var ph = ((t * (hot ? 0.55 : 0.9) + s.phase) % 1); s.ring.scale.setScalar(1 + ph * (hot ? 3.2 : 4.5)); s.ringMat.opacity = (1 - ph) * 0.8;
+        s.hit.position.copy(s.head.position);
+      });
+      /* satellites */
+      var arr = satGeo.attributes.position.array;
+      SATS.forEach(function (o, i) { o.th += o.w * dt; var p = orbitPos(o, o.th); arr[i * 3] = p.x; arr[i * 3 + 1] = p.y; arr[i * 3 + 2] = p.z; });
+      satGeo.attributes.position.needsUpdate = true;
+      /* beams */
+      STATES.forEach(function (s) {
+        var b = beams[s.id]; if (!(s.job && s.job.t >= 0) || !satPts.visible) { b.visible = false; return; }
+        s.head.getWorldPosition(wp); var bi = 0, bd = 1e9;
+        for (var i = 0; i < SATS.length; i++) { tmpV.set(arr[i * 3], arr[i * 3 + 1], arr[i * 3 + 2]); var d = tmpV.distanceTo(wp); if (d < bd) { bd = d; bi = i; } }
+        var bp = b.geometry.attributes.position.array; bp[0] = arr[bi * 3]; bp[1] = arr[bi * 3 + 1]; bp[2] = arr[bi * 3 + 2]; bp[3] = wp.x; bp[4] = wp.y; bp[5] = wp.z;
+        b.geometry.attributes.position.needsUpdate = true; b.material.opacity = 0.55 + 0.4 * Math.sin(t * 18); b.visible = true;
+      });
+      /* sparks */
+      var sp = sparkGeo.attributes.position.array, n = 0;
+      for (var i = SPARKS.length - 1; i >= 0; i--) { var q = SPARKS[i]; q.life -= dt; if (q.life <= 0) { SPARKS.splice(i, 1); continue; } q.p.addScaledVector(q.v, dt); }
+      for (i = 0; i < SMAX; i++) { var q2 = SPARKS[i]; if (q2) { sp[i * 3] = q2.p.x; sp[i * 3 + 1] = q2.p.y; sp[i * 3 + 2] = q2.p.z; } else { sp[i * 3] = sp[i * 3 + 1] = sp[i * 3 + 2] = 9999; } }
+      sparkGeo.attributes.position.needsUpdate = true; void n;
+
+      var finished = jobsTick(Math.min(0.5, raw)); var tot = updateUI();
+      if (tot <= 0.5 && !winShown && !STATES.some(function (s) { return s.job; })) { winShown = true; setTimeout(function () { $('win').classList.add('on'); }, 900); }
+      if (finished) renderDetail();
+
+      /* labels */
+      camera.getWorldDirection(camDir); var W = window.innerWidth, H = window.innerHeight;
+      STATES.forEach(function (s) {
+        s.head.getWorldPosition(wp); var facing = wp.clone().normalize().dot(camDir.clone().negate());
+        var v = wp.clone().project(camera);
+        if (facing > 0.25 && camDist < 5.2) { s.lb.style.opacity = 1; s.lb.style.left = ((v.x * .5 + .5) * W) + 'px'; s.lb.style.top = ((-v.y * .5 + .5) * H) + 'px'; }
+        else s.lb.style.opacity = 0;
+      });
+      try { drawRadar(t, dt); } catch (e) {}
+      renderer.render(scene, camera);
+    }
+  }
+  renderDetail(); updateUI(); log('info', 'SYSTEM', 'Monitoring network online \u00B7 24/7 \u00B7 12 satellites');
+  requestAnimationFrame(frame);
+  if (location.hash) { var hs = byId(location.hash.slice(1)); if (hs) select(hs.id, true); }
+})();
+</script>
+<script src="eco-logo-viewer.js" defer></script>
+<script src="eco-wordmark.js" defer></script>
+</body>
+</html>

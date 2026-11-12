@@ -1,0 +1,855 @@
+<!doctype html>
+<html lang="en" class="dark">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>FloodGuard Bangladesh | Our Services</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              spaceBg: "#030712",
+              spaceCard: "#0b1329",
+              neonBlue: "#00f2fe",
+              neonPurple: "#4facfe",
+              neonEmerald: "#10b981",
+              neonPink: "#f43f5e",
+            },
+            fontFamily: {
+              sans: ["Inter", "sans-serif"],
+            },
+          },
+        },
+      };
+    </script>
+    <!-- Google Fonts Inter -->
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Fira+Sans:wght@400;500;600&display=swap"
+      rel="stylesheet"
+    />
+    <!-- FontAwesome Icons -->
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+    <!-- Three.js CDN -->
+<link rel="icon" type="image/png" href="favicon.png">
+    <style>
+      body {
+        font-family: "Inter", sans-serif;
+        background-color: #030712;
+        color: #f3f4f6;
+        overflow-x: hidden;
+      }
+
+      /* Header layout: keep navigation inside the header and prevent overlap. */
+      #site-header {
+        min-height: 80px;
+      }
+      #site-header .header-inner {
+        min-height: 80px;
+        flex-wrap: nowrap;
+      }
+      #site-header nav {
+        min-width: 0;
+      }
+      #site-header nav a {
+        white-space: nowrap;
+      }
+      @media (max-width: 1100px) {
+        #site-header nav {
+          gap: 1rem;
+          font-size: 0.8rem;
+        }
+        #site-header .brand-title {
+          max-width: 260px;
+        }
+      }
+      @media (max-width: 900px) {
+        #site-header nav {
+          display: none;
+        }
+        #mobile-menu-button {
+          display: inline-flex !important;
+        }
+      }
+      @media (min-width: 901px) {
+        #mobile-menu-button,
+        #mobile-menu {
+          display: none !important;
+        }
+      }
+      #mobile-menu {
+        border-top: 1px solid rgba(255, 255, 255, 0.08);
+      }
+      .glass-panel {
+        background: rgba(11, 19, 41, 0.78);
+        backdrop-filter: blur(9px);
+        -webkit-backdrop-filter: blur(9px);
+        border: 1px solid rgba(255, 255, 255, 0.08);
+      }
+</style>
+<style>
+:root{--ink:#030712;--deep:#0b1329;--teal:#0b2f55;--line:rgba(255,255,255,.12);--ring:#f1f5f9;--mute:#94a3b8;--sun:#ffd23f;--ok:#10d9a0;--sim:#c39bff;--warn:#ff8a5c;
+--head:'Inter',system-ui,sans-serif;--body:'Inter',system-ui,sans-serif}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+:focus-visible{outline:2px solid var(--sun);outline-offset:3px}
+.wrap{max-width:1240px;margin:0 auto;padding:0 28px}
+.hero{position:relative;scroll-margin-top:80px;height:min(78vh,700px);min-height:520px;background:radial-gradient(circle at 50% 55%,var(--teal) 0,var(--deep) 45%,var(--ink) 80%);overflow:hidden}
+#orbit{position:absolute;inset:0;width:100%;height:100%;cursor:grab;touch-action:none}
+#orbit:active{cursor:grabbing}
+.hero-text{position:absolute;left:0;right:0;top:40px;pointer-events:none}
+.hero-text h1{font:800 clamp(40px,6.4vw,88px)/.98 var(--head);letter-spacing:-.025em;max-width:11ch}
+.hero-text p{max-width:34ch;margin-top:18px;color:var(--mute);font-size:19px}
+.chip{display:inline-flex;gap:8px;align-items:center;margin-top:20px;padding:6px 14px;border:1px solid var(--line);border-radius:99px;font-size:14px;background:#030712cc;pointer-events:auto}
+.dot{width:9px;height:9px;border-radius:50%;background:var(--mute)}
+.live .dot{background:var(--ok);box-shadow:0 0 0 4px #5fe0c433}
+.offline .dot{background:var(--sim)}
+.sel{position:absolute;right:28px;bottom:26px;width:min(340px,calc(100% - 56px));background:#0b1329e6;border:1px solid var(--line);padding:18px 20px;border-radius:6px}
+.sel h3{font:700 22px var(--head)}
+.sel dl{display:grid;grid-template-columns:auto 1fr;gap:4px 16px;margin-top:10px;font-size:15px}
+.sel dt{color:var(--mute)}
+.hint{position:absolute;left:28px;bottom:26px;color:var(--mute);font-size:14px}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);border-block:1px solid var(--line)}
+.stats div{padding:34px 28px;border-right:1px solid var(--line)}
+.stats div:last-child{border:0}
+.stats strong{display:block;font:800 clamp(34px,4.4vw,60px)/1 var(--head);font-variant-numeric:tabular-nums}
+.stats small{color:var(--mute);font-size:15px}
+section{padding:96px 0 0}
+main h2{font:800 clamp(30px,4vw,52px)/1.05 var(--head);letter-spacing:-.02em;max-width:18ch}
+.lede{color:var(--mute);max-width:56ch;margin:14px 0 36px;font-size:18px}
+.tag{font-size:13px;padding:2px 9px;border-radius:99px;border:1px solid;white-space:nowrap}
+.tag.v{color:var(--ok);border-color:#5fe0c488}
+.tag.s{color:var(--sim);border-color:#c39bff88}
+.scroll{overflow-x:auto}
+table{width:100%;border-collapse:collapse;min-width:760px;font-variant-numeric:tabular-nums}
+th{text-align:left;font-weight:500;color:var(--mute);font-size:14px;padding:10px 14px;border-bottom:1px solid var(--line)}
+td{padding:16px 14px;border-bottom:1px solid rgba(255,255,255,.07);font-size:17px}
+tbody tr{cursor:pointer}
+tbody tr:hover,tbody tr.on{background:#0e4b6355}
+tbody tr.on td:first-child{box-shadow:inset 3px 0 var(--sun)}
+.bar{display:block;height:6px;background:var(--ok);border-radius:3px;min-width:4px}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:56px}
+.list li{list-style:none;display:grid;grid-template-columns:1fr auto;gap:2px 20px;padding:16px 0;border-bottom:1px solid rgba(255,255,255,.07)}
+.list li b{font:700 19px var(--head)}
+.list li span{color:var(--mute);font-size:15px}
+.list li em{font:800 22px var(--head);font-style:normal;grid-row:1/3;grid-column:2;align-self:center;text-align:right}
+.list{padding:0}
+.sim{background:linear-gradient(#1a0f2e,#0b0716);border:1px solid #c39bff55;padding:40px;border-radius:6px;display:grid;grid-template-columns:1.1fr 1fr;gap:48px}
+.sim label{display:block;margin-bottom:22px;font-size:15px;color:var(--mute)}
+.sim label b{float:right;color:var(--ring);font-variant-numeric:tabular-nums}
+input[type=range]{width:100%;accent-color:var(--sim);margin-top:8px}
+.out strong{display:block;font:800 clamp(44px,6vw,84px)/1 var(--head);color:var(--sim);font-variant-numeric:tabular-nums}
+.out p{color:var(--mute);margin-top:10px}
+.svc{border-top:1px solid var(--line)}
+.svc div{display:grid;grid-template-columns:1fr 2fr auto;gap:28px;padding:30px 0;border-bottom:1px solid var(--line);align-items:baseline}
+.svc h3{font:700 26px var(--head)}
+.svc p{color:var(--mute)}
+footer{margin-top:110px;border-top:1px solid var(--line);padding:40px 0 60px;color:var(--mute);font-size:15px}
+footer a{color:var(--ring)}
+@media(max-width:860px){.stats{grid-template-columns:1fr 1fr}.stats div:nth-child(2){border-right:0}.stats div:nth-child(-n+2){border-bottom:1px solid var(--line)}
+.two,.sim{grid-template-columns:1fr;gap:36px}.svc div{grid-template-columns:1fr;gap:8px}.sel{position:static;width:auto;margin:0}
+.hero{height:auto;min-height:0;display:flex;flex-direction:column}.hero-text{position:static;padding:40px 28px 16px}#orbit{position:relative;height:440px}.hint{display:none}.sim{padding:24px}}
+@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+
+body{font-family:'Inter',sans-serif}.hero h1{font-weight:800}.back{display:inline-block;margin-bottom:14px}
+#map{position:absolute;inset:0;z-index:0;background:#0b1a2b}
+.hero{background:linear-gradient(#0a2540,#030712)}
+.hero-text,.sel,.ctl{z-index:3}.hero-text .wrap{pointer-events:none}
+.hero-text h1{max-width:12ch}
+.hero-text{position:absolute}
+.ctl{position:absolute;left:28px;bottom:26px;background:#0b1329e6;border:1px solid var(--line);border-radius:6px;padding:14px 16px;display:grid;gap:10px;font-size:14px;width:min(330px,calc(100% - 56px))}
+.ctl label{display:flex;gap:8px;align-items:center;justify-content:space-between;color:var(--mute)}
+.ctl select,.ctl input[type=date]{background:#030712;border:1px solid var(--line);color:var(--ring);border-radius:4px;padding:4px 8px;font:inherit}
+.ctl button{background:var(--ok);color:#030712;font-weight:700;border-radius:4px;padding:7px 10px;cursor:pointer}
+.ctl input[type=checkbox]{accent-color:var(--ok)}
+#note{color:var(--sun);min-height:1em}
+.leaflet-container img.leaflet-tile{max-width:none!important;max-height:none!important}
+.leaflet-container svg{max-width:none!important}
+.leaflet-tooltip{background:#0b1329;color:#f1f5f9;border:1px solid rgba(255,255,255,.2)}
+.leaflet-container{font:inherit}
+.tag.x{color:#7fb8ff;border-color:#7fb8ff88}
+.tag.hi{color:#ff6b4a;border-color:#ff6b4a88}.tag.el{color:var(--sun);border-color:#ffd23f88}.tag.no{color:var(--ok);border-color:#10d9a088}.tag.nd{color:var(--mute);border-color:var(--line)}
+.sel canvas{width:100%;height:96px;margin-top:12px;display:block}
+.sel small{color:var(--mute);font-size:13px}
+.cols{display:grid;grid-template-columns:repeat(3,1fr);gap:40px}
+.cols h3,.help h3{font:700 22px var(--head);margin-bottom:6px}
+.cols ul{padding:0}.cols li{list-style:none;padding:12px 0;border-bottom:1px solid rgba(255,255,255,.07);color:var(--mute)}
+.help{display:grid;grid-template-columns:1fr 1fr;gap:56px;margin-top:56px}
+.help li{list-style:none;display:flex;justify-content:space-between;gap:20px;padding:14px 0;border-bottom:1px solid rgba(255,255,255,.07)}
+.help li b{font:800 22px var(--head);white-space:nowrap}.help ul{padding:0}.help li span{color:var(--mute)}
+.help a{color:var(--sun)}
+@media(max-width:860px){#map{position:relative;height:460px}.ctl{position:static;width:auto}.cols,.help{grid-template-columns:1fr;gap:28px}.hero-text{position:static}}
+</style>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.css">
+</head>
+<body class="bg-spaceBg text-slate-100 min-h-screen flex flex-col selection:bg-neonBlue selection:text-black">
+<header
+      id="site-header"
+      class="sticky top-0 z-50 glass-panel border-b border-white/10"
+    >
+      <div
+        class="header-inner max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between gap-4"
+      >
+        <a
+          href="EcoOrbit.html"
+          aria-label="EcoOrbit Logo"
+          title="EcoOrbit Logo"
+          class="flex items-center space-x-3 min-w-0 group shrink-0"
+        >
+          <div
+            class="w-12 h-12 sm:w-14 sm:h-14 flex-shrink-0 rounded-xl overflow-hidden bg-slate-950/70 border border-cyan-400/30 p-1.5 shadow-[0_0_25px_rgba(0,242,254,0.25)] group-hover:shadow-[0_0_35px_rgba(0,242,254,0.55)] group-hover:border-cyan-300/60 group-hover:scale-105 transition-all duration-300"
+          >
+            <img
+              src="/images/EcoOrbit_Logo.png"
+              alt="EcoOrbit Logo"
+              class="w-full h-full object-contain drop-shadow-[0_0_8px_rgba(0,242,254,0.45)]"
+              loading="eager"
+            />
+          </div>
+          <div class="min-w-0 ml-1">
+            <span
+              class="brand-title text-lg sm:text-xl font-extrabold tracking-tight truncate block"
+              ><span class="text-white">Eco</span><span class="text-neonBlue">Orbit</span></span
+            >
+            <span
+              class="block text-[9px] sm:text-[10px] text-slate-400 font-medium tracking-widest uppercase mt-0.5"
+              >NASA Space Apps 2026</span
+            >
+          </div>
+        </a>
+        <nav
+          class="hidden md:flex items-center space-x-5 text-sm font-medium text-slate-300 shrink-0"
+        >
+          <a href="EcoOrbit.html" class="hover:text-neonBlue transition">Home</a>
+          <div class="relative group">
+            <a
+              href="About_Us.html"
+              target="_blank"
+              rel="noopener"
+              class="hover:text-neonBlue transition inline-flex items-center gap-1"
+            >
+              About Us
+              <i class="fa-solid fa-chevron-down text-[10px] mt-0.5"></i>
+            </a>
+            <div
+              class="absolute left-0 top-full pt-2 hidden group-hover:block z-50"
+            >
+              <div
+                class="glass-panel rounded-xl border border-white/10 py-2 min-w-[240px] shadow-lg shadow-black/40"
+              >
+                <a
+                  href="About_EcoOrbit.html"
+                  target="_blank"
+                  rel="noopener"
+                  class="block px-4 py-2.5 text-sm text-slate-300 hover:text-neonBlue hover:bg-white/5 transition"
+                >
+                  <i class="fa-solid fa-satellite mr-2 text-neonBlue"></i>About
+                  EcoOrbit
+                </a>
+                <a
+                  href="EcoOrbit_Growths.html"
+                  target="_blank"
+                  rel="noopener"
+                  class="block px-4 py-2.5 text-sm text-slate-300 hover:text-neonBlue hover:bg-white/5 transition"
+                >
+                  <i class="fa-solid fa-chart-line mr-2 text-neonBlue"></i>EcoOrbit
+                  Growths
+                </a>
+                <a
+                  href="EcoOrbit_Guidelines.html"
+                  target="_blank"
+                  rel="noopener"
+                  class="block px-4 py-2.5 text-sm text-slate-300 hover:text-neonBlue hover:bg-white/5 transition"
+                >
+                  <i class="fa-solid fa-palette mr-2 text-neonBlue"></i>EcoOrbit
+                  Guidelines
+                </a>
+                <a
+                  href="Contact_Us.html"
+                  target="_blank"
+                  rel="noopener"
+                  class="block px-4 py-2.5 text-sm text-slate-300 hover:text-neonBlue hover:bg-white/5 transition"
+                >
+                  <i class="fa-solid fa-envelope mr-2 text-neonBlue"></i>Contact Us
+                </a>
+                <a
+                  href="EcoOrbit_FAQ.html"
+                  target="_blank"
+                  rel="noopener"
+                  class="block px-4 py-2.5 text-sm text-slate-300 hover:text-neonBlue hover:bg-white/5 transition"
+                >
+                  <i class="fa-solid fa-circle-question mr-2 text-neonBlue"></i>FAQ
+                </a>
+              </div>
+            </div>
+          </div>
+          <div class="relative group">
+            <a
+              href="Privacy_and_Safety.html"
+              target="_blank"
+              rel="noopener"
+              class="hover:text-neonBlue transition inline-flex items-center gap-1"
+            >
+              Privacy & Safety
+              <i class="fa-solid fa-chevron-down text-[10px] mt-0.5"></i>
+            </a>
+            <div
+              class="absolute left-0 top-full pt-2 hidden group-hover:block z-50"
+            >
+              <div
+                class="glass-panel rounded-xl border border-white/10 py-2 min-w-[240px] shadow-lg shadow-black/40"
+              >
+                <a
+                  href="FAQ_Help.html"
+                  target="_blank"
+                  rel="noopener"
+                  class="block px-4 py-2.5 text-sm text-slate-300 hover:text-neonBlue hover:bg-white/5 transition"
+                >
+                  <i class="fa-solid fa-circle-question mr-2 text-neonBlue"></i
+                  >FAQ & Help
+                </a>
+              </div>
+            </div>
+          </div>
+          <div class="relative group">
+            <a
+              href="Our_Services.html"
+              target="_blank"
+              rel="noopener"
+              class="hover:text-neonBlue transition inline-flex items-center gap-1"
+            >
+              Our Services
+              <i class="fa-solid fa-chevron-down text-[10px] mt-0.5"></i>
+            </a>
+            <div
+              class="absolute left-0 top-full pt-2 hidden group-hover:block z-50"
+            >
+              <div
+                class="glass-panel rounded-xl border border-white/10 py-2 min-w-[240px] shadow-lg shadow-black/40"
+              >
+                <a
+                  href="The_Earth_Information_Jukebox.html"
+                  target="_blank"
+                  rel="noopener"
+                  class="block px-4 py-2.5 text-sm text-slate-300 hover:text-neonBlue hover:bg-white/5 transition"
+                >
+                  <i class="fa-solid fa-music mr-2 text-neonBlue"></i>The Earth
+                  Information Jukebox
+                </a>
+                <a
+                  href="Aircraft_Live_Tracking.html"
+                  target="_blank"
+                  rel="noopener"
+                  class="block px-4 py-2.5 text-sm text-slate-300 hover:text-neonBlue hover:bg-white/5 transition"
+                >
+                  <i class="fa-solid fa-plane-up mr-2 text-neonBlue"></i>Aircraft
+                  Live Tracking
+                </a>
+                <a
+                  href="Simulation_Game.html"
+                  target="_blank"
+                  rel="noopener"
+                  class="block px-4 py-2.5 text-sm text-slate-300 hover:text-neonBlue hover:bg-white/5 transition"
+                >
+                  <i class="fa-solid fa-gamepad mr-2 text-neonBlue"></i>Simulation
+                  Game
+                </a>
+                <a
+                  href="Freelancer_Place.html"
+                  target="_blank"
+                  rel="noopener"
+                  class="block px-4 py-2.5 text-sm text-slate-300 hover:text-neonBlue hover:bg-white/5 transition"
+                >
+                  <i class="fa-solid fa-store mr-2 text-neonBlue"></i>Freelancer Place
+                </a>
+                <a
+                  href="Satellite_Marketplace.html"
+                  target="_blank"
+                  rel="noopener"
+                  class="block px-4 py-2.5 text-sm text-slate-300 hover:text-neonBlue hover:bg-white/5 transition"
+                >
+                  <i class="fa-solid fa-satellite mr-2 text-neonBlue"></i>Satellite Marketplace
+                </a>
+                <a
+                  href="EcoOrbit_AI_Earth_Guardian.html"
+                  class="block px-4 py-2.5 text-sm text-slate-300 hover:text-neonBlue hover:bg-white/5 transition"
+                >
+                  <i class="fa-solid fa-earth-americas mr-2 text-neonBlue"></i>EcoOrbit AI — Earth Guardian
+                </a>
+                <a
+                  href="EcoOrbit_SpaceGuard.html"
+                  class="block px-4 py-2.5 text-sm text-slate-300 hover:text-neonBlue hover:bg-white/5 transition"
+                >
+                  <i class="fa-solid fa-satellite-dish mr-2 text-neonBlue"></i>EcoOrbit SpaceGuard
+                </a>
+                <a
+                  href="EcoOrbit_GreenOrbit.html"
+                  class="block px-4 py-2.5 text-sm text-slate-300 hover:text-neonBlue hover:bg-white/5 transition"
+                >
+                  <i class="fa-solid fa-tree mr-2 text-neonBlue"></i>GreenOrbit — Forest &amp; Biodiversity Watch
+                </a>
+                <a
+                  href="EcoOrbit_DisasterLens.html"
+                  class="block px-4 py-2.5 text-sm text-slate-300 hover:text-neonBlue hover:bg-white/5 transition"
+                >
+                  <i class="fa-solid fa-triangle-exclamation mr-2 text-neonBlue"></i>EcoOrbit DisasterLens
+                </a>
+                <a
+                  href="EcoOrbit_SolarShield.html"
+                  class="block px-4 py-2.5 text-sm text-slate-300 hover:text-neonBlue hover:bg-white/5 transition"
+                >
+                  <i class="fa-solid fa-sun mr-2 text-neonBlue"></i>SolarShield — Space Weather Watch
+                </a>
+                <a
+                  href="EcoOrbit_Earth_Intelligence.html"
+                  class="block px-4 py-2.5 text-sm text-slate-300 hover:text-neonBlue hover:bg-white/5 transition"
+                >
+                  <i class="fa-solid fa-globe mr-2 text-neonBlue"></i>EcoOrbit Earth Intelligence
+                </a>
+                <a
+                  href="EcoOrbit_Collision_Analysis.html"
+                  class="block px-4 py-2.5 text-sm text-slate-300 hover:text-neonBlue hover:bg-white/5 transition"
+                >
+                  <i class="fa-solid fa-meteor mr-2 text-neonBlue"></i>EcoOrbit Collision Analysis
+                </a>
+                <a
+                  href="EcoOrbit_FloodGuard_Bangladesh.html"
+                  class="block px-4 py-2.5 text-sm text-slate-300 hover:text-neonBlue hover:bg-white/5 transition"
+                >
+                  <i class="fa-solid fa-water mr-2 text-neonBlue"></i>FloodGuard Bangladesh
+                </a>
+                <a
+                  href="EcoOrbit_GreenWatch_Orbit.html"
+                  class="block px-4 py-2.5 text-sm text-slate-300 hover:text-neonBlue hover:bg-white/5 transition"
+                >
+                  <i class="fa-solid fa-leaf mr-2 text-neonBlue"></i>GreenWatch Orbit
+                </a>
+              </div>
+            </div>
+          </div>
+          <a
+            href="VLZO_TV.html"
+            target="_blank"
+            rel="noopener"
+            class="hover:text-neonBlue transition"
+            >VLZO TV</a
+          >
+          <div class="relative group">
+            <a
+              href="Test_Yourself.html"
+              target="_blank"
+              rel="noopener"
+              class="hover:text-neonBlue transition inline-flex items-center gap-1"
+            >
+              Test Yourself
+              <i class="fa-solid fa-chevron-down text-[10px] mt-0.5"></i>
+            </a>
+            <div
+              class="absolute left-0 top-full pt-2 hidden group-hover:block z-50"
+            >
+              <div
+                class="glass-panel rounded-xl border border-white/10 py-2 min-w-[260px] shadow-lg shadow-black/40"
+              >
+                <a
+                  href="Kids_Learning_Hub.html"
+                  target="_blank"
+                  rel="noopener"
+                  class="block px-4 py-2.5 text-sm text-slate-300 hover:text-neonBlue hover:bg-white/5 transition"
+                >
+                  <i class="fa-solid fa-rocket mr-2 text-neonBlue"></i>Junior
+                  Space Explorers Hub (Kids)
+                </a>
+              </div>
+            </div>
+          </div>
+          <a
+            href="The_Third_World_Piece_VLZO_UFO_V_1.html"
+            target="_blank"
+            rel="noopener"
+            class="hover:text-neonBlue transition"
+            >Kids Story</a
+          >
+        </nav>
+        <div class="flex items-center space-x-3 shrink-0">
+          <button
+            id="mobile-menu-button"
+            type="button"
+            aria-expanded="false"
+            aria-controls="mobile-menu"
+            class="hidden w-10 h-10 items-center justify-center rounded-xl border border-white/10 bg-white/5 text-slate-200 hover:text-neonBlue transition"
+          >
+            <i class="fa-solid fa-bars"></i>
+          </button>
+          <!-- LIVE GLOBE BUTTON: put your link in href below (e.g. https://yourwebsite.com) -->
+          <a
+            href="VASHAN_Antivirus.html"
+            target="_blank"
+            rel="noopener"
+            class="hidden lg:inline-flex px-4 py-2 rounded-xl bg-gradient-to-r from-neonBlue to-neonPurple text-spaceBg font-bold text-sm hover:opacity-90 transition shadow-lg shadow-neonBlue/20"
+          >
+            <i class="fa-solid fa-globe mr-2"></i>Antivirus
+          </a>
+          
+        </div>
+      </div>
+
+      <div id="mobile-menu" class="hidden bg-spaceBg/95 backdrop-blur-xl">
+        <nav
+          class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3 grid grid-cols-2 gap-2 text-sm font-medium text-slate-300"
+        >
+          <a
+            href="EcoOrbit.html"
+            class="rounded-lg px-3 py-2 hover:bg-white/5 hover:text-neonBlue"
+            >Home</a
+          >
+          <a
+            href="About_Us.html"
+            target="_blank"
+            rel="noopener"
+            class="rounded-lg px-3 py-2 hover:bg-white/5 hover:text-neonBlue"
+            >About Us</a
+          >
+          <a
+            href="About_EcoOrbit.html"
+            target="_blank"
+            rel="noopener"
+            class="col-span-2 rounded-lg px-3 py-2 pl-6 text-xs text-slate-400 hover:bg-white/5 hover:text-neonBlue border-l border-white/10 ml-3"
+          >
+            <i class="fa-solid fa-satellite mr-2 text-neonBlue"></i>About
+            EcoOrbit
+          </a>
+          <a
+            href="EcoOrbit_Growths.html"
+            target="_blank"
+            rel="noopener"
+            class="col-span-2 rounded-lg px-3 py-2 pl-6 text-xs text-slate-400 hover:bg-white/5 hover:text-neonBlue border-l border-white/10 ml-3"
+          >
+            <i class="fa-solid fa-chart-line mr-2 text-neonBlue"></i>EcoOrbit
+            Growths
+          </a>
+          <a
+            href="EcoOrbit_Guidelines.html"
+            target="_blank"
+            rel="noopener"
+            class="col-span-2 rounded-lg px-3 py-2 pl-6 text-xs text-slate-400 hover:bg-white/5 hover:text-neonBlue border-l border-white/10 ml-3"
+          >
+            <i class="fa-solid fa-palette mr-2 text-neonBlue"></i>EcoOrbit
+            Guidelines
+          </a>
+          <a
+            href="Contact_Us.html"
+            target="_blank"
+            rel="noopener"
+            class="col-span-2 rounded-lg px-3 py-2 pl-6 text-xs text-slate-400 hover:bg-white/5 hover:text-neonBlue border-l border-white/10 ml-3"
+          >
+            <i class="fa-solid fa-envelope mr-2 text-neonBlue"></i>Contact Us
+          </a>
+          <a
+            href="EcoOrbit_FAQ.html"
+            target="_blank"
+            rel="noopener"
+            class="col-span-2 rounded-lg px-3 py-2 pl-6 text-xs text-slate-400 hover:bg-white/5 hover:text-neonBlue border-l border-white/10 ml-3"
+          >
+            <i class="fa-solid fa-circle-question mr-2 text-neonBlue"></i>FAQ
+          </a>
+          <a
+            href="Privacy_and_Safety.html"
+            target="_blank"
+            rel="noopener"
+            class="rounded-lg px-3 py-2 hover:bg-white/5 hover:text-neonBlue"
+            >Privacy & Safety</a
+          >
+          <a
+            href="FAQ_Help.html"
+            target="_blank"
+            rel="noopener"
+            class="col-span-2 rounded-lg px-3 py-2 pl-6 text-xs text-slate-400 hover:bg-white/5 hover:text-neonBlue border-l border-white/10 ml-3"
+          >
+            <i class="fa-solid fa-circle-question mr-2 text-neonBlue"></i>FAQ &
+            Help
+          </a>
+          <a
+            href="Our_Services.html"
+            target="_blank"
+            rel="noopener"
+            class="rounded-lg px-3 py-2 hover:bg-white/5 hover:text-neonBlue"
+            >Our Services</a
+          >
+          <a
+            href="The_Earth_Information_Jukebox.html"
+            target="_blank"
+            rel="noopener"
+            class="col-span-2 rounded-lg px-3 py-2 pl-6 text-xs text-slate-400 hover:bg-white/5 hover:text-neonBlue border-l border-white/10 ml-3"
+          >
+            <i class="fa-solid fa-music mr-2 text-neonBlue"></i>The Earth
+            Information Jukebox
+          </a>
+          <a
+            href="Aircraft_Live_Tracking.html"
+            target="_blank"
+            rel="noopener"
+            class="col-span-2 rounded-lg px-3 py-2 pl-6 text-xs text-slate-400 hover:bg-white/5 hover:text-neonBlue border-l border-white/10 ml-3"
+          >
+            <i class="fa-solid fa-plane-up mr-2 text-neonBlue"></i>Aircraft
+            Live Tracking
+          </a>
+          <a
+            href="Simulation_Game.html"
+            target="_blank"
+            rel="noopener"
+            class="col-span-2 rounded-lg px-3 py-2 pl-6 text-xs text-slate-400 hover:bg-white/5 hover:text-neonBlue border-l border-white/10 ml-3"
+          >
+            <i class="fa-solid fa-gamepad mr-2 text-neonBlue"></i>Simulation
+            Game
+          </a>
+          <a
+            href="Freelancer_Place.html"
+            target="_blank"
+            rel="noopener"
+            class="col-span-2 rounded-lg px-3 py-2 pl-6 text-xs text-slate-400 hover:bg-white/5 hover:text-neonBlue border-l border-white/10 ml-3"
+          >
+            <i class="fa-solid fa-store mr-2 text-neonBlue"></i>Freelancer Place
+          </a>
+          <a
+            href="Satellite_Marketplace.html"
+            target="_blank"
+            rel="noopener"
+            class="col-span-2 rounded-lg px-3 py-2 pl-6 text-xs text-slate-400 hover:bg-white/5 hover:text-neonBlue border-l border-white/10 ml-3"
+          >
+            <i class="fa-solid fa-satellite mr-2 text-neonBlue"></i>Satellite Marketplace
+          </a>
+          <a
+            href="EcoOrbit_AI_Earth_Guardian.html"
+            class="col-span-2 rounded-lg px-3 py-2 pl-6 text-xs text-slate-400 hover:bg-white/5 hover:text-neonBlue border-l border-white/10 ml-3"
+          >
+            <i class="fa-solid fa-earth-americas mr-2 text-neonBlue"></i>EcoOrbit AI — Earth Guardian
+          </a>
+          <a
+            href="EcoOrbit_SpaceGuard.html"
+            class="col-span-2 rounded-lg px-3 py-2 pl-6 text-xs text-slate-400 hover:bg-white/5 hover:text-neonBlue border-l border-white/10 ml-3"
+          >
+            <i class="fa-solid fa-satellite-dish mr-2 text-neonBlue"></i>EcoOrbit SpaceGuard
+          </a>
+          <a
+            href="EcoOrbit_GreenOrbit.html"
+            class="col-span-2 rounded-lg px-3 py-2 pl-6 text-xs text-slate-400 hover:bg-white/5 hover:text-neonBlue border-l border-white/10 ml-3"
+          >
+            <i class="fa-solid fa-tree mr-2 text-neonBlue"></i>GreenOrbit — Forest &amp; Biodiversity Watch
+          </a>
+          <a
+            href="EcoOrbit_DisasterLens.html"
+            class="col-span-2 rounded-lg px-3 py-2 pl-6 text-xs text-slate-400 hover:bg-white/5 hover:text-neonBlue border-l border-white/10 ml-3"
+          >
+            <i class="fa-solid fa-triangle-exclamation mr-2 text-neonBlue"></i>EcoOrbit DisasterLens
+          </a>
+          <a
+            href="EcoOrbit_SolarShield.html"
+            class="col-span-2 rounded-lg px-3 py-2 pl-6 text-xs text-slate-400 hover:bg-white/5 hover:text-neonBlue border-l border-white/10 ml-3"
+          >
+            <i class="fa-solid fa-sun mr-2 text-neonBlue"></i>SolarShield — Space Weather Watch
+          </a>
+          <a
+            href="EcoOrbit_Earth_Intelligence.html"
+            class="col-span-2 rounded-lg px-3 py-2 pl-6 text-xs text-slate-400 hover:bg-white/5 hover:text-neonBlue border-l border-white/10 ml-3"
+          >
+           <i class="fa-solid fa-globe mr-2 text-neonBlue"></i>EcoOrbit Earth Intelligence</a>
+          <a
+            href="EcoOrbit_Collision_Analysis.html"
+            class="col-span-2 rounded-lg px-3 py-2 pl-6 text-xs text-slate-400 hover:bg-white/5 hover:text-neonBlue border-l border-white/10 ml-3"
+          >
+            <i class="fa-solid fa-meteor mr-2 text-neonBlue"></i>EcoOrbit Collision Analysis
+          </a>
+          <a
+            href="EcoOrbit_FloodGuard_Bangladesh.html"
+            class="col-span-2 rounded-lg px-3 py-2 pl-6 text-xs text-slate-400 hover:bg-white/5 hover:text-neonBlue border-l border-white/10 ml-3"
+          >
+            <i class="fa-solid fa-water mr-2 text-neonBlue"></i>FloodGuard Bangladesh
+          </a>
+          <a
+            href="EcoOrbit_GreenWatch_Orbit.html"
+            class="col-span-2 rounded-lg px-3 py-2 pl-6 text-xs text-slate-400 hover:bg-white/5 hover:text-neonBlue border-l border-white/10 ml-3"
+          >
+            <i class="fa-solid fa-leaf mr-2 text-neonBlue"></i>GreenWatch Orbit
+          </a>
+          <a
+            href="VLZO_TV.html"
+            target="_blank"
+            rel="noopener"
+            class="rounded-lg px-3 py-2 hover:bg-white/5 hover:text-neonBlue"
+            >VLZO TV</a
+          >
+          <a
+            href="Test_Yourself.html"
+            target="_blank"
+            rel="noopener"
+            class="rounded-lg px-3 py-2 hover:bg-white/5 hover:text-neonBlue"
+            >Test Yourself</a
+          >
+          <a
+            href="Kids_Learning_Hub.html"
+            target="_blank"
+            rel="noopener"
+            class="col-span-2 rounded-lg px-3 py-2 pl-6 text-xs text-slate-400 hover:bg-white/5 hover:text-neonBlue border-l border-white/10 ml-3"
+          >
+            <i class="fa-solid fa-rocket mr-2 text-neonBlue"></i>Junior Space
+            Explorers Hub (Kids)
+          </a>
+          <a
+            href="https://ijisrt.com/assets/upload/hardcopy_form/1786574380.pdf"
+            target="_blank"
+            rel="noopener"
+            class="rounded-lg px-3 py-2 hover:bg-white/5 hover:text-neonBlue"
+            >Story</a
+          >
+          
+        </nav>
+      </div>
+    </header>
+<div class="hero">
+  <div id="map" role="application" aria-label="Map of Bangladesh with NASA rainfall and satellite layers"></div>
+  <div class="hero-text"><div class="wrap">
+    <h1>FloodGuard Bangladesh</h1>
+    <p>See where rain is falling, which rivers are rising, and what to do before the water arrives.</p>
+    <div class="chip" id="status"><i class="dot"></i><span>Connecting to NASA…</span></div>
+  </div></div>
+  <div class="ctl">
+    <label>Satellite date <input type="date" id="date"></label>
+    <label>Background <select id="base"><option value="tc">True-colour (VIIRS)</option><option value="bm">Terrain relief</option></select></label>
+    <label>NASA GPM rainfall <input type="checkbox" id="rainon" checked></label>
+    <label>Flood-prone districts <input type="checkbox" id="distson" checked></label>
+    <button id="hosp" type="button">Show hospitals in view</button>
+    <div id="note" aria-live="polite"></div>
+  </div>
+  <aside class="sel" id="sel" aria-live="polite"><h3>Select a district</h3><small>Click a marker or a row in the table to see its river signal and NASA rainfall record.</small></aside>
+</div>
+<div class="stats">
+  <div><strong id="s1">–</strong><small>of 12 watched districts show an elevated or high river-flow signal</small></div>
+  <div><strong id="s2">–</strong><small id="l2">heaviest forecast rain in the next 7 days, mm</small></div>
+  <div><strong id="s3">–</strong><small id="l3">highest forecast river flow compared with the last 60 days</small></div>
+  <div><strong id="s4">–</strong><small>date of the NASA satellite layers on the map</small></div>
+</div>
+<main class="wrap">
+<section id="watch">
+  <h2>District watchlist</h2>
+  <p class="lede">Twelve districts along the Brahmaputra–Jamuna, Meghna, and coastal belt. The river signal compares the next 7 days of forecast flow with the average of the last 60 days. <span class="tag x">Forecast · GloFAS via Open-Meteo</span> It is an indicator, not an official warning.</p>
+  <div class="scroll"><table>
+    <thead><tr><th>District</th><th>River signal</th><th>Peak flow, 7 days</th><th>Rain, 7 days</th><th></th></tr></thead>
+    <tbody id="rows"><tr><td colspan="5">Loading…</td></tr></tbody>
+  </table></div>
+</section>
+<section id="satellite" class="two">
+  <div><h2>What the map shows</h2>
+    <p class="lede">Rainfall comes from NASA’s Global Precipitation Measurement (GPM) IMERG product, drawn through NASA Earthdata’s GIBS service. Turn it on over the true-colour image to see storms and swollen, silty rivers together. <span class="tag v">Verified NASA data</span></p></div>
+  <div><h2>Rain already fallen</h2>
+    <p class="lede">Select a district to see its last 16 days of rainfall from NASA POWER, which is built from satellite and model data. The newest days can be missing while NASA processes them. <span class="tag v">Verified NASA data</span></p></div>
+</section>
+<section id="infra">
+  <h2>Communities and infrastructure</h2>
+  <p class="lede">Markers show the districts most often hit by river and coastal flooding. Zoom to district level and press “Show hospitals in view” to load hospitals mapped by volunteers on OpenStreetMap. <span class="tag x">Community data · OpenStreetMap</span> <span class="tag nd">Reference list</span> Coverage is uneven, so treat missing hospitals as unknown, not absent.</p>
+</section>
+<section id="prepare">
+  <h2>Prepare and evacuate</h2>
+  <p class="lede">Simple steps that matter most. Local authorities decide where shelters are and when to leave, so follow their instructions first.</p>
+  <div class="cols">
+    <div><h3>Before the flood</h3><ul><li>Agree on a meeting point and a route to higher ground or the nearest shelter.</li><li>Pack drinking water, dry food, medicine, a torch, a charged phone, and a power bank.</li><li>Keep ID, land papers, and certificates in a sealed plastic bag.</li><li>Move livestock, seed, and tools to raised ground.</li></ul></div>
+    <div><h3>When water rises</h3><ul><li>Leave early when the warning comes. Do not wait for the water to reach the door.</li><li>Switch off power and gas. Never walk or drive through moving water.</li><li>Take children, older people, and people with disabilities first.</li><li>Tell a neighbour or relative where you are going.</li></ul></div>
+    <div><h3>After the flood</h3><ul><li>Drink only boiled or treated water. Tube wells may be contaminated.</li><li>Stay away from fallen power lines and damaged buildings.</li><li>Photograph damage before cleaning, for relief and insurance claims.</li><li>Watch for diarrhoea, fever, and skin infections, and seek care early.</li></ul></div>
+  </div>
+  <div class="help">
+    <div><h3>Helplines</h3><ul><li><span>National emergency</span><b>999</b></li><li><span>Disaster early-warning line</span><b>1090</b></li><li><span>Government information and services</span><b>333</b></li></ul>
+    <p class="lede" style="margin-top:14px;font-size:15px">Numbers can change. Confirm them with your Union Parishad or on the official sites.</p></div>
+    <div><h3>Official sources</h3><ul>
+      <li><span>Flood Forecasting and Warning Centre</span><a href="http://www.ffwc.gov.bd" rel="noopener" target="_blank">ffwc.gov.bd</a></li>
+      <li><span>Department of Disaster Management</span><a href="https://ddm.gov.bd" rel="noopener" target="_blank">ddm.gov.bd</a></li>
+      <li><span>Bangladesh Water Development Board</span><a href="https://www.bwdb.gov.bd" rel="noopener" target="_blank">bwdb.gov.bd</a></li>
+      <li><span>Bangladesh Meteorological Department</span><a href="https://www.bmd.gov.bd" rel="noopener" target="_blank">bmd.gov.bd</a></li></ul></div>
+  </div>
+</section>
+</main>
+<footer><div class="wrap"><a class="back" href="EcoOrbit.html" style="color:var(--sun)">&larr; Back to EcoOrbit</a><br>
+Data: <a href="https://earthdata.nasa.gov/gibs">NASA GIBS</a> (GPM IMERG rainfall, VIIRS imagery), <a href="https://power.larc.nasa.gov">NASA POWER</a>, <a href="https://open-meteo.com/en/docs/flood-api">Open-Meteo Flood API</a> (GloFAS), OpenStreetMap contributors. EcoOrbit is not an official flood warning service. NASA does not endorse EcoOrbit.
+</div></footer>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.js"></script>
+<script>
+(function(){var b=document.getElementById("mobile-menu-button"),m=document.getElementById("mobile-menu");if(b&&m)b.addEventListener("click",function(){var h=m.classList.toggle("hidden");b.setAttribute("aria-expanded",String(!h))})})();
+</script>
+<script>
+const $=s=>document.querySelector(s),esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const iso=d=>d.toISOString().slice(0,10),day=n=>{const d=new Date();d.setUTCDate(d.getUTCDate()+n);return d};
+const D=[["Kurigram","Rangpur",25.80,89.65],["Gaibandha","Rangpur",25.33,89.53],["Sirajganj","Rajshahi",24.45,89.70],["Jamalpur","Mymensingh",24.92,89.94],["Netrokona","Mymensingh",24.87,90.73],["Sunamganj","Sylhet",25.07,91.40],["Sylhet","Sylhet",24.90,91.87],["Chandpur","Chattogram",23.23,90.65],["Feni","Chattogram",23.02,91.40],["Noakhali","Chattogram",22.82,91.10],["Bhola","Barishal",22.69,90.65],["Satkhira","Khulna",22.72,89.07]].map(([n,div,lat,lon])=>({n,div,lat,lon}));
+const CL={High:'#ff6b4a',Elevated:'#ffd23f',Normal:'#10d9a0','No data':'#94a3b8'},TG={High:'hi',Elevated:'el',Normal:'no','No data':'nd'};
+const map=L.map('map',{center:[23.8,90.3],zoom:7,minZoom:5,maxZoom:11,preferCanvas:true});
+const gibs=(l,z,x,d)=>`https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/${l}/default/${d?d+'/':''}GoogleMapsCompatible_Level${z}/{z}/{y}/{x}.${x}`;
+const gurl=(l,z,ext,d)=>`https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/${l}/default/${d?d+'/':''}GoogleMapsCompatible_Level${z}/{z}/{y}/{x}.${ext}`;
+let base,rain,errs=0,sel=-1,hospLayer=L.layerGroup().addTo(map);
+const dt=$('#date');dt.max=iso(day(-1));dt.min=iso(day(-30));dt.value=iso(day(-1));
+function note(t){$('#note').textContent=t}
+function layers(){
+  const d=dt.value,tc=$('#base').value==='tc';errs=0;note('');
+  if(base)map.removeLayer(base);if(rain)map.removeLayer(rain);
+  base=L.tileLayer(tc?gurl('VIIRS_SNPP_CorrectedReflectance_TrueColor',9,'jpg',d):gurl('BlueMarble_ShadedRelief_Bathymetry',8,'jpeg'),{maxNativeZoom:tc?9:8,maxZoom:11,attribution:'Imagery: NASA GIBS'}).addTo(map);
+  if($('#rainon').checked)rain=L.tileLayer(gurl('IMERG_Precipitation_Rate',6,'png',d),{maxNativeZoom:6,maxZoom:11,opacity:.8,attribution:'Rain: NASA GPM IMERG'}).addTo(map);
+  [base,rain].forEach(t=>t&&t.on('tileerror',()=>{if(++errs===8)note('Some NASA tiles didn’t load for this date. Try an earlier date.')}));
+  $('#s4').textContent=d.slice(5).replace('-','/');
+}
+['date','base','rainon'].forEach(i=>$('#'+i).addEventListener('change',layers));layers();
+const dm=D.map(d=>{d.m=L.circleMarker([d.lat,d.lon],{radius:9,color:'#fff',weight:2,fillColor:CL['No data'],fillOpacity:.95}).bindTooltip(d.n).on('click',()=>select(D.indexOf(d))).addTo(map);return d.m});
+$('#distson').addEventListener('change',e=>dm.forEach(m=>e.target.checked?m.addTo(map):map.removeLayer(m)));
+function status(live,t){const s=$('#status');s.className='chip '+(live?'live':'offline');s.querySelector('span').textContent=t}
+status(true,'NASA GIBS imagery · '+dt.value);
+const risk=r=>r==null?'No data':r>=1.5?'High':r>=1.2?'Elevated':'Normal';
+async function forecasts(){
+  const la=D.map(d=>d.lat).join(','),lo=D.map(d=>d.lon).join(',');
+  const [f,r]=await Promise.allSettled([
+    fetch(`https://flood-api.open-meteo.com/v1/flood?latitude=${la}&longitude=${lo}&daily=river_discharge&past_days=60&forecast_days=7`).then(x=>x.json()),
+    fetch(`https://api.open-meteo.com/v1/forecast?latitude=${la}&longitude=${lo}&daily=precipitation_sum&forecast_days=7&timezone=Asia%2FDhaka`).then(x=>x.json())]);
+  const arr=x=>x.status==='fulfilled'?[].concat(x.value):[],fa=arr(f),ra=arr(r),today=iso(new Date());
+  D.forEach((d,i)=>{
+    const q=fa[i]&&fa[i].daily;
+    if(q){const past=[],fut=[];q.time.forEach((t,k)=>{const v=q.river_discharge[k];if(v!=null)(t<today?past:fut).push(v)});
+      if(past.length&&fut.length){d.peak=Math.max(...fut);d.ratio=d.peak/(past.reduce((a,b)=>a+b)/past.length)}}
+    const p=ra[i]&&ra[i].daily;if(p)d.rain=p.precipitation_sum.reduce((a,b)=>a+(b||0),0);
+    d.risk=risk(d.ratio);d.m.setStyle({fillColor:CL[d.risk]});
+  });
+  if(!D.some(d=>d.ratio!=null||d.rain!=null)){$('#rows').innerHTML='<tr><td colspan="5">Forecast services didn’t respond. Refresh to try again. The NASA map above still works.</td></tr>';status(false,'Forecasts unavailable · NASA imagery only');return}
+  const order=D.map((d,i)=>i).sort((a,b)=>(D[b].ratio||0)-(D[a].ratio||0)),mx=Math.max(1,...D.map(d=>d.rain||0));
+  $('#rows').innerHTML=order.map(i=>{const d=D[i];return `<tr data-i="${i}" tabindex="0"><td><b>${esc(d.n)}</b> <small style="color:var(--mute)">${esc(d.div)}</small></td><td><span class="tag ${TG[d.risk]}">${d.risk}</span> <small style="color:var(--mute)">${d.ratio!=null?d.ratio.toFixed(2)+'×':''}</small></td><td>${d.peak!=null?Math.round(d.peak).toLocaleString()+' m³/s':'–'}</td><td>${d.rain!=null?Math.round(d.rain)+' mm':'–'}</td><td style="width:110px"><i class="bar" style="width:${Math.max(4,(d.rain||0)/mx*100)}%"></i></td></tr>`}).join('');
+  $('#rows').querySelectorAll('tr').forEach(tr=>{const go=()=>select(+tr.dataset.i);tr.onclick=go;tr.onkeydown=e=>e.key==='Enter'&&go()});
+  const w=D.filter(d=>d.rain!=null).sort((a,b)=>b.rain-a.rain)[0],h=D.filter(d=>d.ratio!=null).sort((a,b)=>b.ratio-a.ratio)[0];
+  $('#s1').textContent=D.filter(d=>d.risk==='High'||d.risk==='Elevated').length;
+  if(w){$('#s2').textContent=Math.round(w.rain);$('#l2').textContent='mm of rain forecast in the next 7 days, heaviest in '+w.n}
+  if(h){$('#s3').textContent=h.ratio.toFixed(1)+'×';$('#l3').textContent='highest forecast river flow vs. the last 60 days, in '+h.n}
+}
+const cache={};
+function bars(cv,vals){const r=cv.getBoundingClientRect(),k=devicePixelRatio||1;cv.width=r.width*k;cv.height=r.height*k;const c=cv.getContext('2d');c.scale(k,k);const W=r.width,H=r.height,m=Math.max(5,...vals.map(v=>v[1])),bw=W/vals.length;
+  vals.forEach(([t,v],i)=>{const h=v/m*(H-18);c.fillStyle='#4fb3ff';c.fillRect(i*bw+2,H-14-h,bw-4,Math.max(1,h))});c.fillStyle='#94a3b8';c.font='11px Inter,sans-serif';c.fillText(vals[0][0].slice(4,6)+'/'+vals[0][0].slice(6),0,H-2);const e=vals[vals.length-1][0];c.textAlign='right';c.fillText(e.slice(4,6)+'/'+e.slice(6),W,H-2)}
+async function select(i){
+  sel=i;const d=D[i];map.flyTo([d.lat,d.lon],9);
+  document.querySelectorAll('#rows tr').forEach(r=>r.classList.toggle('on',+r.dataset.i===i));
+  $('#sel').innerHTML=`<h3>${esc(d.n)}</h3><small>${esc(d.div)} division</small><dl><dt>River signal</dt><dd><span class="tag ${TG[d.risk||'No data']}">${d.risk||'Loading'}</span></dd><dt>Peak flow</dt><dd>${d.peak!=null?Math.round(d.peak).toLocaleString()+' m³/s':'–'}</dd><dt>Rain, next 7 days</dt><dd>${d.rain!=null?Math.round(d.rain)+' mm':'–'}</dd></dl><canvas id="ch"></canvas><small id="cap">Loading NASA POWER rainfall…</small>`;
+  try{
+    if(!cache[i]){const u=`https://power.larc.nasa.gov/api/temporal/daily/point?parameters=PRECTOTCORR&community=AG&longitude=${d.lon}&latitude=${d.lat}&start=${iso(day(-16)).replace(/-/g,'')}&end=${iso(day(-1)).replace(/-/g,'')}&format=JSON`;
+      const j=await (await fetch(u)).json();cache[i]=Object.entries(j.properties.parameter.PRECTOTCORR).filter(([k,v])=>v>=0)}
+    if(sel!==i)return;const v=cache[i];if(!v.length)throw 0;
+    bars($('#ch'),v);$('#cap').textContent=`NASA POWER rainfall, mm per day. ${Math.round(v.reduce((a,b)=>a+b[1],0))} mm over ${v.length} days.`;
+  }catch(e){if(sel===i){$('#cap').textContent='NASA POWER rainfall isn’t available right now.';}}
+}
+$('#hosp').onclick=async()=>{
+  if(map.getZoom()<9){note('Zoom in to district level first (zoom 9 or closer).');return}
+  const b=map.getBounds(),bb=[b.getSouth(),b.getWest(),b.getNorth(),b.getEast()].join(',');note('Loading hospitals…');
+  try{const q=`[out:json][timeout:20];(node["amenity"="hospital"](${bb});way["amenity"="hospital"](${bb}););out center 80;`;
+    const j=await (await fetch('https://overpass-api.de/api/interpreter?data='+encodeURIComponent(q))).json();
+    hospLayer.clearLayers();
+    j.elements.forEach(e=>{const la=e.lat||e.center.lat,lo=e.lon||e.center.lon;L.circleMarker([la,lo],{radius:6,color:'#fff',weight:1.5,fillColor:'#4fb3ff',fillOpacity:1}).bindTooltip(e.tags&&(e.tags.name||e.tags['name:en'])||'Hospital (unnamed)').addTo(hospLayer)});
+    note(j.elements.length?j.elements.length+' hospitals found (OpenStreetMap).':'No mapped hospitals in this view.');
+  }catch(e){note('Hospital data didn’t load. Try again in a moment.')}
+};
+forecasts().catch(()=>status(false,'Forecasts unavailable · NASA imagery only'));
+</script>
+</body>
+</html>
