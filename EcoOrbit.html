@@ -1733,142 +1733,6 @@ html[lang="ar"],html[lang="fa"],html[lang="ur"],html[lang="ps"],html[lang="sd"],
     <p class="text-xs text-slate-500 mt-4 max-w-3xl">Source: CelesTrak SATCAT and GP data, based on US Space Force tracking. "Operational" is an estimate from catalogue status codes. Objects are propagated from published orbital elements, so positions are predictions, not telemetry. Fallback figures are an Orbital Radar snapshot from 5 Nov 2026.</p>
   </div>
 </section>
-<section id="nasa-data" class="py-12 relative">
-  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-    <div class="flex flex-wrap items-end justify-between gap-3 mb-6">
-      <div>
-        <h2 style="color: yellowgreen;" class="text-3xl sm:text-4xl font-extrabold text-white">Live NASA data</h2>
-        <p class="text-slate-400 text-sm mt-2 max-w-2xl">Satellites and debris do not orbit in isolation. Solar activity changes drag in low Earth orbit, and NASA satellites watch the planet below. These panels load live from NASA open data services.</p>
-      </div>
-      <p id="nd-stamp" class="text-xs text-slate-400" aria-live="polite">Loading NASA data...</p>
-    </div>
-    <div class="grid grid-cols-1 lg:grid-cols-3 gap-4">
-      <div class="glass-panel rounded-2xl p-5 border border-white/10">
-        <h3 class="font-bold text-white mb-1">Space weather and orbital drag</h3>
-        <p class="text-xs text-slate-400 mb-4">NASA DONKI, last 7 to 30 days</p>
-        <div id="sw-body" class="text-sm text-slate-300">Loading...</div>
-        <p class="text-xs text-slate-500 mt-4">Strong solar flares and geomagnetic storms heat and expand the upper atmosphere. That raises drag on satellites and debris and can change where they are expected to be.</p>
-      </div>
-      <div class="glass-panel rounded-2xl p-5 border border-white/10 lg:col-span-2">
-        <div class="flex flex-wrap items-center justify-between gap-2 mb-3">
-          <div><h3 class="font-bold text-white">Earth from NASA satellites, with natural events</h3><p class="text-xs text-slate-400">NASA GIBS imagery and NASA EONET open events</p></div>
-          <div id="nm-layers" class="flex flex-wrap gap-2"></div>
-        </div>
-        <div id="nm-wrap" class="relative w-full rounded-xl overflow-hidden bg-black" style="aspect-ratio:2/1">
-          <img id="nm-img" alt="NASA GIBS view of Earth" class="absolute inset-0 w-full h-full object-cover">
-          <div id="nm-dots" class="absolute inset-0"></div>
-        </div>
-        <div id="nm-legend" class="flex flex-wrap gap-x-4 gap-y-1 mt-3 text-xs text-slate-300"></div>
-      </div>
-    </div>
-    <div class="grid grid-cols-1 lg:grid-cols-3 gap-4 mt-4">
-      <div class="glass-panel rounded-2xl p-5 border border-white/10">
-        <h3 class="font-bold text-white mb-1">Earth right now</h3>
-        <p class="text-xs text-slate-400 mb-3">NASA EPIC camera on DSCOVR, about 1.5 million km away</p>
-        <img id="epic-img" alt="Latest NASA EPIC image of Earth" class="w-full rounded-xl bg-black" style="aspect-ratio:1/1;object-fit:cover">
-        <p id="epic-cap" class="text-xs text-slate-400 mt-2"></p>
-      </div>
-      <div class="glass-panel rounded-2xl p-5 border border-white/10 lg:col-span-2">
-        <h3 class="font-bold text-white mb-3">NASA sources used by EcoOrbit</h3>
-        <ul class="text-sm text-slate-300 space-y-2">
-          <li><b class="text-white">DONKI</b> (api.nasa.gov): solar flares, coronal mass ejections and geomagnetic storms.</li>
-          <li><b class="text-white">GIBS</b> (Global Imagery Browse Services): satellite imagery of Earth by day and night.</li>
-          <li><b class="text-white">EONET</b> (Earth Observatory Natural Event Tracker): open wildfires, storms, volcanoes and ice events.</li>
-          <li><b class="text-white">EPIC</b> (DSCOVR): the latest full-disc image of Earth.</li>
-          <li><b class="text-white">NASA Orbital Debris Program Office</b>: the reference for debris guidance cited in our reports. <a class="text-neonBlue underline" href="https://orbitaldebris.jsc.nasa.gov/" target="_blank" rel="noopener">orbitaldebris.jsc.nasa.gov</a></li>
-        </ul>
-        <p class="text-xs text-slate-500 mt-4">Orbit positions still come from CelesTrak, which is not a NASA service. NASA data is used for space weather and Earth context. Imagery and data courtesy of NASA. EcoOrbit is not endorsed by NASA.</p>
-      </div>
-    </div>
-  </div>
-</section>
-<script id="eo-nasa-js">
-(function () {
-  "use strict";
-  var KEY = "DEMO_KEY"; /* free key at https://api.nasa.gov, DEMO_KEY is rate limited */
-  var $ = function (i) { return document.getElementById(i); };
-  var now = new Date(), DAY = 864e5;
-  function iso(d) { return d.toISOString().slice(0, 10); }
-  function cached(k, url, ttl) {
-    try { var c = JSON.parse(localStorage.getItem(k)); if (c && Date.now() - c.t < ttl) return Promise.resolve(c.v); } catch (e) {}
-    return fetch(url).then(function (r) { if (!r.ok) throw 0; return r.text(); }).then(function (t) {
-      var v; try { v = JSON.parse(t); } catch (e) { v = []; }
-      try { localStorage.setItem(k, JSON.stringify({ t: Date.now(), v: v })); } catch (e) {}
-      return v;
-    });
-  }
-  function row(box, label, value, color) {
-    var d = document.createElement("div"); d.className = "flex justify-between gap-3 py-1.5 border-b border-white/5";
-    var a = document.createElement("span"); a.className = "text-slate-400"; a.textContent = label;
-    var b = document.createElement("b"); b.className = "text-white text-right"; b.textContent = value; if (color) b.style.color = color;
-    d.appendChild(a); d.appendChild(b); box.appendChild(d);
-  }
-  function stamp() { $("nd-stamp").textContent = "Live from NASA, loaded " + now.toUTCString().slice(5, 22) + " UTC"; }
-
-  /* ---- space weather (DONKI) ---- */
-  function rank(c) { var m = /^([ABCMX])(\d+(\.\d+)?)/.exec(c || ""); return m ? "ABCMX".indexOf(m[1]) * 100 + parseFloat(m[2]) : -1; }
-  var u = function (p, days) { return "https://api.nasa.gov/DONKI/" + p + "?startDate=" + iso(new Date(now - days * DAY)) + "&endDate=" + iso(now) + "&api_key=" + KEY; };
-  Promise.all([cached("eo_flr", u("FLR", 7), 18e5), cached("eo_cme", u("CME", 7), 18e5), cached("eo_gst", u("GST", 30), 18e5)]).then(function (r) {
-    var fl = (r[0] || []).slice().sort(function (a, b) { return rank(b.classType) - rank(a.classType); }),
-      best = fl.length ? fl[0].classType : "none", kp = 0;
-    (r[2] || []).forEach(function (g) { (g.allKpIndex || []).forEach(function (k) { if (k.kpIndex > kp) kp = k.kpIndex; }); });
-    var top = best[0], lvl = (kp >= 5 || top === "X") ? ["Elevated", "#f43f5e"] : (kp >= 4 || top === "M") ? ["Active", "#f59e0b"] : ["Quiet", "#10b981"];
-    var b = $("sw-body"); b.textContent = "";
-    row(b, "Orbital drag outlook", lvl[0], lvl[1]);
-    row(b, "Strongest flare, 7 days", best);
-    row(b, "Solar flares, 7 days", String((r[0] || []).length));
-    row(b, "Coronal mass ejections, 7 days", String((r[1] || []).length));
-    row(b, "Peak Kp index, 30 days", kp ? String(kp) : "no storms");
-    window.EO_NASA = { drag: lvl[0], kp: kp, flare: best };
-    stamp();
-  }).catch(function () { $("sw-body").textContent = "NASA DONKI is unreachable right now (offline or rate limited). Add your own free key in the script to raise the limit."; });
-
-  /* ---- GIBS imagery + EONET events ---- */
-  var yday = iso(new Date(now - DAY));
-  var L = [["Blue Marble", "BlueMarble_ShadedRelief_Bathymetry", ""], ["Recent true colour", "VIIRS_SNPP_CorrectedReflectance_TrueColor", yday], ["Night lights", "VIIRS_Black_Marble", "2016-01-01"]];
-  function gibs(l) { return "https://gibs.earthdata.nasa.gov/wms/epsg4326/best/wms.cgi?SERVICE=WMS&REQUEST=GetMap&VERSION=1.3.0&LAYERS=" + l[1] + "&STYLES=&FORMAT=image%2Fjpeg&CRS=EPSG%3A4326&BBOX=-90,-180,90,180&WIDTH=1440&HEIGHT=720" + (l[2] ? "&TIME=" + l[2] : ""); }
-  var btns = [];
-  function pick(i) { $("nm-img").src = gibs(L[i]); btns.forEach(function (b, j) { b.style.background = j === i ? "rgba(0,242,254,.25)" : "rgba(255,255,255,.05)"; }); }
-  L.forEach(function (l, i) {
-    var b = document.createElement("button"); b.type = "button"; b.textContent = l[0];
-    b.className = "px-3 py-1.5 rounded-lg border border-white/20 text-xs text-slate-200"; b.onclick = function () { pick(i); };
-    $("nm-layers").appendChild(b); btns.push(b);
-  });
-  pick(0);
-  var CC = { wildfires: "#f43f5e", severeStorms: "#a855f7", volcanoes: "#f59e0b", seaLakeIce: "#22d3ee" };
-  cached("eo_eonet", "https://eonet.gsfc.nasa.gov/api/v3/events?status=open&limit=100", 18e5).then(function (d) {
-    var ev = d.events || [], counts = {}, dots = $("nm-dots"); dots.textContent = "";
-    ev.forEach(function (e) {
-      var g = (e.geometry || []).slice(-1)[0], c = (e.categories || [])[0] || {};
-      if (!g) return;
-      var p = g.coordinates; while (p && typeof p[0] !== "number") p = p[0];
-      if (!p) return;
-      var col = CC[c.id] || "#e2e8f0", dot = document.createElement("i");
-      dot.title = e.title + " (" + (c.title || "event") + ")";
-      dot.style.cssText = "position:absolute;width:9px;height:9px;border-radius:50%;border:1px solid #fff;transform:translate(-50%,-50%);background:" + col + ";left:" + ((p[0] + 180) / 360 * 100) + "%;top:" + ((90 - p[1]) / 180 * 100) + "%";
-      dots.appendChild(dot); counts[c.title || "Other"] = (counts[c.title || "Other"] || 0) + 1; counts["_" + (c.title || "Other")] = col;
-    });
-    var lg = $("nm-legend"); lg.textContent = "";
-    Object.keys(counts).filter(function (k) { return k[0] !== "_"; }).forEach(function (k) {
-      var s = document.createElement("span"); s.textContent = k + ": " + counts[k]; s.style.borderLeft = "10px solid " + counts["_" + k]; s.style.paddingLeft = "6px"; lg.appendChild(s);
-    });
-    if (!ev.length) lg.textContent = "No open events returned by NASA EONET.";
-    stamp();
-  }).catch(function () { $("nm-legend").textContent = "NASA EONET is unreachable right now."; });
-
-  /* ---- EPIC ---- */
-  function epic(list) {
-    var e = list && list[0]; if (!e) throw 0;
-    var p = e.date.slice(0, 10).split("-");
-    $("epic-img").src = "https://epic.gsfc.nasa.gov/archive/natural/" + p.join("/") + "/jpg/" + e.image + ".jpg";
-    $("epic-cap").textContent = "Captured " + e.date + " UTC";
-  }
-  cached("eo_epic", "https://epic.gsfc.nasa.gov/api/natural", 18e5).then(epic).catch(function () {
-    return cached("eo_epic2", "https://api.nasa.gov/EPIC/api/natural?api_key=" + KEY, 18e5).then(epic);
-  }).catch(function () { $("epic-cap").textContent = "NASA EPIC is unreachable right now."; });
-})();
-</script>
-
 
 <script src="https://cdn.jsdelivr.net/npm/satellite.js@5.0.0/dist/satellite.min.js"></script>
 <script id="eo-live-js">
@@ -2240,36 +2104,6 @@ html[lang="ar"],html[lang="fa"],html[lang="ur"],html[lang="ps"],html[lang="sd"],
         </div>
       </div>
     </section>
-<section id="sat-split" class="py-10 relative">
-  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-    <h2 style="color: yellowgreen;" class="text-3xl font-extrabold text-white">Working satellites vs waste satellites</h2>
-    <p class="text-slate-400 text-sm mt-2 mb-5 max-w-2xl">EcoOrbit separates satellites that still work from defunct objects and debris. Download a separate report for each group. Use the Satellites and Debris switches on the globe to show one group at a time.</p>
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-      <div class="glass-panel rounded-2xl p-5 border border-neonEmerald/30">
-        <h3 class="font-bold text-white">Working satellites</h3>
-        <div id="sp-work-n" class="text-4xl font-extrabold mt-2" style="color:#10b981">...</div>
-        <p id="sp-work-r" class="text-xs text-slate-400 mt-1">Counting...</p>
-        <p id="sp-work-g" class="text-xs text-slate-300 mt-1"></p>
-        <div class="flex flex-wrap gap-2 mt-4">
-          <button class="sp-dl px-3 py-1.5 rounded-lg border border-neonEmerald/40 bg-neonEmerald/10 text-neonEmerald text-sm" data-kind="working" data-fmt="pdf">Working report (PDF)</button>
-          <button class="sp-dl px-3 py-1.5 rounded-lg border border-white/20 bg-white/5 text-slate-200 text-sm" data-kind="working" data-fmt="csv">List (CSV)</button>
-        </div>
-      </div>
-      <div class="glass-panel rounded-2xl p-5 border border-neonPink/30">
-        <h3 class="font-bold text-white">Waste satellites and debris</h3>
-        <div id="sp-waste-n" class="text-4xl font-extrabold mt-2" style="color:#f43f5e">...</div>
-        <p id="sp-waste-r" class="text-xs text-slate-400 mt-1">Counting...</p>
-        <p id="sp-waste-g" class="text-xs text-slate-300 mt-1"></p>
-        <div class="flex flex-wrap gap-2 mt-4">
-          <button class="sp-dl px-3 py-1.5 rounded-lg border border-neonPink/40 bg-neonPink/10 text-neonPink text-sm" data-kind="waste" data-fmt="pdf">Waste report (PDF)</button>
-          <button class="sp-dl px-3 py-1.5 rounded-lg border border-white/20 bg-white/5 text-slate-200 text-sm" data-kind="waste" data-fmt="csv">List (CSV)</button>
-        </div>
-      </div>
-    </div>
-    <p class="text-xs text-slate-500 mt-3">Counts and risk values come from EcoOrbit's simulator, built from public-catalog parameters. Not for operational use.</p>
-  </div>
-</section>
-
 
     <section class="relative pt-24 pb-20 overflow-hidden">
       <div class="eo-hero-spot absolute" aria-hidden="true"></div>
@@ -2761,7 +2595,8 @@ html[lang="ar"],html[lang="fa"],html[lang="ur"],html[lang="ps"],html[lang="sd"],
             </div>
             <h3 class="font-bold text-white text-base mb-2">NASA Open Data</h3>
             <p class="text-xs text-slate-400 leading-relaxed">
-              CelesTrak TLE feeds for orbits, plus live NASA DONKI space weather, GIBS satellite imagery, EONET natural events and EPIC Earth views.
+              Utilizing CelesTrak TLE (Two-Line Element) feeds, Earth Observing
+              System data, and orbital ephemeris parameters in real-time.
             </p>
           </div>
 
@@ -5560,7 +5395,6 @@ html[lang="ar"],html[lang="fa"],html[lang="ur"],html[lang="ps"],html[lang="sd"],
           "#94a3b8",
           "center",
         );
-        T(window.EO_NASA ? "NASA DONKI space weather: drag outlook " + window.EO_NASA.drag + ", strongest flare " + window.EO_NASA.flare + ", peak Kp " + window.EO_NASA.kp + ". Debris guidance: NASA Orbital Debris Program Office." : "Debris guidance: NASA Orbital Debris Program Office (orbitaldebris.jsc.nasa.gov).", 105, 290, 5.5, "italic", "#94a3b8", "center");
         doc.save(o.name.replace(/[^\w]+/g, "_") + "_Survey_Certificate.pdf");
         showNotification("PDF report downloaded for " + o.name);
       }
@@ -9435,77 +9269,6 @@ details{margin-top:14px}summary{cursor:pointer;color:#00f2fe;font-weight:600}
         }
       })();
     </script>
-<script id="eo-waste-js">
-/* Separate working satellites from waste satellites (defunct objects and debris), and report on each */
-var EO_KINDS = { waste: { kinds: ["deb"], label: "Waste satellite", title: "WASTE SATELLITE & DEBRIS TRACKING REPORT", file: "Waste" }, working: { kinds: ["sat", "nasa"], label: "Working satellite", title: "WORKING SATELLITE TRACKING REPORT", file: "Working" } };
-function trackSatellites(type) {
-  if (typeof satNodes === "undefined" || !satNodes.length) return [];
-  var ks = EO_KINDS[type].kinds;
-  return satNodes.filter(function (n) { return ks.indexOf(n.userData.kind) > -1; }).map(function (n) {
-    var d = n.userData;
-    return { name: d.name, group: d.shell, alt: parseFloat(d.altitude) || 0, speed: parseFloat(d.velocity) || 0, risk: +d.risk || 0 };
-  }).sort(function (a, b) { return b.risk - a.risk; });
-}
-function trackWasteSatellites() { return trackSatellites("waste"); }
-function trackWorkingSatellites() { return trackSatellites("working"); }
-function satSummary(w) {
-  var g = {}; w.forEach(function (o) { g[o.group] = (g[o.group] || 0) + 1; });
-  var alts = w.map(function (o) { return o.alt; });
-  return { total: w.length, groups: g, avgRisk: w.reduce(function (s, o) { return s + o.risk; }, 0) / (w.length || 1), minAlt: Math.min.apply(null, alts), maxAlt: Math.max.apply(null, alts), top: w[0] };
-}
-function satNote(m) { if (typeof showNotification === "function") showNotification(m); else alert(m); }
-function downloadSatCSV(type) {
-  var w = trackSatellites(type); if (!w.length) return satNote("Satellite list is not ready yet. Wait for the globe to load.");
-  var c = "rank,name,group,altitude_km,speed_km_s,collision_risk_percent\n";
-  w.forEach(function (o, i) { c += [i + 1, '"' + o.name + '"', '"' + o.group + '"', o.alt, o.speed, o.risk.toFixed(2)].join(",") + "\n"; });
-  var a = document.createElement("a"); a.href = URL.createObjectURL(new Blob([c], { type: "text/csv" })); a.download = "EcoOrbit_" + EO_KINDS[type].file + "_Satellites.csv"; a.click();
-  satNote(EO_KINDS[type].label + " list downloaded (" + w.length + " objects).");
-}
-function downloadTypeReport(type) {
-  var w = trackSatellites(type), other = trackSatellites(type === "waste" ? "working" : "waste"), K = EO_KINDS[type];
-  if (!w.length) return satNote("Satellite list is not ready yet. Wait for the globe to load.");
-  if (!(window.jspdf && window.jspdf.jsPDF)) return satNote("PDF library could not load. Check your internet connection.");
-  var doc = new window.jspdf.jsPDF({ unit: "mm", format: "a4" }), s = satSummary(w), y, nw = type === "waste" ? w.length : other.length, nk = type === "waste" ? other.length : w.length;
-  function head() { doc.setFillColor(type === "waste" ? "#3b0b1e" : "#0b2b1e"); doc.rect(0, 0, 210, 26, "F"); doc.setTextColor("#ffffff"); doc.setFont("helvetica", "bold"); doc.setFontSize(15); doc.text(K.title, 105, 12, { align: "center" }); doc.setFontSize(8); doc.setFont("helvetica", "normal"); doc.setTextColor("#22d3ee"); doc.text("EcoOrbit | NASA Space Apps 2026 | Generated " + new Date().toUTCString().slice(0, 22) + " UTC", 105, 19, { align: "center" }); }
-  function txt(t, x, yy, sz, b, col) { doc.setFont("helvetica", b ? "bold" : "normal"); doc.setFontSize(sz); doc.setTextColor(col || "#0f172a"); doc.text(t, x, yy); }
-  head(); y = 36; txt("SUMMARY", 15, y, 11, 1, "#0b3b8c"); y += 7;
-  [[K.label + "s tracked", String(s.total)], ["Working satellites / waste objects", nk + " / " + nw], ["Waste share of tracked objects", (nw / ((nw + nk) || 1) * 100).toFixed(0) + "%"], ["Average collision risk", s.avgRisk.toFixed(2) + "%"], ["Altitude range", Math.round(s.minAlt) + " to " + Math.round(s.maxAlt) + " km"], ["Highest-risk object", s.top.name + " (" + s.top.risk.toFixed(2) + "%)"]].forEach(function (r) { txt(r[0], 15, y, 9, 0, "#475569"); txt(r[1], 80, y, 9, 1); y += 6; });
-  y += 2; txt("BY GROUP", 15, y, 11, 1, "#0b3b8c"); y += 7;
-  Object.keys(s.groups).forEach(function (k) { txt(k, 15, y, 9, 0, "#475569"); txt(s.groups[k] + " objects", 110, y, 9, 1); y += 6; });
-  y += 4; txt("TRACKED OBJECTS, HIGHEST RISK FIRST", 15, y, 11, 1, "#0b3b8c"); y += 7;
-  var X = [17, 28, 85, 138, 160, 185];
-  function th() { doc.setFillColor("#e2e8f0"); doc.rect(15, y - 4.5, 180, 6.5, "F"); ["#", "Name", "Group", "Alt (km)", "Speed (km/s)", "Risk"].forEach(function (h, i) { txt(h, X[i], y, 8, 1); }); y += 6.5; }
-  th();
-  w.forEach(function (o, i) {
-    if (y > 275) { doc.addPage(); head(); y = 36; th(); }
-    [String(i + 1), o.name.slice(0, 30), o.group.slice(0, 28), String(Math.round(o.alt)), o.speed.toFixed(2), o.risk.toFixed(2) + "%"].forEach(function (v, k) { txt(v, X[k], y, 7.5, 0, "#1e293b"); }); y += 5.2;
-  });
-  if (y > 240) { doc.addPage(); head(); y = 36; }
-  y += 6; txt("SHARING WITH NASA", 15, y, 11, 1, "#0b3b8c"); y += 6;
-  [ "This report is made for download. Share it with the NASA Orbital Debris Program Office (orbitaldebris.jsc.nasa.gov) or other space agencies.", window.EO_NASA ? "NASA DONKI space weather at time of report: drag outlook " + window.EO_NASA.drag + ", strongest flare " + window.EO_NASA.flare + ", peak Kp " + window.EO_NASA.kp + "." : "NASA space weather data was not loaded when this report was made.", "Values are simulated from public-catalog parameters for visualization and education. Not for operational use." ].forEach(function (t) { doc.splitTextToSize(t, 180).forEach(function (l) { txt(l, 15, y, 8.5, 0, "#334155"); y += 4.5; }); y += 1.5; });
-  doc.save("EcoOrbit_" + K.file + "_Satellite_Report.pdf"); satNote(K.label + " report downloaded (" + w.length + " objects).");
-}
-function downloadWasteReport() { downloadTypeReport("waste"); }
-function downloadWasteCSV() { downloadSatCSV("waste"); }
-(function () {
-  function fill(type, id) {
-    var w = trackSatellites(type); if (!w.length) return false; var s = satSummary(w);
-    document.getElementById(id + "-n").textContent = w.length;
-    document.getElementById(id + "-r").textContent = "Average collision risk " + s.avgRisk.toFixed(2) + "%";
-    document.getElementById(id + "-g").textContent = Object.keys(s.groups).slice(0, 5).map(function (k) { return k + " " + s.groups[k]; }).join(", ");
-    return true;
-  }
-  var tries = 0, t = setInterval(function () {
-    if (document.getElementById("sp-work-n") && fill("working", "sp-work") && fill("waste", "sp-waste")) clearInterval(t);
-    if (++tries > 60) clearInterval(t);
-  }, 1000);
-  document.addEventListener("click", function (e) {
-    var b = e.target.closest(".sp-dl"); if (!b) return;
-    if (b.dataset.fmt === "pdf") downloadTypeReport(b.dataset.kind); else downloadSatCSV(b.dataset.kind);
-  });
-})();
-</script>
-
 <script id="eo-pulse-js">
 (function(){
   var root=document.getElementById('eo-pulse'); if(!root) return;
