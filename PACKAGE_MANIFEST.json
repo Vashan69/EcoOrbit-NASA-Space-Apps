@@ -1,0 +1,13 @@
+{
+  "package": "EcoOrbit NASA Repositories PLUS ALL Datasets",
+  "repository_catalogue_entries": 58,
+  "full_data_nasa_gov_catalogue_harvester": true,
+  "earthdata_collection_metadata_harvester": true,
+  "earthdata_granule_downloader": true,
+  "bangladesh_nasa_power_downloader": true,
+  "live_catalogue_records_embedded_in_zip": 0,
+  "live_science_granules_embedded_in_zip": 0,
+  "why_not_embedded": "No live NASA catalogue/data files were downloaded during package creation; the scripts fetch current official data when run online. Data.nasa.gov is a metadata catalogue and the underlying files live in distributed archives.",
+  "portal_listing_count_seen": 36518,
+  "portal_listing_count_is_dynamic": true
+}
