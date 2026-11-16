@@ -1,2 +1,864 @@
-# EcoOrbit-NASA-Space-Apps
-EcoOrbit is an AI-powered space sustainability platform for NASA Space Apps Challenge 2026. Explore 3D Earth and orbit visuals, satellite data, orbital debris, collision risks, and carbon-offset insights in one dashboard. We make space-environment data easier to understand and support a cleaner, safer future in orbit for everyone. for all humanity.
+# EcoOrbit NASA Space Apps
+
+## Project Overview
+
+EcoOrbit NASA Space Apps is an integrated Earth-observation, environmental-monitoring, scientific-data exploration, and space-environment awareness platform developed for the NASA Space Apps Challenge 2026 by The Third World Peace, with software development by VLZO ENGINEERING.
+
+The project is designed around the idea that understanding our planet requires information from multiple scientific fields. Agricultural conditions, weather patterns, natural disasters, forest changes, atmospheric composition, flooding, and orbital sustainability are interconnected areas that benefit from reliable scientific observations.
+
+EcoOrbit NASA Space Apps brings these areas together through a unified digital ecosystem containing specialized modules for environmental exploration, geographic information, NASA data resources, and structured reporting.
+
+The platform aims to make complex environmental information easier to explore and understand. It connects scientific information with organized interfaces, visual presentation, geographic context, and reporting concepts.
+
+Rather than treating environmental challenges as isolated subjects, EcoOrbit NASA Space Apps approaches them as parts of a larger planetary observation system.
+
+The project is developed with a modular structure so that different monitoring capabilities can operate independently while remaining connected to the central platform.
+
+Its overall direction is to support environmental awareness, encourage scientific exploration, and demonstrate how modern software engineering can make Earth-observation information more accessible.
+
+## Project Vision
+
+The vision of EcoOrbit NASA Space Apps is to create a connected digital environment where Earth-observation information, satellite-derived datasets, environmental indicators, and geographic analysis can be explored through one organized platform.
+
+The project envisions a future in which scientific information is not limited to specialized research environments but can also be explored by students, developers, educators, environmental organizations, and interested members of the public.
+
+By bringing together different environmental fields, EcoOrbit NASA Space Apps aims to encourage a broader understanding of planetary conditions and the importance of protecting Earth's natural systems.
+
+## Project Mission
+
+The mission of EcoOrbit NASA Space Apps is to organize and present environmental and scientific information through accessible digital technology.
+
+Its mission includes:
+
+- Connecting relevant NASA scientific resources with environmental monitoring.
+- Making Earth-observation information easier to explore.
+- Supporting the organization of scientific datasets.
+- Presenting environmental conditions through geographic visualization.
+- Exploring agricultural and vegetation observations.
+- Supporting awareness of weather and precipitation patterns.
+- Presenting natural disaster and flood-related information.
+- Exploring forest changes and atmospheric observations.
+- Increasing awareness of satellite sustainability and orbital debris.
+- Developing structured environmental reporting concepts.
+- Encouraging the responsible interpretation of scientific information.
+
+## Core Objectives
+
+### Scientific Data Accessibility
+
+Make relevant scientific information easier to discover, organize, and understand through a unified digital environment.
+
+### Environmental Observation
+
+Explore different environmental conditions using satellite-derived observations, geographic information, and scientific datasets.
+
+### Agricultural Awareness
+
+Support the exploration of vegetation, precipitation, soil moisture, and other environmental factors that influence agricultural conditions.
+
+### Weather Information
+
+Present weather-related observations and geographic information in an organized and understandable format.
+
+### Disaster Awareness
+
+Explore information about natural events, environmental hazards, and disaster-related conditions.
+
+### Flood Monitoring
+
+Investigate precipitation, soil moisture, and geographic information relevant to flood awareness.
+
+### Forest Observation
+
+Explore vegetation conditions, land-cover changes, and forest-related satellite observations.
+
+### Atmospheric Exploration
+
+Investigate atmospheric composition and carbon-related observations from scientific missions.
+
+### Orbital Sustainability
+
+Increase awareness of space debris, satellite operations, and the long-term sustainability of Earth's orbital environment.
+
+### Environmental Reporting
+
+Develop a structured approach to presenting observations, data sources, geographic information, and analytical findings.
+
+## Global Challenges Addressed
+
+### 1. Space Debris and Orbital Sustainability
+
+Earth's orbital environment contains operational satellites, inactive spacecraft, rocket bodies, and fragments generated by previous space activities.
+
+As human activity in space increases, maintaining a sustainable orbital environment becomes increasingly important. Space debris can create risks for satellites, spacecraft operations, and future space missions.
+
+EcoOrbit NASA Space Apps explores this challenge through its Space Environment Monitoring component.
+
+The project's objectives include increasing awareness of orbital debris, exploring satellite-related information, presenting relevant orbital observations, and investigating satellite collision-analysis concepts.
+
+The long-term direction includes connecting available orbital information with geographic and orbital visualization.
+
+### 2. Deforestation and Forest Degradation
+
+Forests are essential components of Earth's environmental systems. They support biodiversity, regulate the carbon cycle, influence regional climate, protect soil, and provide important natural resources.
+
+Deforestation and forest degradation can affect ecosystems, wildlife habitats, atmospheric conditions, and local communities.
+
+EcoOrbit NASA Space Apps explores forest-related observations through satellite imagery, vegetation information, and land-cover monitoring concepts.
+
+Relevant observations can help users investigate changes in forested areas and understand the importance of long-term environmental monitoring.
+
+### 3. Natural Disasters and Environmental Hazards
+
+Natural disasters can affect communities, infrastructure, agriculture, ecosystems, and economic activities.
+
+Floods, wildfires, tropical cyclones, droughts, and severe weather events can develop across different regions and require reliable environmental information.
+
+EcoOrbit NASA Space Apps explores natural event information through DisasterLens and related monitoring components.
+
+The platform's direction includes geographic presentation, event exploration, relevant scientific datasets, and structured environmental information.
+
+### 4. Flooding and Precipitation Uncertainty
+
+Flooding is influenced by multiple environmental factors, including rainfall intensity, soil moisture, surface conditions, river systems, and geographic characteristics.
+
+Understanding these factors requires information from different scientific sources.
+
+FloodGuard explores flood-related environmental information using precipitation observations, geographic context, and relevant satellite-derived datasets.
+
+### 5. Agricultural and Weather Uncertainty
+
+Agriculture is influenced by changing environmental conditions. Rainfall, temperature, vegetation health, soil moisture, and seasonal patterns can all affect agricultural activities.
+
+EcoOrbit NASA Space Apps connects agricultural observation with weather-related information to support a broader understanding of environmental conditions.
+
+AgroOrbit and WeatherOrbit are designed to organize these different but related areas.
+
+### 6. Atmospheric Changes and Carbon Emissions
+
+The atmosphere plays an essential role in Earth's climate system. Carbon dioxide, methane, aerosols, and other atmospheric components are important subjects of scientific observation.
+
+Satellite missions provide information that helps researchers investigate atmospheric composition and changes over time.
+
+EcoOrbit NASA Space Apps explores this subject through Carbon and Atmospheric Monitoring.
+
+### 7. Environmental Information Fragmentation
+
+Scientific information can be distributed across multiple datasets, missions, services, and research platforms.
+
+Finding relevant information and understanding how different sources relate to one another can be challenging.
+
+DataStack addresses this organizational challenge by providing a central data-infrastructure concept for the platform.
+
+## Platform Ecosystem
+
+EcoOrbit NASA Space Apps is organized as a connected ecosystem of specialized modules.
+
+Each module focuses on a particular environmental or scientific area while contributing to the wider platform.
+
+### Main Platform Components
+
+| Module | Main Responsibility |
+|---|---|
+| AgroOrbit | Agricultural and vegetation monitoring |
+| EcoAI | Environmental intelligence and analytical concepts |
+| DataStack | NASA scientific data organization |
+| WeatherOrbit | Weather and precipitation information |
+| DisasterLens | Natural disaster and event information |
+| FloodGuard | Flood-related environmental monitoring |
+| Space Environment | Orbital debris and satellite information |
+| Forest Monitoring | Vegetation and land-cover observations |
+| Carbon Monitoring | Atmospheric and carbon-related information |
+| Dynamic Planet Report | Structured environmental reporting |
+
+## AgroOrbit — Agricultural and Vegetation Monitoring
+
+AgroOrbit is the agricultural observation component of EcoOrbit NASA Space Apps.
+
+It focuses on exploring environmental conditions that influence agricultural systems and vegetation.
+
+Agriculture depends on several interconnected factors. Rainfall, temperature, soil moisture, vegetation conditions, and seasonal environmental changes can influence agricultural productivity and growing conditions.
+
+AgroOrbit aims to bring relevant environmental observations together so that agricultural information can be explored in a more organized way.
+
+### Primary Areas
+
+- Vegetation monitoring.
+- Agricultural environmental observations.
+- Precipitation information.
+- Soil moisture exploration.
+- Seasonal environmental comparisons.
+- Geographic agricultural information.
+- Satellite-derived vegetation indicators.
+- Historical environmental observation concepts.
+
+### Scientific Importance
+
+Satellite observations can provide information about vegetation conditions across large geographic regions.
+
+Vegetation indices, precipitation estimates, and soil moisture observations can help users investigate environmental conditions that are relevant to agriculture.
+
+### Potential Scientific Resources
+
+- MODIS vegetation observations.
+- VIIRS Earth observations.
+- Global Precipitation Measurement.
+- IMERG precipitation estimates.
+- SMAP soil moisture observations.
+- NASA POWER.
+- GEDI vegetation structure information.
+
+## EcoAI — Environmental Intelligence
+
+EcoAI is the environmental intelligence component of EcoOrbit NASA Space Apps.
+
+Its purpose is to organize environmental information and support its interpretation through analytical concepts and structured presentation.
+
+Environmental datasets often contain large amounts of information. Understanding their meaning requires considering the source, observation period, geographic coverage, scientific measurements, and limitations.
+
+EcoAI is intended to provide a dedicated environment for exploring these relationships.
+
+### Primary Areas
+
+- Environmental information organization.
+- Scientific dataset interpretation.
+- Environmental summaries.
+- Observation comparisons.
+- Analytical presentation.
+- Environmental indicator exploration.
+- Potential machine-learning-assisted analysis.
+- Future intelligent environmental information tools.
+
+### Development Direction
+
+The development direction of EcoAI includes making environmental information easier to interpret without removing the scientific context behind the original observations.
+
+Any automated analytical capabilities should distinguish between measured observations, estimates, forecasts, and generated interpretations.
+
+## DataStack — Scientific Data Infrastructure
+
+DataStack is the scientific data organization component of EcoOrbit NASA Space Apps.
+
+It provides the conceptual foundation for discovering, organizing, retrieving, and presenting relevant scientific datasets.
+
+NASA operates numerous Earth-observation missions and scientific information services. These resources provide different types of environmental information, with varying formats, geographic coverage, and observation periods.
+
+DataStack focuses on bringing the data-related elements of EcoOrbit NASA Space Apps into a more organized structure.
+
+### Primary Responsibilities
+
+- NASA dataset discovery.
+- Scientific resource organization.
+- Dataset categorization.
+- Metadata presentation.
+- Data source identification.
+- Geographic filtering concepts.
+- Temporal filtering concepts.
+- Data retrieval and integration.
+- Dataset format awareness.
+- Information preparation for visualization.
+
+### Scientific Data Organization
+
+Scientific datasets can contain measurements, metadata, timestamps, coordinates, observation periods, and information about the instruments used to collect them.
+
+DataStack is intended to support an organized approach to understanding these different elements.
+
+## WeatherOrbit — Weather Monitoring and Analysis
+
+WeatherOrbit is the dedicated weather-monitoring component of EcoOrbit NASA Space Apps.
+
+It focuses on presenting weather-related information through geographic visualization and environmental observation.
+
+Weather conditions can change significantly across different regions. Temperature, precipitation, rainfall, and other atmospheric conditions are important for understanding local and regional environmental patterns.
+
+WeatherOrbit is designed as a separate component within the platform ecosystem.
+
+### Primary Areas
+
+- Geographic weather information.
+- Temperature observations.
+- Rainfall information.
+- Precipitation observations.
+- Environmental weather conditions.
+- Regional weather exploration.
+- Weather-related geographic visualization.
+- Historical observation concepts.
+- Current and future weather information where supported by connected services.
+- Weather-related news and information presentation.
+
+### Scientific Importance
+
+Weather observations can contribute to agricultural awareness, disaster preparedness, environmental research, and regional monitoring.
+
+NASA precipitation datasets can provide valuable scientific context, while other supported weather services may provide additional meteorological information.
+
+### Potential Scientific Resources
+
+- NASA GPM.
+- IMERG.
+- NASA POWER.
+- Relevant NASA Earth-observation resources.
+- Supported external meteorological services.
+
+## DisasterLens — Natural Disaster Information
+
+DisasterLens is the natural disaster information component of EcoOrbit NASA Space Apps.
+
+It focuses on exploring natural events and environmental hazards through geographic information and relevant scientific resources.
+
+Natural events can occur across different geographic regions and may affect people, infrastructure, ecosystems, and agricultural systems.
+
+DisasterLens aims to provide an organized environment for exploring disaster-related information.
+
+### Primary Areas
+
+- Natural event exploration.
+- Wildfire information.
+- Flood-related event information.
+- Tropical cyclone awareness.
+- Severe weather information.
+- Geographic event visualization.
+- Environmental hazard awareness.
+- Scientific information from relevant sources.
+
+### Potential Scientific Resources
+
+- NASA FIRMS.
+- NASA EONET.
+- NASA GPM.
+- NASA Earthdata.
+- NASA Worldview.
+
+## FloodGuard — Flood Monitoring and Geographic Awareness
+
+FloodGuard is the flood-related monitoring component of EcoOrbit NASA Space Apps.
+
+It focuses on environmental information that can contribute to understanding flood-related conditions.
+
+Flooding is influenced by rainfall, soil moisture, geographic characteristics, water systems, and other environmental factors.
+
+FloodGuard explores relevant scientific information through geographic presentation and environmental monitoring concepts.
+
+### Primary Areas
+
+- Precipitation observation.
+- Rainfall information.
+- Soil moisture exploration.
+- Geographic flood awareness.
+- Environmental condition monitoring.
+- Historical precipitation comparisons.
+- Flood-related information presentation.
+- Relevant satellite-derived observations.
+
+### Potential Scientific Resources
+
+- NASA GPM.
+- IMERG.
+- SMAP.
+- NASA Earthdata.
+- NASA Worldview.
+
+FloodGuard is an informational and exploratory component. It should not be treated as an official emergency warning service or a replacement for local disaster-management authorities.
+
+## Space Environment Monitoring
+
+Space Environment Monitoring explores the orbital environment surrounding Earth.
+
+Human activity in space has created a complex orbital environment containing satellites, spacecraft, rocket bodies, and debris.
+
+Understanding this environment is important for satellite sustainability and the long-term development of space activities.
+
+### Primary Areas
+
+- Satellite information exploration.
+- Orbital debris awareness.
+- Space sustainability.
+- Orbital environment visualization.
+- Satellite-related information.
+- Collision-analysis concepts.
+- Scientific and educational information about orbital conditions.
+
+### Development Direction
+
+Future development may include additional orbital datasets, satellite visualization, historical orbital information, and more advanced analytical presentation.
+
+The platform's collision-analysis concepts are intended for scientific exploration and awareness rather than operational spacecraft control.
+
+## Forest Monitoring — Vegetation and Land-Cover Observation
+
+Forest Monitoring focuses on satellite-derived vegetation information, forest conditions, and land-cover observations.
+
+Forests are dynamic ecosystems. Their conditions can change because of natural processes, environmental pressures, land-use changes, and human activities.
+
+Satellite observations provide a way to investigate these changes over large geographic areas.
+
+### Primary Areas
+
+- Vegetation observation.
+- Forest-related information.
+- Land-cover exploration.
+- Geographic forest monitoring.
+- Historical vegetation comparisons.
+- Satellite imagery exploration.
+- Environmental change awareness.
+- Forest ecosystem information.
+
+### Potential Scientific Resources
+
+- MODIS.
+- VIIRS.
+- Landsat.
+- GEDI.
+- NASA Earthdata.
+- NASA Worldview.
+
+## Carbon and Atmospheric Monitoring
+
+Carbon and Atmospheric Monitoring explores atmospheric composition and carbon-related scientific observations.
+
+The atmosphere contains different gases and particles that influence environmental and climate systems.
+
+Satellite missions can provide important observations of atmospheric composition and greenhouse gases.
+
+### Primary Areas
+
+- Carbon dioxide observations.
+- Methane-related information.
+- Atmospheric composition.
+- Aerosol observations.
+- Nitrogen dioxide information.
+- Greenhouse gas research.
+- Geographic atmospheric data.
+- Historical observation concepts.
+
+### Potential NASA Resources
+
+- OCO-2.
+- OCO-3.
+- Aura.
+- NASA GEOS.
+- NASA Earthdata.
+
+## Dynamic Planet Report
+
+Dynamic Planet Report is the structured environmental reporting component of EcoOrbit NASA Space Apps.
+
+Environmental observations can be difficult to interpret when they are distributed across multiple datasets and geographic sources.
+
+Dynamic Planet Report aims to organize relevant information into structured reports that connect observations with their scientific context.
+
+### Report Elements
+
+- Report identification.
+- Geographic information.
+- Observation period.
+- Relevant scientific datasets.
+- Environmental indicators.
+- Observation summaries.
+- Geographic visualizations.
+- Analytical findings.
+- Source attribution.
+- Data limitations.
+- Report verification information.
+
+### Reporting Purpose
+
+The objective is to make environmental information easier to review and understand through a consistent reporting structure.
+
+Reports should clearly distinguish original scientific observations from estimates, interpretations, and generated summaries.
+
+## Blockchain-Based Report Verification
+
+EcoOrbit NASA Space Apps explores a blockchain-inspired reporting concept focused on report integrity and verification.
+
+Digital environmental reports may contain important scientific information, observations, and analytical summaries. Maintaining the integrity of these records is an important consideration.
+
+A potential verification system can use cryptographic hashing to generate a digital fingerprint of a report.
+
+If the report changes, its calculated fingerprint can also change. This provides a method for identifying differences between versions.
+
+### Main Objectives
+
+- Report integrity.
+- Digital fingerprint generation.
+- Report verification concepts.
+- Version comparison.
+- Transparent report history.
+- Improved confidence in document consistency.
+
+### Important Distinction
+
+A verification mechanism can help identify whether a report has changed after its fingerprint was generated. It does not independently prove that the original data is scientifically accurate or that the report's conclusions are correct.
+
+## NASA Data Integration
+
+NASA scientific resources are an important foundation of the EcoOrbit NASA Space Apps ecosystem.
+
+NASA missions and data services provide information about Earth's surface, atmosphere, oceans, vegetation, precipitation, fires, ice, and other environmental systems.
+
+EcoOrbit NASA Space Apps explores relevant resources and their potential applications across its specialized modules.
+
+### Important NASA Platforms and Services
+
+| NASA Resource | Scientific or Technical Purpose |
+|---|---|
+| NASA Earthdata | Access to Earth-science datasets |
+| Earthdata Search | Discovery of scientific datasets |
+| NASA Worldview | Satellite imagery exploration |
+| NASA GIBS | Global imagery services |
+| NASA FIRMS | Active fire information |
+| NASA POWER | Meteorological and solar information |
+| NASA EONET | Natural event information |
+| NASA API Portal | Access to supported NASA APIs |
+| NASA Orbital Debris Program Office | Orbital debris research and information |
+
+## Scientific Datasets and Satellite Missions
+
+EcoOrbit NASA Space Apps explores scientific datasets and satellite missions that may contribute to its environmental monitoring areas.
+
+| Dataset or Mission | Scientific Application |
+|---|---|
+| MODIS | Vegetation, land cover, and fire observations |
+| VIIRS | Earth observation and active fire information |
+| GPM | Global precipitation monitoring |
+| IMERG | Precipitation estimates |
+| Landsat | Land-surface and vegetation changes |
+| OCO-2 | Atmospheric carbon dioxide observations |
+| OCO-3 | Atmospheric carbon dioxide observations |
+| Aura | Atmospheric composition |
+| Terra | Earth observation |
+| Aqua | Earth observation |
+| ICESat-2 | Ice and surface elevation measurements |
+| SMAP | Soil moisture observations |
+| GEDI | Forest structure and vegetation information |
+
+These resources represent relevant scientific sources for the platform. Their availability, access requirements, and actual integration depend on the implementation of each feature.
+
+## Technical Architecture
+
+EcoOrbit NASA Space Apps follows a modular technical architecture intended to connect scientific resources, data infrastructure, environmental modules, and reporting interfaces.
+
+### Scientific Data Sources
+
+The first architectural layer consists of scientific datasets, satellite missions, NASA services, and supported external information sources.
+
+### Data Infrastructure
+
+The second layer focuses on data retrieval, organization, metadata, geographic filtering, temporal filtering, and preparation for presentation.
+
+### Environmental Modules
+
+The third layer contains the specialized components of the platform, including AgroOrbit, EcoAI, DataStack, WeatherOrbit, DisasterLens, and FloodGuard.
+
+### Visualization and Reporting
+
+The fourth layer presents relevant information through geographic interfaces, environmental dashboards, charts, observations, and structured reports.
+
+### Modular Development
+
+A modular structure makes it possible to expand individual components without requiring the entire platform to be redesigned.
+
+It also provides a foundation for introducing additional scientific resources and environmental monitoring capabilities.
+
+## Technology Stack
+
+| Technology | Role in Development |
+|---|---|
+| HTML5 | Webpage structure |
+| CSS3 | Interface design and styling |
+| JavaScript | Frontend functionality |
+| Python | Backend and data-processing development |
+| Tailwind CSS | Interface styling |
+| Git | Version control |
+| GitHub | Repository management |
+| Visual Studio Code | Development environment |
+| NASA Earthdata | Scientific data access |
+| NASA APIs | Supported NASA data services |
+| GeoJSON | Geographic data representation |
+
+## Data Processing and Scientific Information
+
+Scientific datasets often require several stages of preparation before they can be presented in a user interface.
+
+These stages may include dataset discovery, metadata examination, geographic filtering, temporal filtering, retrieval, format interpretation, validation, and visualization preparation.
+
+EcoOrbit NASA Space Apps is designed around the concept of organizing these processes so that environmental information can be presented through its specialized modules.
+
+### Data Processing Considerations
+
+- Geographic coverage.
+- Observation dates.
+- Dataset resolution.
+- Measurement units.
+- Scientific metadata.
+- Data quality information.
+- Source identification.
+- File format compatibility.
+- Observation uncertainty.
+- Update frequency.
+
+### Scientific Data Formats
+
+Relevant scientific information may be distributed in formats such as JSON, GeoJSON, CSV, NetCDF, GeoTIFF, and HDF.
+
+Each format serves different purposes and may require specialized processing before visualization.
+
+## Geographic Visualization
+
+Geographic visualization is an important part of EcoOrbit NASA Space Apps.
+
+Environmental information becomes easier to interpret when it is connected to geographic locations and regions.
+
+Maps can help users understand where observations were collected, where environmental events occurred, and how conditions differ across geographic areas.
+
+### Geographic Applications
+
+- Environmental location mapping.
+- Satellite imagery presentation.
+- Weather-related geographic information.
+- Precipitation visualization.
+- Vegetation and forest observations.
+- Natural event locations.
+- Flood-related geographic exploration.
+- Environmental comparisons.
+- Geographic reporting.
+
+Potential visualization technologies include Leaflet, MapLibre, GeoJSON, and NASA GIBS.
+
+## Environmental Data Interpretation
+
+Scientific information requires careful interpretation.
+
+A satellite observation is not automatically a prediction, and an estimated environmental measurement should not be presented as an exact measurement.
+
+EcoOrbit NASA Space Apps aims to maintain clear distinctions between different types of information.
+
+### Important Information Categories
+
+- Direct scientific observations.
+- Satellite-derived measurements.
+- Model-based estimates.
+- Historical datasets.
+- Current information from supported services.
+- Forecast information from supported providers.
+- Analytical interpretations.
+- Generated summaries.
+
+Understanding these differences is important for responsible scientific communication.
+
+## Environmental Applications
+
+EcoOrbit NASA Space Apps explores several areas where scientific information can support environmental awareness and research.
+
+### Agriculture
+
+Vegetation observations, precipitation information, and soil moisture datasets can contribute to the exploration of agricultural conditions.
+
+### Weather
+
+Weather-related information can help users understand regional environmental conditions and precipitation patterns.
+
+### Disaster Awareness
+
+Natural event information can provide geographic and scientific context for understanding environmental hazards.
+
+### Flood Monitoring
+
+Precipitation, soil moisture, and geographic observations can contribute to the investigation of flood-related conditions.
+
+### Forest Observation
+
+Satellite imagery and vegetation information can help users explore forest conditions and land-cover changes.
+
+### Atmospheric Research
+
+Atmospheric observations can contribute to the exploration of greenhouse gases and other components of Earth's atmosphere.
+
+### Space Sustainability
+
+Orbital information can help users understand space debris and the importance of maintaining a sustainable environment around Earth.
+
+## Who Benefits from EcoOrbit NASA Space Apps?
+
+| Audience | Potential Benefits |
+|---|---|
+| Students | Explore Earth science and satellite information |
+| Researchers | Investigate scientific datasets |
+| Developers | Explore environmental data integration |
+| Agricultural Communities | Understand relevant environmental observations |
+| Environmental Organizations | Explore forest and environmental information |
+| Educators | Demonstrate Earth-observation applications |
+| Disaster Researchers | Investigate natural event information |
+| Geographic Information Users | Explore environmental data through maps |
+| Technology Enthusiasts | Understand scientific software applications |
+| General Public | Improve environmental awareness |
+
+## Data Reliability and Responsible Information
+
+Scientific reliability is an essential consideration in environmental monitoring.
+
+Different datasets may have different spatial resolutions, observation periods, update frequencies, uncertainty levels, and access conditions.
+
+EcoOrbit NASA Space Apps aims to maintain awareness of these differences when organizing and presenting scientific information.
+
+### Data Reliability Principles
+
+- Identify the original data source.
+- Preserve relevant dataset information.
+- Distinguish observations from estimates.
+- Consider the geographic coverage of datasets.
+- Consider the observation period.
+- Avoid presenting unsupported conclusions.
+- Recognize uncertainty and limitations.
+- Provide appropriate scientific context.
+
+EcoOrbit NASA Space Apps is an informational and exploratory platform. It is not a replacement for official emergency alerts, professional scientific services, or operational environmental decision-making systems.
+
+## Future Development
+
+The long-term development direction of EcoOrbit NASA Space Apps includes expanding scientific data accessibility, improving environmental visualization, and introducing additional analytical capabilities.
+
+### Expanded NASA Data Integration
+
+Additional NASA datasets and scientific resources may be explored to improve the range of information available across the platform.
+
+### Advanced Environmental Visualization
+
+Future development may include improved geographic interfaces, additional environmental indicators, and more detailed comparisons.
+
+### Agricultural Monitoring Expansion
+
+AgroOrbit may be expanded with additional vegetation observations, soil moisture information, precipitation comparisons, and agricultural environmental indicators.
+
+### Weather Information Expansion
+
+WeatherOrbit may introduce additional supported weather sources, historical comparisons, geographic weather information, and improved presentation.
+
+### Disaster Information Expansion
+
+DisasterLens may include additional natural event information and broader geographic exploration.
+
+### Flood Monitoring Expansion
+
+FloodGuard may be expanded through additional precipitation observations, soil moisture information, and geographic datasets.
+
+### Forest Monitoring Expansion
+
+Forest Monitoring may introduce additional satellite observations, historical comparisons, and vegetation-related information.
+
+### Atmospheric Information Expansion
+
+Carbon and Atmospheric Monitoring may explore additional scientific observations and atmospheric datasets.
+
+### Orbital Environment Expansion
+
+Space Environment Monitoring may introduce additional satellite information and orbital visualization capabilities.
+
+### Dynamic Planet Report Expansion
+
+Dynamic Planet Report may develop into a more comprehensive reporting environment with structured observations, geographic information, source attribution, and report history.
+
+### Report Verification Expansion
+
+The blockchain-inspired reporting concept may be developed further through digital fingerprints, report comparison, and verification records.
+
+### Accessibility and Interface Improvements
+
+Future development may include improved mobile accessibility, clearer navigation, more consistent module interfaces, and better presentation of scientific information.
+
+## Project Team
+
+### The Third World Peace
+
+EcoOrbit NASA Space Apps is developed by The Third World Peace for the NASA Space Apps Challenge 2026.
+
+| Role | Team Member |
+|---|---|
+| Team Leader | Omar Ibne Abdullah |
+| Team Partner | Amira Mozumder Zara |
+| Team Advisor | Abdullah Al Mahmud Mozumder |
+| Team Manager | Sabekun Naher Lima |
+
+## Software Development
+
+### VLZO ENGINEERING
+
+VLZO ENGINEERING is the software development identity associated with EcoOrbit NASA Space Apps.
+
+The development focus includes software engineering, web development, platform architecture, interface organization, scientific data integration, and the continued development of the project's technical ecosystem.
+
+The project brings together web technologies, scientific information, geographic visualization, and modular software development.
+
+## Project Images and Descriptions
+
+| <img width="1366" height="610" alt="image" src="https://github.com/user-attachments/assets/e8249b6b-9e72-440b-9a74-2300b141efc3" />
+
+<img width="322" height="555" alt="image" src="https://github.com/user-attachments/assets/ca6362db-2ebb-4206-a2ba-f5180bc510d1" />
+navigation interface connecting the platform's modules. |
+| <img width="1179" height="731" alt="image" src="https://github.com/user-attachments/assets/22059a6b-b7dc-47e8-a6e2-04d9a0f830e4" />
+AgroOrbit  \nAgricultural monitoring, vegetation information, and environmental observations.
+## Acknowledgements
+
+EcoOrbit NASA Space Apps acknowledges NASA and its scientific teams for providing Earth-observation missions, scientific datasets, research, and information resources that support the exploration of our planet.
+
+Special recognition goes to the NASA Space Apps Challenge for encouraging international collaboration, scientific curiosity, innovation, and the development of technology-based solutions.
+
+The project also recognizes the open-source software community, scientific organizations, researchers, educators, and developers whose work contributes to making scientific information more accessible.
+
+## NASA Resources
+
+| Resource | Website |
+|---|---|
+| NASA | https://www.nasa.gov/ |
+| NASA Earthdata | https://www.earthdata.nasa.gov/ |
+| Earthdata Search | https://search.earthdata.nasa.gov/ |
+| NASA Worldview | https://worldview.earthdata.nasa.gov/ |
+| NASA GIBS | https://www.earthdata.nasa.gov/about/gibs |
+| NASA FIRMS | https://firms.modaps.eosdis.nasa.gov/ |
+| NASA POWER | https://power.larc.nasa.gov/ |
+| NASA EONET | https://eonet.gsfc.nasa.gov/ |
+| NASA API Portal | https://api.nasa.gov/ |
+| NASA Orbital Debris Program Office | https://orbitaldebris.jsc.nasa.gov/ |
+
+## Project Information
+
+| Category | Details |
+|---|---|
+| Project Name | EcoOrbit NASA Space Apps |
+| Challenge | NASA Space Apps Challenge 2026 |
+| Team Name | The Third World Peace |
+| Software Development | VLZO ENGINEERING |
+| Country | Bangladesh |
+| Primary Domain | Earth Observation |
+| Scientific Focus | Environmental Monitoring |
+| Data Focus | NASA Scientific Datasets |
+| Technology Focus | Web Development and Data Integration |
+| Environmental Areas | Agriculture, Weather, Disasters, Forests, Atmosphere, and Flooding |
+| Space Focus | Orbital Debris and Satellite Sustainability |
+| Reporting Concept | Dynamic Planet Report |
+| Verification Concept | Blockchain-Inspired Report Integrity |
+
+## Conclusion
+
+EcoOrbit NASA Space Apps represents an integrated approach to exploring Earth's environmental systems and the scientific information used to understand them.
+
+By connecting agricultural monitoring, environmental intelligence, NASA data organization, weather information, disaster awareness, flood monitoring, forest observation, atmospheric exploration, and orbital sustainability, the project creates a unified environment for investigating different planetary challenges.
+
+Its specialized modules provide a structured foundation for connecting scientific resources with accessible digital interfaces, geographic information, environmental observations, and reporting concepts.
+
+The project emphasizes the importance of scientific data, responsible interpretation, environmental awareness, and continued technological development.
+
+EcoOrbit NASA Space Apps is an ongoing exploration of how software engineering and Earth-observation science can work together to improve access to environmental information and encourage a deeper understanding of our planet.
+
+---
+
+## ONE PLANET. ONE MISSION. INFINITE POSSIBILITIES.
+
+EcoOrbit NASA Space Apps
+
+The Third World Peace
+
+Software Programmed by VLZO ENGINEERING
+
+Bangladesh | NASA Space Apps Challenge 2026
