@@ -13,6 +13,7 @@ py scripts\download_full_nasa_catalog.py
 py scripts\harvest_earthdata_cmr.py
 py scripts\download_power_bangladesh.py
 ```
+<img width="1364" height="605" alt="image" src="https://github.com/user-attachments/assets/9999c35a-241d-4d8f-b9a8-1b29ea3c0428" />
 
 The first script downloads NASA's complete Data.nasa.gov catalogue and creates:
 - `output/nasa_data_catalog_full.json`
